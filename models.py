@@ -18,6 +18,8 @@ class SleepRecord(BaseModel):
     min_hr: Optional[int] = None
     max_hr: Optional[int] = None
     quality_score: Optional[int] = None  # -1 = not computed
+    sleep_start: Optional[int] = None   # Unix timestamp — bedtime
+    sleep_end: Optional[int] = None     # Unix timestamp — wake time
 
 
 class HRVRecord(BaseModel):

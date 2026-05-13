@@ -7,10 +7,12 @@ Sleep phase data comes from the mobile API (/coros/data/statistic/daily on apieu
 """
 
 import asyncio
+import base64
 import hashlib
 import json
 import os
 import random
+import struct
 import time
 from typing import Optional
 
@@ -1212,6 +1214,34 @@ async def _ensure_mobile_token(auth: StoredAuth) -> bool:
 # Sleep data  (mobile API: apieu.coros.com/coros/data/statistic/daily)
 # ---------------------------------------------------------------------------
 
+
+def _parse_sleep_timestamps(
+    sleep_list: list[str] | None,
+) -> tuple[int | None, int | None]:
+    """Extract bedtime/wake timestamps from the first (main) sleepList entry.
+
+    Each entry is base64-encoded binary.  Bytes at offset 15..18 hold the
+    sleep-start Unix timestamp (uint32 LE, rounded to the minute); bytes at
+    offset 20..23 hold the sleep-end timestamp in the same format.
+    """
+    if not sleep_list:
+        return None, None
+    try:
+        raw = base64.b64decode(sleep_list[0])
+        if len(raw) < 24:
+            return None, None
+        start_ts = struct.unpack_from("<I", raw, 15)[0]
+        end_ts = struct.unpack_from("<I", raw, 20)[0]
+        now = time.time()
+        if not (now - 365 * 86400 < start_ts < now + 86400):
+            return None, None
+        if not (now - 365 * 86400 < end_ts < now + 86400):
+            return None, None
+        return start_ts, end_ts
+    except Exception:
+        return None, None
+
+
 async def fetch_sleep(auth: StoredAuth, start_day: str, end_day: str) -> list[SleepRecord]:
     """
     Fetch sleep stage data for a date range from the Coros mobile API.
@@ -1232,7 +1262,7 @@ async def fetch_sleep(auth: StoredAuth, start_day: str, end_day: str) -> list[Sl
     url = mobile_base + ENDPOINTS["sleep"]
     sleep_payload = {
         "allDeviceSleep": 1,
-        "dataType": [5],
+        "dataType": [5, 13],
         "dataVersion": 0,
         "startTime": int(start_day),
         "endTime": int(end_day),
@@ -1263,6 +1293,9 @@ async def fetch_sleep(auth: StoredAuth, start_day: str, end_day: str) -> list[Sl
     for item in body.get("data", {}).get("statisticData", {}).get("dayDataList", []):
         sd = item.get("sleepData", {})
         quality = item.get("performance")
+
+        sleep_start, sleep_end = _parse_sleep_timestamps(item.get("sleepList"))
+
         records.append(SleepRecord(
             date=str(item.get("happenDay", "")),
             total_duration_minutes=sd.get("totalSleepTime"),
@@ -1277,5 +1310,7 @@ async def fetch_sleep(auth: StoredAuth, start_day: str, end_day: str) -> list[Sl
             min_hr=sd.get("minHeartRate"),
             max_hr=sd.get("maxHeartRate"),
             quality_score=quality if quality != -1 else None,
+            sleep_start=sleep_start,
+            sleep_end=sleep_end,
         ))
     return sorted(records, key=lambda r: r.date)
