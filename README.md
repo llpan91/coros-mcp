@@ -1,429 +1,113 @@
 # coros-mcp
 
-A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that fetches sleep, HRV, and training data from the unofficial Coros API and exposes them to AI assistants like Claude.
+COROS (高驰) 手表数据 MCP Server —— 让 Claude 直接读取和分析你的运动、睡眠、健康数据。
 
-**No API key required.** This server authenticates directly with your Coros Training Hub credentials. Your token is stored securely in your system keyring (or an encrypted local file as fallback), never transmitted anywhere except to Coros.
+Fork 自 [cygnusb/coros-mcp](https://github.com/cygnusb/coros-mcp)，新增了睡眠时间戳解析等功能。
 
-## What You Can Do
+## 能做什么
 
-Ask your AI assistant questions like:
+在 Claude Code 中直接用自然语言提问：
 
-- "How much deep sleep and REM did I get last week?"
-- "What was my HRV trend over the last 4 weeks?"
-- "Show me my resting heart rate and training load for last week"
-- "How many steps did I average per day this month?"
-- "List my rides from last month"
-- "Show me the details of my last long ride"
-- "Create a 90-minute sweet spot workout for me"
-- "What's on my training calendar next week?"
-- "Schedule my VO2 workout for Thursday"
-- "Create a 20-minute strength circuit with squats, lunges, and planks"
+- "分析一下我最近两个月的跑步数据"
+- "最近一周睡眠质量怎么样"
+- "我的 HRV 和静息心率趋势"
+- "对比最近三次跑步的配速和心率"
+- "帮我创建一个间歇训练计划"
 
-## Features
+## 快速安装
 
-| Tool | Description |
-|------|-------------|
-| `authenticate_coros` | Log in with email and password — token stored securely in keyring |
-| `authenticate_coros_mobile` | Log in to the mobile API only (useful for sleep data troubleshooting) |
-| `check_coros_auth` | Check whether a valid auth token is present |
-| `get_daily_metrics` | Fetch daily metrics (HRV, resting HR, training load, VO2max, stamina, and more) for n weeks (default: 4) |
-| `get_sleep_data` | Fetch nightly sleep stages (deep, light, REM, awake) and sleep HR for n weeks (default: 4) |
-| `list_activities` | List activities for a date range with summary metrics |
-| `get_activity_detail` | Fetch full detail for a single activity (laps, HR zones, power zones) |
-| `list_workouts` | List all saved structured workout programs |
-| `create_workout` | Create a new structured workout with named steps and power targets |
-| `delete_workout` | Delete a workout program from the library |
-| `list_planned_activities` | List planned workouts from the Coros training calendar |
-| `schedule_workout` | Schedule an existing workout on a calendar day |
-| `remove_scheduled_workout` | Remove a scheduled workout from the calendar |
-| `create_strength_workout` | Create a structured strength workout with sets, reps, or timed exercises |
-| `list_exercises` | Browse the Coros exercise catalogue, especially for strength workouts |
-
----
-
-## Setup
-
-### Option A: Auto-Setup with Claude Code
-
-If you have [Claude Code](https://claude.ai/code), paste this prompt:
-
-```
-Set up the Coros MCP server from https://github.com/cygnusb/coros-mcp — clone it, create a venv, install it with pip install -e ., add it to my MCP config, then tell me to run 'coros-mcp auth' in my terminal to authenticate.
-```
-
-Claude will handle the installation and guide you through configuration.
-
-### Option B: Manual Setup
-
-#### Step 1: Install
+### 1. 安装 uv + 克隆代码
 
 ```bash
-git clone https://github.com/cygnusb/coros-mcp.git
-cd coros-mcp
-python3 -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -e .
-```
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-Or with `uv`:
-
-```bash
+git clone https://github.com/llpan91/coros-mcp.git ~/coros-mcp
+cd ~/coros-mcp
+uv python install 3.12
+uv venv --python 3.12
 uv pip install -e .
 ```
 
-#### Step 2: Add to Claude Code
+### 2. 配置高驰账号
 
 ```bash
-claude mcp add coros -- /path/to/coros-mcp/.venv/bin/coros-mcp serve
+cat > ~/coros-mcp/.env << 'EOF'
+COROS_EMAIL=你的邮箱
+COROS_PASSWORD=你的密码
+COROS_REGION=cn
+EOF
 ```
 
-To limit the MCP to a specific project only (recommended):
+> Region 选择：国内用 `cn`，欧洲 `eu`，美国 `us`，亚洲 `asia`
+
+### 3. 注册到 Claude Code
 
 ```bash
-cd /path/to/your/project
-claude mcp add --scope project coros -- /path/to/coros-mcp/.venv/bin/coros-mcp serve
+claude mcp add coros-mcp -s user -- uv --directory ~/coros-mcp run coros-mcp serve
 ```
 
-Or add to Claude Desktop (`~/Library/Application Support/Claude/claude_desktop_config.json`):
+完成。打开 Claude Code 直接问即可。
 
-```json
-{
-  "mcpServers": {
-    "coros": {
-      "command": "/path/to/coros-mcp/.venv/bin/coros-mcp",
-      "args": ["serve"]
-    }
-  }
-}
-```
+## 可用工具
 
-#### Step 3: Authenticate
+### 数据查询
 
-**Option A — `.env` file (recommended for project-scoped setups):**
+| 工具 | 功能 |
+|------|------|
+| `get_daily_metrics` | 每日健康指标：HRV、静息心率、训练负荷、VO2max 等 |
+| `get_sleep_data` | 睡眠分期（深睡/浅睡/REM/清醒）、入睡和醒来时间、睡眠心率 |
+| `list_activities` | 活动列表：跑步、骑行、游泳等，含心率/配速/功率等摘要 |
+| `get_activity_detail` | 单次活动详情：分圈数据、心率区间、功率区间 |
 
-Create a `.env` file in your project directory:
+### 训练管理
 
-```
-COROS_EMAIL=you@example.com
-COROS_PASSWORD=yourpassword
-COROS_REGION=eu
-```
+| 工具 | 功能 |
+|------|------|
+| `list_workouts` | 已保存的训练计划 |
+| `create_workout` | 创建结构化训练（支持间歇/重复组） |
+| `delete_workout` | 删除训练计划 |
+| `schedule_workout` | 将训练安排到日历 |
+| `list_planned_activities` | 查看训练日历 |
+| `remove_scheduled_workout` | 移除已安排的训练 |
+| `create_strength_workout` | 创建力量训练（组数/次数/时间） |
+| `list_exercises` | 浏览高驰运动库 |
 
-The server authenticates automatically on the first request and re-authenticates transparently whenever the token expires. No manual auth step needed.
+### 认证管理
 
-**Option B — Manual authentication:**
+| 工具 | 功能 |
+|------|------|
+| `authenticate_coros` | Web API 登录 |
+| `authenticate_coros_mobile` | Mobile API 登录（睡眠数据需要） |
+| `check_coros_auth` | 检查认证状态 |
 
-Run the following command in your terminal — **outside** of any Claude session:
+## 相比上游的改动
+
+- **睡眠时间戳**：`SleepRecord` 新增 `sleep_start` / `sleep_end` 字段，记录入睡和醒来的 Unix 时间戳
+- 通过解码 Mobile API 返回的 `sleepList` 二进制数据（`dataType=13`）提取时间信息
+
+详见 [CHANGELOG.md](CHANGELOG.md)。
+
+## CLI 命令
 
 ```bash
-coros-mcp auth
+coros-mcp serve          # 启动 MCP Server（Claude Code 自动调用）
+coros-mcp auth           # 交互式登录（Web + Mobile）
+coros-mcp auth-web       # 仅 Web API 登录
+coros-mcp auth-mobile    # 仅 Mobile API 登录（睡眠数据）
+coros-mcp auth-status    # 查看认证状态
+coros-mcp auth-clear     # 清除已保存的 token
+coros-mcp sync           # 同步历史数据到本地 SQLite 缓存
+coros-mcp cache-status   # 查看本地缓存状态
 ```
 
-You will be prompted for your email, password, and region (`eu`, `us`, or `asia`). This stores both the Training Hub web token and the mobile API token (used for sleep data). Your credentials are sent directly to Coros and the tokens are stored securely in your system keyring (or an encrypted local file as fallback). **You only need to do this once** — the tokens persist across restarts.
+## 注意事项
 
-> **Note:** The mobile login (`apieu.coros.com`) will log you out of the Coros mobile app on your phone. If you want to avoid this, use `coros-mcp auth-web` instead — it stores only the web token, and the mobile token will be obtained automatically when you first request sleep data.
+- 基于高驰**非官方** API，可能随时失效
+- Token 24 小时过期，配置 `.env` 后会自动重新登录
+- Mobile API 登录会踢掉手机 App 的登录态（使用 `auth-web` 可避免，Mobile token 会在首次请求睡眠数据时自动获取）
+- 卡路里单位：API 返回的是 cal（物理卡），需除以 1000 得到 kcal
 
-**Other auth commands:**
+## 依赖
 
-```bash
-coros-mcp serve         # Start the MCP server (used by Claude Code / Claude Desktop)
-coros-mcp auth-web      # Web API only — skips mobile login (sleep data obtained lazily)
-coros-mcp auth-mobile   # Mobile API only (sleep data)
-coros-mcp auth-status   # Check if authenticated
-coros-mcp auth-clear    # Remove stored tokens
-```
-
----
-
-## Tool Reference
-
-### `authenticate_coros`
-
-Log in with your Coros credentials. The auth token is stored securely in your system keyring (or an encrypted file as fallback).
-
-```json
-{ "email": "you@example.com", "password": "yourpassword", "region": "eu" }
-```
-
-Returns: `authenticated`, `user_id`, `region`, `message`
-
-### `authenticate_coros_mobile`
-
-Authenticate with the Coros mobile API only. This is mainly useful if you need to restore sleep-data access without redoing full web authentication.
-
-```json
-{ "email": "you@example.com", "password": "yourpassword", "region": "eu" }
-```
-
-Returns: `authenticated`, `user_id`, `region`, `message`
-
-### `check_coros_auth`
-
-Check whether valid web and mobile tokens are stored and how long the web token remains valid.
-
-```json
-{}
-```
-
-Returns: `authenticated`, `user_id`, `region`, `expires_in_hours`, `mobile_authenticated`, `mobile_token_status`
-
-### `get_daily_metrics`
-
-Fetch daily metrics for a configurable number of weeks (default: 4).
-
-```json
-{ "weeks": 4 }
-```
-
-Returns: `records` (list), `count`, `date_range`
-
-Each record includes:
-
-| Field | Source | Description |
-|-------|--------|-------------|
-| `date` | — | Date (YYYYMMDD) |
-| `avg_sleep_hrv` | dayDetail | Nightly HRV (RMSSD ms) |
-| `baseline` | dayDetail | HRV rolling baseline |
-| `rhr` | dayDetail | Resting heart rate (bpm) |
-| `training_load` | dayDetail | Daily training load |
-| `training_load_ratio` | dayDetail | Acute/chronic training load ratio |
-| `tired_rate` | dayDetail | Fatigue rate |
-| `ati` / `cti` | dayDetail | Acute / chronic training index |
-| `distance` / `duration` | dayDetail | Distance (m) / duration (s) |
-| `vo2max` | analyse (merge) | VO2 Max (last ~28 days) |
-| `lthr` | analyse (merge) | Lactate threshold heart rate (bpm) |
-| `ltsp` | analyse (merge) | Lactate threshold pace (s/km) |
-| `stamina_level` | analyse (merge) | Base fitness level |
-| `stamina_level_7d` | analyse (merge) | 7-day fitness trend |
-
-### `get_sleep_data`
-
-Fetch nightly sleep stage data for a configurable number of weeks (default: 4).
-
-```json
-{ "weeks": 4 }
-```
-
-Returns: `records` (list), `count`, `date_range`
-
-Each record includes:
-
-| Field | Description |
-|-------|-------------|
-| `date` | Date (YYYYMMDD) — the morning after the sleep |
-| `total_duration_minutes` | Total sleep in minutes |
-| `phases.deep_minutes` | Deep sleep |
-| `phases.light_minutes` | Light sleep |
-| `phases.rem_minutes` | REM sleep |
-| `phases.awake_minutes` | Time awake during the night |
-| `phases.nap_minutes` | Daytime nap time (null if none) |
-| `avg_hr` | Average heart rate during sleep |
-| `min_hr` | Minimum heart rate during sleep |
-| `max_hr` | Maximum heart rate during sleep |
-| `quality_score` | Sleep quality score (null if not computed) |
-
-> **Note:** Sleep data is fetched from the Coros mobile API (`apieu.coros.com`), which uses a separate token from the Training Hub web API. `coros-mcp auth` obtains both tokens, but doing so logs you out of the Coros mobile app. Use `coros-mcp auth-web` to skip mobile login — the mobile token is then obtained automatically on the first sleep data request. The token expires after ~1 hour but **refreshes automatically** on subsequent requests.
-
-### `list_activities`
-
-List activities for a date range.
-
-```json
-{ "start_day": "20260101", "end_day": "20260305", "page": 1, "size": 30 }
-```
-
-Returns: `activities` (list), `total_count`, `page`
-
-Each activity includes: `activity_id`, `name`, `sport_type`, `sport_name`, `start_time`, `end_time`, `duration_seconds`, `distance_meters`, `avg_hr`, `max_hr`, `calories` (in cal — divide by 1000 for kcal), `training_load`, `avg_power`, `normalized_power`, `elevation_gain`
-
-### `get_activity_detail`
-
-Fetch full detail for a single activity. Requires the `sport_type` from `list_activities`.
-
-```json
-{ "activity_id": "469901014965714948", "sport_type": 200 }
-```
-
-Returns full activity data including laps, HR zones, power zones, and all sport-specific metrics.
-
-> **Note:** Large time-series arrays (`graphList`, `frequencyList`, `gpsLightDuration`) are stripped from the response to keep it manageable.
-
-### `list_workouts`
-
-List all saved structured workout programs.
-
-```json
-{}
-```
-
-Returns: `workouts` (list), `count`
-
-Each workout includes: `id`, `name`, `sport_type`, `sport_name`, `estimated_time_seconds`, `exercise_count`, `exercises` (list of steps with `name`, `duration_seconds`, `power_low_w`, `power_high_w`)
-
-### `create_workout`
-
-Create a new structured workout. Workouts appear in the Coros app and can be synced to the watch. Steps can be plain steps or repeat groups for intervals.
-
-**Plain steps:**
-
-```json
-{
-  "name": "Sweet Spot 90min",
-  "sport_type": 2,
-  "steps": [
-    {"name": "15:00 Warmup",     "duration_minutes": 15, "power_low_w": 148, "power_high_w": 192},
-    {"name": "20:00 Sweet Spot", "duration_minutes": 20, "power_low_w": 260, "power_high_w": 275},
-    {"name": "5:00 Rest",        "duration_minutes":  5, "power_low_w": 100, "power_high_w": 150},
-    {"name": "20:00 Sweet Spot", "duration_minutes": 20, "power_low_w": 260, "power_high_w": 275},
-    {"name": "30:00 Cooldown",   "duration_minutes": 30, "power_low_w": 100, "power_high_w": 192}
-  ]
-}
-```
-
-**With repeat groups (intervals):**
-
-```json
-{
-  "name": "3×10min Sweet Spot",
-  "sport_type": 2,
-  "steps": [
-    {"name": "Warmup",    "duration_minutes": 10, "power_low_w": 150, "power_high_w": 200},
-    {"repeat": 3, "steps": [
-      {"name": "Sweet Spot", "duration_minutes": 10, "power_low_w": 265, "power_high_w": 285},
-      {"name": "Recovery",   "duration_minutes":  3, "power_low_w": 150, "power_high_w": 175}
-    ]},
-    {"name": "Cooldown",  "duration_minutes": 11, "power_low_w": 150, "power_high_w": 200}
-  ]
-}
-```
-
-`sport_type`: `2` = Indoor Cycling (default), `200` = Road Bike
-
-Returns: `workout_id`, `name`, `total_minutes`, `steps_count`, `message`
-
-### `delete_workout`
-
-Delete a workout program from the Coros account.
-
-```json
-{ "workout_id": "476023839273435149" }
-```
-
-The `workout_id` comes from `list_workouts`.
-
-Returns: `deleted`, `workout_id`, `message`
-
-### `list_planned_activities`
-
-List planned activities from the Coros training calendar.
-
-```json
-{ "start_day": "20260309", "end_day": "20260316" }
-```
-
-Returns: `activities` (list), `count`, `date_range`
-
-### `schedule_workout`
-
-Add an existing workout from your library to the Coros training calendar.
-
-```json
-{ "workout_id": "1234567890", "happen_day": "20260312", "sort_no": 1 }
-```
-
-Returns: `scheduled`, `workout_id`, `happen_day`
-
-### `remove_scheduled_workout`
-
-Remove a scheduled workout from the Coros training calendar.
-
-```json
-{
-  "plan_id": "987654321",
-  "id_in_plan": "1234567890",
-  "plan_program_id": "1234567890"
-}
-```
-
-`plan_id`, `id_in_plan`, and `plan_program_id` come from `list_planned_activities`. If `plan_program_id` is missing, you can usually reuse `id_in_plan`.
-
-Returns: `removed`, `plan_id`, `id_in_plan`
-
-### `create_strength_workout`
-
-Create a structured strength workout with repeated sets. Exercises must come from the Coros exercise catalogue.
-
-```json
-{
-  "name": "Leg Circuit",
-  "sets": 3,
-  "exercises": [
-    {
-      "origin_id": "54",
-      "name": "T1061",
-      "overview": "sid_strength_squats",
-      "target_type": 3,
-      "target_value": 12,
-      "rest_seconds": 45
-    },
-    {
-      "origin_id": "130",
-      "name": "T1176",
-      "overview": "sid_strength_plank",
-      "target_type": 2,
-      "target_value": 60,
-      "rest_seconds": 30
-    }
-  ]
-}
-```
-
-`target_type`: `2` = time in seconds, `3` = reps
-
-Returns: `workout_id`, `name`, `sets`, `exercise_count`
-
-### `list_exercises`
-
-List the Coros exercise catalogue for a sport type. Default `sport_type=4` returns strength exercises.
-
-```json
-{ "sport_type": 4 }
-```
-
-Returns: `exercises` (list), `count`, `sport_type`
-
----
-
-## Requirements
-
-- Python ≥ 3.11
-- A Coros account (Training Hub)
-
----
-
-## Project Structure
-
-```
-coros-mcp/
-├── server.py          # MCP server with tool definitions
-├── coros_api.py       # Coros API client (auth, requests, parsers)
-├── models.py          # Pydantic data models
-├── cli.py             # CLI entry point (serve, auth, auth-mobile, auth-status, auth-clear)
-├── auth/              # Token storage (keyring + encrypted file fallback)
-├── pyproject.toml     # Project metadata & dependencies
-└── docs/
-    └── mobile-token.md  # Mobile API token background (legacy reference)
-```
-
-## Dependencies
-
-- [fastmcp](https://github.com/jlowin/fastmcp) — MCP framework
-- [httpx](https://www.python-httpx.org/) — Async HTTP client
-- [pydantic](https://docs.pydantic.dev/) — Data validation
-- [pycryptodome](https://pycryptodome.readthedocs.io/) — AES encryption for mobile API auth
-- [keyring](https://github.com/jaraco/keyring) — Secure token storage
-- [python-dotenv](https://github.com/theskumar/python-dotenv) — `.env` support
-
-## Disclaimer
-
-This project uses the **unofficial** Coros Training Hub API. The API may change at any time without notice. Use at your own risk.
+- Python >= 3.11
+- [fastmcp](https://github.com/jlowin/fastmcp) / [httpx](https://www.python-httpx.org/) / [pydantic](https://docs.pydantic.dev/) / [pycryptodome](https://pycryptodome.readthedocs.io/) / [keyring](https://github.com/jaraco/keyring) / [python-dotenv](https://github.com/theskumar/python-dotenv)
