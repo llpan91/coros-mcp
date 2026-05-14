@@ -18,7 +18,7 @@ transparently whenever the stored token is expired or rejected.
 """
 
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from dotenv import load_dotenv
 from fastmcp import FastMCP
@@ -33,6 +33,7 @@ from cache.sync import (
     fetch_sleep_cached,
     sync_all as _sync_all,
 )
+from weather import fetch_weather_batch, get_location_for_activity
 
 load_dotenv()
 init_db()
@@ -72,6 +73,26 @@ def _summarize_steps(steps: list[dict]) -> tuple[float, int]:
             total_minutes += s["duration_minutes"]
             steps_count += 1
     return total_minutes, steps_count
+
+
+def _parse_coros_weather(raw: dict) -> dict:
+    """Parse the native Coros weather object into readable units.
+
+    Coros API returns values scaled by 10 (e.g. temperature=232 → 23.2°C).
+    """
+    def _scale(val, divisor=10):
+        if val is None or val == 0:
+            return None
+        return round(val / divisor, 1)
+
+    return {
+        "temperature_c": _scale(raw.get("temperature")),
+        "feels_like_c": _scale(raw.get("bodyFeelTemp")),
+        "relative_humidity_pct": _scale(raw.get("humidity")),
+        "wind_speed_kmh": _scale(raw.get("windSpeed")),
+        "wind_direction_deg": _scale(raw.get("windDirection")),
+        "source": "coros",
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -295,6 +316,8 @@ async def get_sleep_data(weeks: int = 4) -> dict:
       - date: YYYYMMDD local date (the morning date — sleep started the night before;
               per COROS_TIMEZONE, defaults to system timezone)
       - total_duration_minutes: total sleep in minutes
+      - sleep_start: bedtime as local datetime string "YYYY-MM-DD HH:MM:SS" (null if unavailable)
+      - sleep_end: wake time as local datetime string "YYYY-MM-DD HH:MM:SS" (null if unavailable)
       - phases.deep_minutes: deep sleep
       - phases.light_minutes: light sleep
       - phases.rem_minutes: REM sleep
@@ -317,8 +340,14 @@ async def get_sleep_data(weeks: int = 4) -> dict:
 
     try:
         records = await _run_with_auth(fetch_sleep_cached, auth, start_day, end_day)
+        result = []
+        for r in records:
+            d = r.model_dump()
+            d["sleep_start"] = fmt_local_time(str(r.sleep_start)) if r.sleep_start else None
+            d["sleep_end"] = fmt_local_time(str(r.sleep_end)) if r.sleep_end else None
+            result.append(d)
         return {
-            "records": [r.model_dump() for r in records],
+            "records": result,
             "count": len(records),
             "date_range": f"{start_day} – {end_day}",
         }
@@ -359,18 +388,37 @@ async def list_activities(
     start_time (local datetime string "YYYY-MM-DD HH:MM:SS", per COROS_TIMEZONE),
     end_time (same format), duration_seconds, distance_meters, avg_hr, max_hr,
     calories (in cal — divide by 1000 to get kcal), training_load, avg_power,
-    normalized_power, elevation_gain.
+    normalized_power, elevation_gain,
+    weather (dict with temperature_c, relative_humidity_pct, wind_speed_kmh, source;
+             null if location/weather unavailable. Set COROS_DEFAULT_LAT/LON for fallback).
     """
     auth = await _get_auth()
     if auth is None:
         return {"error": "Not authenticated. Set COROS_EMAIL and COROS_PASSWORD in .env or call authenticate_coros.", "activities": []}
     try:
         activities, total = await _run_with_auth(fetch_activities_cached, auth, start_day, end_day, page, size)
+
+        weather_requests = []
+        request_indices = []
+        for i, a in enumerate(activities):
+            loc, source = get_location_for_activity(a.start_lat, a.start_lon)
+            if loc and a.start_time and str(a.start_time).isdigit():
+                dt = datetime.fromtimestamp(int(a.start_time), tz=timezone.utc)
+                weather_requests.append((loc[0], loc[1], dt, source))
+                request_indices.append(i)
+
+        weather_results = await fetch_weather_batch(weather_requests) if weather_requests else []
+        weather_map: dict[int, dict | None] = {}
+        for j, idx in enumerate(request_indices):
+            w = weather_results[j]
+            weather_map[idx] = w.model_dump() if w else None
+
         result = []
-        for a in activities:
+        for i, a in enumerate(activities):
             d = a.model_dump()
             d["start_time"] = fmt_local_time(a.start_time)
             d["end_time"] = fmt_local_time(a.end_time)
+            d["weather"] = weather_map.get(i)
             result.append(d)
         return {
             "activities": result,
@@ -401,13 +449,24 @@ async def get_activity_detail(activity_id: str, sport_type: int = 0) -> dict:
     Returns
     -------
     dict with full activity data including laps, HR zones, power metrics,
-    elevation, and all available sport-specific fields.
+    elevation, all available sport-specific fields, and weather data.
+    Weather comes from the native Coros API (parsed from the detail response):
+      temperature_c, feels_like_c, relative_humidity_pct, wind_speed_kmh,
+      wind_direction_deg.
     """
     auth = await _get_auth()
     if auth is None:
         return {"error": "Not authenticated. Set COROS_EMAIL and COROS_PASSWORD in .env or call authenticate_coros."}
     try:
-        return await _run_with_auth(coros_api.fetch_activity_detail, auth, activity_id, sport_type)
+        data = await _run_with_auth(coros_api.fetch_activity_detail, auth, activity_id, sport_type)
+
+        raw_weather = data.get("weather")
+        if raw_weather and isinstance(raw_weather, dict):
+            data["weather"] = _parse_coros_weather(raw_weather)
+        else:
+            data["weather"] = None
+
+        return data
     except Exception as exc:
         return {"error": str(exc)}
 

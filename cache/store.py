@@ -36,6 +36,11 @@ _CREATE_SQL = """
     );
     CREATE INDEX IF NOT EXISTS activities_start_day
         ON activities(start_day);
+    CREATE TABLE IF NOT EXISTS weather_cache (
+        cache_key TEXT PRIMARY KEY,
+        data      TEXT NOT NULL,
+        synced_at INTEGER NOT NULL
+    );
 """
 
 
@@ -188,6 +193,39 @@ def get_min_activity_date() -> Optional[str]:
     with _conn() as con:
         row = con.execute("SELECT MIN(start_day) AS d FROM activities").fetchone()
     return row["d"] if row and row["d"] else None
+
+
+# ---------------------------------------------------------------------------
+# Weather cache
+# ---------------------------------------------------------------------------
+
+def get_cached_weather(cache_key: str) -> Optional[str]:
+    with _conn() as con:
+        row = con.execute(
+            "SELECT data FROM weather_cache WHERE cache_key = ?", (cache_key,)
+        ).fetchone()
+    return row["data"] if row else None
+
+
+def get_cached_weather_batch(keys: list[str]) -> dict[str, str]:
+    if not keys:
+        return {}
+    with _conn() as con:
+        placeholders = ",".join("?" for _ in keys)
+        rows = con.execute(
+            f"SELECT cache_key, data FROM weather_cache WHERE cache_key IN ({placeholders})",
+            keys,
+        ).fetchall()
+    return {r["cache_key"]: r["data"] for r in rows}
+
+
+def upsert_weather(cache_key: str, data_json: str) -> None:
+    now = int(time.time())
+    with _conn() as con:
+        con.execute(
+            "INSERT OR REPLACE INTO weather_cache (cache_key, data, synced_at) VALUES (?, ?, ?)",
+            (cache_key, data_json, now),
+        )
 
 
 # ---------------------------------------------------------------------------

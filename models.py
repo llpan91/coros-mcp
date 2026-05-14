@@ -51,6 +51,13 @@ class DailyRecord(BaseModel):
     stamina_level_7d: Optional[float] = None       # 7-day fitness trend
 
 
+class WeatherData(BaseModel):
+    temperature_c: Optional[float] = None
+    relative_humidity_pct: Optional[float] = None
+    wind_speed_kmh: Optional[float] = None
+    source: Optional[str] = None  # "gps" or "default_location"
+
+
 class ActivitySummary(BaseModel):
     activity_id: str
     name: Optional[str] = None
@@ -68,6 +75,8 @@ class ActivitySummary(BaseModel):
     normalized_power: Optional[int] = None
     elevation_gain: Optional[int] = None
     elevation_loss: Optional[int] = None
+    start_lat: Optional[float] = None  # decimal degrees
+    start_lon: Optional[float] = None  # decimal degrees
 
 
 class StoredAuth(BaseModel):

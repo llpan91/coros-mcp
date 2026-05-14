@@ -469,6 +469,33 @@ SPORT_NAMES: dict[int, str] = {
 }
 
 
+def _parse_gps_coord(item: dict, lat_keys: tuple, lon_keys: tuple) -> tuple[float | None, float | None]:
+    """Extract lat/lon from a Coros API item, handling scale factors."""
+    raw_lat = None
+    raw_lon = None
+    for k in lat_keys:
+        if item.get(k) is not None:
+            raw_lat = item[k]
+            break
+    for k in lon_keys:
+        if item.get(k) is not None:
+            raw_lon = item[k]
+            break
+    if raw_lat is None or raw_lon is None:
+        return None, None
+    lat_f, lon_f = float(raw_lat), float(raw_lon)
+    if abs(lat_f) > 180:
+        lat_f /= 10_000_000
+        lon_f /= 10_000_000
+    if -90 <= lat_f <= 90 and -180 <= lon_f <= 180 and (lat_f != 0 or lon_f != 0):
+        return round(lat_f, 6), round(lon_f, 6)
+    return None, None
+
+
+_LAT_KEYS = ("startLat", "lat", "latitude")
+_LON_KEYS = ("startLon", "startLng", "lon", "lng", "longitude")
+
+
 def _parse_activity(item: dict) -> ActivitySummary:
     sport_type = item.get("sportType")
     # The Coros API field "calorie" is in physical calories (cal), NOT kilocalories (kcal).
@@ -477,6 +504,7 @@ def _parse_activity(item: dict) -> ActivitySummary:
     # always display energy in kcal (sometimes written as "Calories" with a capital C).
     # We store the raw value as-is; callers must divide by 1000 to get kcal.
     cal_raw = item.get("calorie")
+    start_lat, start_lon = _parse_gps_coord(item, _LAT_KEYS, _LON_KEYS)
     return ActivitySummary(
         activity_id=str(item.get("labelId", "")),
         name=item.get("name") or item.get("remark"),
@@ -494,6 +522,8 @@ def _parse_activity(item: dict) -> ActivitySummary:
         normalized_power=item.get("np"),
         elevation_gain=item.get("ascent") if item.get("ascent") is not None else (item.get("totalAscent") if item.get("totalAscent") is not None else item.get("elevationGain")),
         elevation_loss=item.get("descent") if item.get("descent") is not None else item.get("totalDescent"),
+        start_lat=start_lat,
+        start_lon=start_lon,
     )
 
 
