@@ -313,7 +313,13 @@ async def try_auto_login() -> Optional[StoredAuth]:
         return None
     email, password, region = creds
     try:
-        return await login(email, password, region)  # skip_mobile=True by default
+        existing = _load_auth()
+        auth = await login(email, password, region)  # skip_mobile=True by default
+        if existing and existing.mobile_login_payload:
+            auth.mobile_access_token = existing.mobile_access_token
+            auth.mobile_login_payload = existing.mobile_login_payload
+            _save_auth(auth)
+        return auth
     except Exception:
         return None
 

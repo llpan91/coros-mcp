@@ -103,8 +103,8 @@ coros-mcp cache-status   # 查看本地缓存状态
 ## 注意事项
 
 - 基于高驰**非官方** API，可能随时失效
-- Token 24 小时过期，配置 `.env` 后会自动重新登录
-- Mobile API 登录会踢掉手机 App 的登录态（使用 `auth-web` 可避免，Mobile token 会在首次请求睡眠数据时自动获取）
+- Web Token 24 小时过期，配置 `.env` 后自动重新登录，不影响已有的 Mobile 认证状态
+- Mobile API 登录会踢掉手机 App 的登录态；配置 `.env` 后，Mobile token 会在首次请求睡眠数据时自动获取，无需手动执行 `auth-mobile`
 - 卡路里单位：API 返回的是 cal（物理卡），需除以 1000 得到 kcal
 
 ## 依赖

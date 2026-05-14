@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Fixed
+
+#### Web Token 刷新不再丢失 Mobile 认证 (2026-05-14)
+- 修复 `try_auto_login()` 在 Web token 过期自动重新登录时，会覆盖已有的 `mobile_access_token` 和 `mobile_login_payload`，导致 Mobile 认证丢失的问题。
+- 修复后：Web token 24 小时过期自动刷新时，保留已有的 Mobile 凭证，不再需要重新执行 Mobile 登录（避免踢掉手机 App 登录态）。
+- 更新 README 注意事项，明确 Web/Mobile 认证的独立性。
+
 ### Added
 
 #### 睡眠分析：入睡/起床时间展示 (2026-05-14)
