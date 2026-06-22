@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026-06-21 跑步训练报告</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #dbeafe;
+            --success: #16a34a;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 24px;
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        h1 { font-size: 28px; margin-bottom: 4px; }
+        .subtitle { color: var(--text-muted); margin-bottom: 32px; font-size: 15px; }
+        .section { margin-bottom: 36px; }
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary);
+            display: inline-block;
+        }
+        .grid { display: grid; gap: 16px; }
+        .grid-4 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); }
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid var(--border);
+        }
+        .card-label { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+        .card-value { font-size: 28px; font-weight: 700; color: var(--primary); }
+        .card-unit { font-size: 14px; color: var(--text-muted); font-weight: 400; }
+        .card-note { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        th, td { padding: 12px 14px; text-align: left; font-size: 14px; }
+        th { background: var(--primary-light); font-weight: 600; color: var(--primary); }
+        tr:not(:last-child) td { border-bottom: 1px solid var(--border); }
+        tr:hover td { background: #f1f5f9; }
+        .pace { font-family: 'SF Mono', 'Consolas', monospace; font-weight: 600; }
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .tag-easy { background: #dcfce7; color: #166534; }
+        .tag-moderate { background: #fef3c7; color: #92400e; }
+        .tag-hard { background: #fecaca; color: #991b1b; }
+        .tag-long { background: #dbeafe; color: #1e40af; }
+        .insight-box {
+            background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid var(--primary);
+            margin-top: 12px;
+        }
+        .insight-box h4 { margin-bottom: 8px; color: var(--primary); }
+        .insight-box ul { padding-left: 20px; }
+        .insight-box li { margin-bottom: 6px; font-size: 14px; }
+        .plan-table th { font-size: 13px; }
+        .plan-table td { font-size: 13px; }
+        .week-header {
+            background: var(--primary);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .hr-zone { font-size: 12px; color: var(--text-muted); }
+        .progress-bar {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            margin-top: 6px;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: var(--primary);
+        }
+        .splits {
+            font-family: 'SF Mono', 'Consolas', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--primary);
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: var(--card);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -22px;
+            top: 20px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary);
+        }
+        .timeline-label {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+        .goal-card {
+            background: linear-gradient(135deg, var(--primary), #7c3aed);
+            color: white;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+        .goal-card .card-value { color: white; }
+        .goal-card .card-label { color: rgba(255,255,255,0.8); }
+        .goal-card .card-note { color: rgba(255,255,255,0.7); }
+        .comparison-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .comparison-arrow {
+            color: var(--success);
+            font-weight: 700;
+        }
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            .grid-4 { grid-template-columns: 1fr 1fr; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .card-value { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<h1>2026-06-21 跑步训练报告</h1>
+<p class="subtitle">数据周期：6月7日 - 6月21日 | COROS PACE Pro | 北京</p>
+
+<!-- ========== 第一部分：训练概览 ========== -->
+<div class="section">
+    <div class="section-title">训练概览</div>
+    <div class="grid grid-4">
+        <div class="card">
+            <div class="card-label">总跑量</div>
+            <div class="card-value">92.5 <span class="card-unit">km</span></div>
+            <div class="card-note">8次跑步，2周</div>
+        </div>
+        <div class="card">
+            <div class="card-label">总时间</div>
+            <div class="card-value">8:59 <span class="card-unit">小时</span></div>
+            <div class="card-note">平均每次67分钟</div>
+        </div>
+        <div class="card">
+            <div class="card-label">平均配速</div>
+            <div class="card-value">5:30 <span class="card-unit">/km</span></div>
+            <div class="card-note">范围 5:18 - 5:59</div>
+        </div>
+        <div class="card">
+            <div class="card-label">周均跑量</div>
+            <div class="card-value">46.3 <span class="card-unit">km/周</span></div>
+            <div class="card-note">每周4次</div>
+        </div>
+    </div>
+    <div class="grid grid-4" style="margin-top: 16px;">
+        <div class="card">
+            <div class="card-label">平均心率</div>
+            <div class="card-value">154 <span class="card-unit">bpm</span></div>
+            <div class="card-note">最高 164 (6/11)</div>
+        </div>
+        <div class="card">
+            <div class="card-label">平均功率</div>
+            <div class="card-value">183 <span class="card-unit">W</span></div>
+            <div class="card-note">范围 169-198W</div>
+        </div>
+        <div class="card">
+            <div class="card-label">VO2max</div>
+            <div class="card-value">56 <span class="card-unit">ml/kg/min</span></div>
+            <div class="card-note">稳定保持</div>
+        </div>
+        <div class="card">
+            <div class="card-label">训练负荷比</div>
+            <div class="card-value">1.49 <span class="card-unit"></span></div>
+            <div class="card-note">高负荷区间 (>1.3)</div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== 第二部分：逐次训练详情 ========== -->
+<div class="section">
+    <div class="section-title">逐次训练详情</div>
+    <table>
+        <thead>
+            <tr>
+                <th>日期</th>
+                <th>距离</th>
+                <th>时间</th>
+                <th>配速</th>
+                <th>心率</th>
+                <th>功率</th>
+                <th>步频</th>
+                <th>步幅</th>
+                <th>负荷</th>
+                <th>类型</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>6/21 (六)</strong></td>
+                <td>15.3 km</td>
+                <td>81'50"</td>
+                <td class="pace">5:18</td>
+                <td>158 <span class="hr-zone">/ 177</span></td>
+                <td>195W</td>
+                <td>194</td>
+                <td>97cm</td>
+                <td>248</td>
+                <td><span class="tag tag-hard">高强度长距离</span></td>
+            </tr>
+            <tr>
+                <td><strong>6/19 (四)</strong></td>
+                <td>13.2 km</td>
+                <td>73'30"</td>
+                <td class="pace">5:33</td>
+                <td>149 <span class="hr-zone">/ 159</span></td>
+                <td>183W</td>
+                <td>195</td>
+                <td>91cm</td>
+                <td>170</td>
+                <td><span class="tag tag-moderate">有氧巡航</span></td>
+            </tr>
+            <tr>
+                <td><strong>6/17 (二)</strong></td>
+                <td>10.0 km</td>
+                <td>57'48"</td>
+                <td class="pace">5:34</td>
+                <td>161 <span class="hr-zone">/ 174</span></td>
+                <td>169W</td>
+                <td>184</td>
+                <td>101cm</td>
+                <td>120</td>
+                <td><span class="tag tag-moderate">节奏跑</span></td>
+            </tr>
+            <tr>
+                <td><strong>6/16 (一)</strong></td>
+                <td>9.7 km</td>
+                <td>55'56"</td>
+                <td class="pace">5:45</td>
+                <td>154 <span class="hr-zone">/ 168</span></td>
+                <td>176W</td>
+                <td>186</td>
+                <td>93cm</td>
+                <td>149</td>
+                <td><span class="tag tag-moderate">有氧跑</span></td>
+            </tr>
+            <tr>
+                <td><strong>6/13 (五)</strong></td>
+                <td>11.6 km</td>
+                <td>71'13"</td>
+                <td class="pace">5:59</td>
+                <td>144 <span class="hr-zone">/ 156</span></td>
+                <td>171W</td>
+                <td>187</td>
+                <td>88cm</td>
+                <td>127</td>
+                <td><span class="tag tag-easy">轻松跑</span></td>
+            </tr>
+            <tr>
+                <td><strong>6/11 (三)</strong></td>
+                <td>11.0 km</td>
+                <td>59'02"</td>
+                <td class="pace">5:21</td>
+                <td>164 <span class="hr-zone">/ 178</span></td>
+                <td>189W</td>
+                <td>190</td>
+                <td>97cm</td>
+                <td>224</td>
+                <td><span class="tag tag-hard">节奏跑</span></td>
+            </tr>
+            <tr>
+                <td><strong>6/9 (一)</strong></td>
+                <td>6.3 km</td>
+                <td>36'58"</td>
+                <td class="pace">5:51</td>
+                <td>146 <span class="hr-zone">/ 158</span></td>
+                <td>178W</td>
+                <td>184</td>
+                <td>94cm</td>
+                <td>73</td>
+                <td><span class="tag tag-easy">恢复跑</span></td>
+            </tr>
+            <tr>
+                <td><strong>6/7 (六)</strong></td>
+                <td>15.3 km</td>
+                <td>85'56"</td>
+                <td class="pace">5:36</td>
+                <td>157 <span class="hr-zone">/ 182</span></td>
+                <td>198W</td>
+                <td>193</td>
+                <td>101cm</td>
+                <td>221</td>
+                <td><span class="tag tag-long">长距离</span></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ========== 第三部分：身体状态与恢复 ========== -->
+<div class="section">
+    <div class="section-title">身体状态与恢复</div>
+    <div class="grid grid-3">
+        <div class="card">
+            <div class="card-label">静息心率趋势</div>
+            <div class="card-value">47 <span class="card-unit">bpm</span></div>
+            <div class="card-note">范围 44-54 | 均值47 | 状态良好</div>
+            <div class="progress-bar"><div class="progress-fill" style="width: 85%; background: var(--success);"></div></div>
+        </div>
+        <div class="card">
+            <div class="card-label">HRV (RMSSD)</div>
+            <div class="card-value">63 <span class="card-unit">ms</span></div>
+            <div class="card-note">基线 64ms | 范围 50-76ms</div>
+            <div class="progress-bar"><div class="progress-fill" style="width: 78%; background: var(--primary);"></div></div>
+        </div>
+        <div class="card">
+            <div class="card-label">睡眠时长</div>
+            <div class="card-value">7:03 <span class="card-unit">h</span></div>
+            <div class="card-note">深睡 86min | REM 85min | 质量良好</div>
+            <div class="progress-bar"><div class="progress-fill" style="width: 80%; background: var(--success);"></div></div>
+        </div>
+    </div>
+    <div class="insight-box" style="margin-top: 16px;">
+        <h4>恢复洞察</h4>
+        <ul>
+            <li><strong>HRV波动较大</strong>（50-76ms），高强度训练后（6/11负荷224）第二天HRV降至54ms，说明大课后需充分恢复</li>
+            <li><strong>6/20恢复优秀</strong>：HRV 76ms（高于基线18%），RHR 44bpm，身体状态极佳，对应6/21高质量长距离</li>
+            <li><strong>睡眠整体充足</strong>：平均7小时+，深睡占比合理（平均86min），但6/17-6/18连续两晚不足6小时需注意</li>
+            <li><strong>训练负荷比已达1.49</strong>，处于高负荷区间，需适当控制下周强度避免过度训练</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ========== 第四部分：跑步能力分析 ========== -->
+<div class="section">
+    <div class="section-title">跑步能力分析</div>
+
+    <div class="grid grid-3">
+        <div class="card">
+            <div class="card-label">乳酸阈值配速</div>
+            <div class="card-value">4:37 <span class="card-unit">/km</span></div>
+            <div class="card-note">乳酸阈心率 168bpm | LTSP 277s/km</div>
+        </div>
+        <div class="card">
+            <div class="card-label">有氧耐力基础</div>
+            <div class="card-value">83.5 <span class="card-unit">分</span></div>
+            <div class="card-note">Stamina Level | 7日趋势 104</div>
+        </div>
+        <div class="card">
+            <div class="card-label">估算比赛成绩</div>
+            <div class="card-value" style="font-size: 22px;">
+                5K: 21:30-22:00<br>
+                10K: 45:00-46:00<br>
+                HM: 1:39-1:42
+            </div>
+            <div class="card-note">基于VO2max 56 + LTSP估算</div>
+        </div>
+    </div>
+
+    <div class="insight-box" style="margin-top: 16px;">
+        <h4>能力评估</h4>
+        <ul>
+            <li><strong>有氧基础扎实</strong>：VO2max 56是优秀水平（同龄男性Top 5%），乳酸阈值配速4:37/km，有氧耐力评分83.5且7日持续上升</li>
+            <li><strong>配速-心率效率分析</strong>：
+                <br>- 轻松跑（5:50-6:00）心率144-146bpm - 有氧区间控制良好
+                <br>- 节奏跑（5:20-5:35）心率158-164bpm - 接近乳酸阈值，强度偏高
+                <br>- 长距离（15km @ 5:18-5:36）心率152-158bpm - 后半段心率漂移控制可以</li>
+            <li><strong>跑步经济性</strong>：平均功率183W @ 5:30配速，功率/配速比合理；步频184-195spm，步幅88-101cm，触地时间191-219ms</li>
+            <li><strong>强项</strong>：有氧耐力出色，长距离耐受力好（15km跑末段加速至4:38），恢复能力强</li>
+            <li><strong>短板</strong>：中距离节奏跑心率偏高（部分因北京夏季高温），轻松跑日步频偏低（184）可提升经济性</li>
+        </ul>
+    </div>
+
+    <div class="card" style="margin-top: 16px;">
+        <div class="card-label">配速分布与训练极化</div>
+        <table style="box-shadow: none; margin-top: 8px;">
+            <tr>
+                <th>区间</th>
+                <th>配速</th>
+                <th>心率</th>
+                <th>次数</th>
+                <th>占比</th>
+                <th>评价</th>
+            </tr>
+            <tr>
+                <td>Z1-Z2 轻松</td>
+                <td>5:45-6:00</td>
+                <td>140-150</td>
+                <td>3次</td>
+                <td>37%</td>
+                <td>偏少，理想>50%</td>
+            </tr>
+            <tr>
+                <td>Z3 有氧</td>
+                <td>5:20-5:40</td>
+                <td>150-160</td>
+                <td>3次</td>
+                <td>38%</td>
+                <td>偏多，"灰色地带"</td>
+            </tr>
+            <tr>
+                <td>Z4 阈值</td>
+                <td>5:00-5:20</td>
+                <td>160-170</td>
+                <td>2次</td>
+                <td>25%</td>
+                <td>合理</td>
+            </tr>
+        </table>
+        <div class="card-note" style="margin-top: 8px;">
+            <strong>极化度偏低</strong>：Z3区间训练偏多（38%），建议增加Z1-Z2比例至50-60%，减少"不上不下"的灰色区间跑
+        </div>
+    </div>
+</div>
+
+<!-- ========== 第五部分：目标预测 ========== -->
+<div class="section">
+    <div class="section-title">目标预测：基于舒适计划的成绩推演</div>
+
+    <div class="card" style="margin-bottom: 16px;">
+        <div class="card-label">我的舒适周训练模式</div>
+        <table style="box-shadow: none; margin-top: 8px;">
+            <tr>
+                <th>课次</th>
+                <th>内容</th>
+                <th>配速</th>
+                <th>实际训练区间</th>
+            </tr>
+            <tr>
+                <td>有氧跑 x2</td>
+                <td>10-12km</td>
+                <td>5:40-5:50/km</td>
+                <td>Z3偏上（HR约150-155）</td>
+            </tr>
+            <tr>
+                <td>长距离 x1</td>
+                <td>15km</td>
+                <td>5:20-5:45/km</td>
+                <td>Z3（HR约152-158）</td>
+            </tr>
+            <tr>
+                <td>强度课 x1</td>
+                <td>10km</td>
+                <td>5:00-5:15/km</td>
+                <td>Z4 临近阈值（HR约160-168）</td>
+            </tr>
+        </table>
+        <div class="card-note" style="margin-top: 8px;">周跑量 45-49km | 维持+缓慢提升型 | 可持续性强、受伤风险低</div>
+    </div>
+
+    <!-- 3个月预测 -->
+    <div class="week-header">3个月目标（2026年9月底）</div>
+    <div class="grid grid-2">
+        <div class="card">
+            <h4 style="color: var(--primary); margin-bottom: 12px;">预计生理指标</h4>
+            <table style="box-shadow: none; font-size: 13px;">
+                <tr><th>指标</th><th>当前</th><th>3个月后</th></tr>
+                <tr><td>VO2max</td><td>56</td><td>56-57</td></tr>
+                <tr><td>乳酸阈值配速</td><td>4:37/km</td><td>4:32-4:35/km</td></tr>
+                <tr><td>有氧耐力评分</td><td>83.5</td><td>85-86</td></tr>
+                <tr><td>跑步经济性</td><td>基准</td><td>提升2-3%</td></tr>
+            </table>
+        </div>
+        <div class="goal-card">
+            <div class="card-label">3个月比赛成绩预测</div>
+            <div class="card-value" style="font-size: 24px; margin: 12px 0;">
+                5K: 21:00 - 21:30<br>
+                10K: 44:00 - 45:00<br>
+                半马: 1:37 - 1:40
+            </div>
+            <div class="card-note">
+                5K提升 30-60秒 | 10K提升 60-90秒 | 半马提升 2-3分钟
+            </div>
+        </div>
+    </div>
+    <div class="insight-box">
+        <h4>3个月关键假设</h4>
+        <ul>
+            <li><strong>夏训效应</strong>：7-8月北京酷暑（33-38&deg;C），同配速心率+8-12bpm，训练质量打折但心血管适应增强（血浆容量增加、散热效率提升）</li>
+            <li><strong>9月释放</strong>：降温后同心率配速自然加快15-25s/km，"夏练三伏"的红利在秋季兑现</li>
+            <li><strong>VO2max不会跳跃式提升</strong>（56已处高平台），进步主要来自跑步经济性和乳酸阈值的渐进提升</li>
+            <li><strong>前提</strong>：保持每周4练的连贯性，无伤病中断</li>
+        </ul>
+    </div>
+
+    <!-- 6个月预测 -->
+    <div class="week-header" style="margin-top: 24px;">6个月目标（2026年12月底）</div>
+    <div class="grid grid-2">
+        <div class="card">
+            <h4 style="color: var(--primary); margin-bottom: 12px;">预计生理指标</h4>
+            <table style="box-shadow: none; font-size: 13px;">
+                <tr><th>指标</th><th>当前</th><th>6个月后</th></tr>
+                <tr><td>VO2max</td><td>56</td><td>57-58</td></tr>
+                <tr><td>乳酸阈值配速</td><td>4:37/km</td><td>4:25-4:30/km</td></tr>
+                <tr><td>有氧耐力评分</td><td>83.5</td><td>87-89</td></tr>
+                <tr><td>跑步经济性</td><td>基准</td><td>提升4-6%</td></tr>
+            </table>
+        </div>
+        <div class="goal-card">
+            <div class="card-label">6个月比赛成绩预测</div>
+            <div class="card-value" style="font-size: 24px; margin: 12px 0;">
+                5K: 20:15 - 21:00<br>
+                10K: 42:30 - 44:00<br>
+                半马: 1:33 - 1:37<br>
+                <span style="font-size: 18px; opacity: 0.85;">全马: 3:20 - 3:30</span>
+            </div>
+            <div class="card-note">
+                5K提升 60-105秒 | 10K提升 2-3分钟 | 半马提升 4-7分钟
+            </div>
+        </div>
+    </div>
+    <div class="insight-box">
+        <h4>6个月关键假设</h4>
+        <ul>
+            <li><strong>秋冬收获期</strong>：10-12月北京气温5-18&deg;C是出成绩的黄金窗口，配合夏季积累的有氧基础</li>
+            <li><strong>适应积累</strong>：6个月持续45-49km/周的跑量意味着1100-1200km的累积里程，对半马耐力有显著提升</li>
+            <li><strong>前提</strong>：保持每周4练连贯性，无超过1周的中断</li>
+        </ul>
+    </div>
+
+    <!-- 天花板分析 -->
+    <div class="card" style="margin-top: 24px; border-left: 4px solid var(--warning);">
+        <h4 style="color: var(--warning); margin-bottom: 12px;">这个计划的天花板在哪里</h4>
+        <p style="font-size: 14px; margin-bottom: 12px;">你的舒适计划能稳步提升，但<strong>提升速率6个月后会明显放缓</strong>。原因：</p>
+        <ul style="font-size: 14px; padding-left: 20px;">
+            <li style="margin-bottom: 8px;"><strong>VO2max高平台限制</strong>：从56提到58相对容易，提到60很难。计划中缺少真正的VO2max刺激（需4:00-4:20/km的高强度间歇，而非5:00-5:15的阈值跑）</li>
+            <li style="margin-bottom: 8px;"><strong>Z3占比过高</strong>：4次跑中3次落在Z3区间（5:20-5:50 @ HR 150-160），恢复不如Z1-Z2充分，刺激不如Z4-Z5有效</li>
+            <li style="margin-bottom: 8px;"><strong>长距离已是舒适区</strong>：15km对半马/全马突破而言偏短，需逐步推到18-21km才能打开耐力天花板</li>
+            <li style="margin-bottom: 8px;"><strong>6个月后预计到顶</strong>：半马1:33-1:35就是这个训练结构的极限，继续突破需要调整训练模式</li>
+        </ul>
+    </div>
+
+    <!-- 加速方案 -->
+    <div class="card" style="margin-top: 16px; border-left: 4px solid var(--success);">
+        <h4 style="color: var(--success); margin-bottom: 12px;">如果想更快：微调加速方案</h4>
+        <p style="font-size: 14px; margin-bottom: 12px;">不需要颠覆舒适模式，小幅调整即可打开更高上限：</p>
+        <table style="box-shadow: none; font-size: 13px;">
+            <tr>
+                <th>调整项</th>
+                <th>当前</th>
+                <th>建议</th>
+                <th>预期额外收益</th>
+            </tr>
+            <tr>
+                <td>有氧跑配速</td>
+                <td>5:40-5:50</td>
+                <td><strong>放慢到6:00-6:15</strong></td>
+                <td>更好恢复，质量课质量更高</td>
+            </tr>
+            <tr>
+                <td>强度课内容</td>
+                <td>10km匀速5:00-5:15</td>
+                <td><strong>6-8x1000m @ 4:15-4:25</strong></td>
+                <td>直接刺激VO2max突破</td>
+            </tr>
+            <tr>
+                <td>长距离</td>
+                <td>15km固定</td>
+                <td><strong>每月一次18-20km</strong></td>
+                <td>半马/全马耐力质变</td>
+            </tr>
+            <tr>
+                <td>周跑量</td>
+                <td>45-49km</td>
+                <td><strong>渐进到52-55km</strong>（+1次6km恢复跑）</td>
+                <td>有氧容量持续增长</td>
+            </tr>
+        </table>
+        <div style="margin-top: 12px; padding: 12px; background: #f0fdf4; border-radius: 8px;">
+            <strong style="color: var(--success);">调整后6个月目标：</strong>
+            <span style="font-size: 14px;">5K 19:45-20:15 | 10K 41:30-42:30 | 半马 1:30-1:33</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========== 第六部分：6个月按月训练计划 ========== -->
+<div class="section">
+    <div class="section-title">6个月训练计划（按月渐进）</div>
+
+    <div class="insight-box" style="margin-bottom: 20px;">
+        <h4>设计原则</h4>
+        <ul>
+            <li><strong>平缓递增</strong>：每月仅微调1-2个变量（距离或配速），不同时提升</li>
+            <li><strong>月内一致</strong>：同一个月4周课表结构基本相同，不需要记复杂安排</li>
+            <li><strong>基于你的舒适区</strong>：以你当前的 2x有氧10-12km + 1x长距离15km + 1x强度10km 为起点</li>
+            <li><strong>可持续优先</strong>：宁可进步慢一点，也不因为课表太难而中断。每月增幅控制在5%以内</li>
+            <li><strong>夏季降速</strong>：7-8月高温期以心率为准，配速允许放慢，不硬追数字</li>
+        </ul>
+    </div>
+
+    <!-- 月度总览表 -->
+    <div class="card" style="margin-bottom: 24px;">
+        <div class="card-label">6个月递进总览</div>
+        <table style="box-shadow: none; margin-top: 8px; font-size: 13px;">
+            <tr>
+                <th>月份</th>
+                <th>周跑量</th>
+                <th>有氧跑 x2</th>
+                <th>长距离 x1</th>
+                <th>强度课 x1</th>
+                <th>月增幅</th>
+            </tr>
+            <tr>
+                <td><strong>7月</strong><br><span class="hr-zone">夏训打底</span></td>
+                <td>45-47km</td>
+                <td>10km @ 5:50-6:00</td>
+                <td>15km @ 5:40-5:50</td>
+                <td>10km含节奏段4km @ 5:05-5:15</td>
+                <td>-（起点）</td>
+            </tr>
+            <tr>
+                <td><strong>8月</strong><br><span class="hr-zone">有氧积累</span></td>
+                <td>46-49km</td>
+                <td>10-11km @ 5:45-5:55</td>
+                <td>16km @ 5:35-5:50</td>
+                <td>10km含节奏段5km @ 5:00-5:10</td>
+                <td>+3%</td>
+            </tr>
+            <tr>
+                <td><strong>9月</strong><br><span class="hr-zone">赛季开启</span></td>
+                <td>48-50km</td>
+                <td>11km @ 5:40-5:50</td>
+                <td>16-17km @ 5:30-5:45</td>
+                <td>10km含间歇5x1000m @ 4:35-4:45</td>
+                <td>+4%</td>
+            </tr>
+            <tr>
+                <td><strong>10月</strong><br><span class="hr-zone">黄金赛季</span></td>
+                <td>49-52km</td>
+                <td>11-12km @ 5:35-5:45</td>
+                <td>17km @ 5:25-5:40</td>
+                <td>10km含间歇6x1000m @ 4:30-4:40</td>
+                <td>+4%</td>
+            </tr>
+            <tr>
+                <td><strong>11月</strong><br><span class="hr-zone">PB冲击</span></td>
+                <td>50-53km</td>
+                <td>11-12km @ 5:30-5:45</td>
+                <td>17-18km @ 5:20-5:35</td>
+                <td>11km含间歇6x1000m @ 4:25-4:35</td>
+                <td>+3%</td>
+            </tr>
+            <tr>
+                <td><strong>12月</strong><br><span class="hr-zone">巩固收官</span></td>
+                <td>48-50km</td>
+                <td>11km @ 5:35-5:45</td>
+                <td>16-17km @ 5:25-5:40</td>
+                <td>10km含混合强度</td>
+                <td>-3%（恢复）</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- 7月 -->
+    <div class="week-header">7月 | 夏训打底 | 周跑量 45-47km</div>
+    <div class="card" style="margin-bottom: 8px; padding: 12px 16px; background: #fffbeb; border-left: 3px solid var(--warning);">
+        <span style="font-size: 13px;"><strong>夏季提示</strong>：7月北京平均30-35&deg;C，所有配速按心率执行，体感配速可能比标注慢15-30s/km，这是正常的。优先清晨(5:30-7:30)或夜间(20:00后)跑步。</span>
+    </div>
+    <table class="plan-table">
+        <thead>
+            <tr>
+                <th>训练日</th>
+                <th>内容</th>
+                <th>距离</th>
+                <th>配速 / 心率</th>
+                <th>备注</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Day 1</strong><br>有氧跑</td>
+                <td>轻松有氧</td>
+                <td>10 km</td>
+                <td>5:50-6:00/km<br><span class="hr-zone">HR &le;150bpm</span></td>
+                <td>舒适节奏，不追配速</td>
+            </tr>
+            <tr>
+                <td><strong>Day 2</strong><br>强度课</td>
+                <td>热身2km + <strong>节奏4km</strong> + 恢复2km + 轻松2km</td>
+                <td>10 km</td>
+                <td>节奏段: 5:05-5:15/km<br><span class="hr-zone">HR 158-165bpm</span></td>
+                <td>节奏段保持稳定即可<br>不必全力</td>
+            </tr>
+            <tr>
+                <td><strong>Day 3</strong><br>有氧跑</td>
+                <td>轻松有氧</td>
+                <td>10 km</td>
+                <td>5:50-6:00/km<br><span class="hr-zone">HR &le;150bpm</span></td>
+                <td>与Day1相同</td>
+            </tr>
+            <tr>
+                <td><strong>Day 4</strong><br>长距离</td>
+                <td>均匀有氧长跑</td>
+                <td>15 km</td>
+                <td>5:40-5:50/km<br><span class="hr-zone">HR &le;155bpm</span></td>
+                <td>全程匀速<br>末3km可自然加速</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="card-note" style="margin-top: 4px; padding: 8px 14px;">
+        <strong>7月要点</strong>：和你目前的习惯几乎一样。唯一调整是有氧跑配速略微放慢到6分附近（热天用心率卡），确保恢复质量。4周结构完全相同，跑熟即可。
+    </div>
+
+    <!-- 8月 -->
+    <div class="week-header" style="margin-top: 28px;">8月 | 有氧积累 | 周跑量 46-49km</div>
+    <div class="card" style="margin-bottom: 8px; padding: 12px 16px; background: #fffbeb; border-left: 3px solid var(--warning);">
+        <span style="font-size: 13px;"><strong>本月变化</strong>：长距离+1km（15&rarr;16km），强度课节奏段+1km（4&rarr;5km）。有氧跑不变。</span>
+    </div>
+    <table class="plan-table">
+        <thead>
+            <tr>
+                <th>训练日</th>
+                <th>内容</th>
+                <th>距离</th>
+                <th>配速 / 心率</th>
+                <th>备注</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Day 1</strong><br>有氧跑</td>
+                <td>轻松有氧</td>
+                <td>10-11 km</td>
+                <td>5:45-5:55/km<br><span class="hr-zone">HR &le;150bpm</span></td>
+                <td>状态好可跑11km<br>否则10km即可</td>
+            </tr>
+            <tr>
+                <td><strong>Day 2</strong><br>强度课</td>
+                <td>热身2km + <strong>节奏5km</strong> + 恢复1km + 轻松2km</td>
+                <td>10 km</td>
+                <td>节奏段: 5:00-5:10/km<br><span class="hr-zone">HR 160-166bpm</span></td>
+                <td>比7月多跑1km节奏<br>配速略快5s</td>
+            </tr>
+            <tr>
+                <td><strong>Day 3</strong><br>有氧跑</td>
+                <td>轻松有氧</td>
+                <td>10-11 km</td>
+                <td>5:45-5:55/km<br><span class="hr-zone">HR &le;150bpm</span></td>
+                <td>与Day1相同</td>
+            </tr>
+            <tr>
+                <td><strong>Day 4</strong><br>长距离</td>
+                <td>均匀有氧长跑</td>
+                <td>16 km</td>
+                <td>5:35-5:50/km<br><span class="hr-zone">HR &le;155bpm</span></td>
+                <td>+1km，配速不变<br>体感轻松为主</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="card-note" style="margin-top: 4px; padding: 8px 14px;">
+        <strong>8月要点</strong>：仍是高温期，不追求配速突破。核心改变只是长距离多跑1km + 节奏段多跑1km。心率控制不住就按7月执行。8月最重要的是"不断"，别因为天热停练。
+    </div>
+
+    <!-- 9月 -->
+    <div class="week-header" style="margin-top: 28px;">9月 | 赛季开启 | 周跑量 48-50km</div>
+    <div class="card" style="margin-bottom: 8px; padding: 12px 16px; background: #dcfce7; border-left: 3px solid var(--success);">
+        <span style="font-size: 13px;"><strong>本月变化</strong>：气温下降，配速自然会快。强度课从"节奏跑"升级为"间歇跑"（5x1000m），有氧跑+1km。如有比赛（衡水湖），第3周减量、第4周比赛。</span>
+    </div>
+    <table class="plan-table">
+        <thead>
+            <tr>
+                <th>训练日</th>
+                <th>内容</th>
+                <th>距离</th>
+                <th>配速 / 心率</th>
+                <th>备注</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Day 1</strong><br>有氧跑</td>
+                <td>轻松有氧</td>
+                <td>11 km</td>
+                <td>5:40-5:50/km<br><span class="hr-zone">HR &le;150bpm</span></td>
+                <td>降温后同心率配速自然变快</td>
+            </tr>
+            <tr>
+                <td><strong>Day 2</strong><br>强度课</td>
+                <td>热身2km + <strong>5x1000m</strong>(休息2min慢跑) + 冷身2km</td>
+                <td>~10 km</td>
+                <td>间歇段: 4:35-4:45/km<br><span class="hr-zone">HR 170-178bpm</span></td>
+                <td>首次引入间歇<br>第一组保守启动</td>
+            </tr>
+            <tr>
+                <td><strong>Day 3</strong><br>有氧跑</td>
+                <td>轻松有氧</td>
+                <td>11 km</td>
+                <td>5:40-5:50/km<br><span class="hr-zone">HR &le;150bpm</span></td>
+                <td>与Day1相同</td>
+            </tr>
+            <tr>
+                <td><strong>Day 4</strong><br>长距离</td>
+                <td>有氧长跑（末段渐加速）</td>
+                <td>16-17 km</td>
+                <td>前13km: 5:35-5:45<br>末3-4km: 5:15-5:25<br><span class="hr-zone">HR &le;158bpm</span></td>
+                <td>练习"后半段发力"<br>为比赛积累信心</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="card-note" style="margin-top: 4px; padding: 8px 14px;">
+        <strong>9月要点</strong>：训练模式第一次明显变化——引入1000m间歇。但只有5组，恢复充分（2分钟），配速4:35-4:45对你来说是舒适偏快（你6/21末段跑出4:38）。有比赛周减量20%：长距离改10km慢跑，强度课取消。
+    </div>
+
+    <!-- 10月 -->
+    <div class="week-header" style="margin-top: 28px;">10月 | 黄金赛季 | 周跑量 49-52km</div>
+    <div class="card" style="margin-bottom: 8px; padding: 12px 16px; background: #dcfce7; border-left: 3px solid var(--success);">
+        <span style="font-size: 13px;"><strong>本月变化</strong>：间歇+1组（5&rarr;6x1000m），长距离稳定17km，有氧跑可选12km。气温10-18&deg;C，是全年最佳跑步月。如有比赛（天津半马），赛前一周减量。</span>
+    </div>
+    <table class="plan-table">
+        <thead>
+            <tr>
+                <th>训练日</th>
+                <th>内容</th>
+                <th>距离</th>
+                <th>配速 / 心率</th>
+                <th>备注</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Day 1</strong><br>有氧跑</td>
+                <td>轻松有氧</td>
+                <td>11-12 km</td>
+                <td>5:35-5:45/km<br><span class="hr-zone">HR &le;150bpm</span></td>
+                <td>凉爽天气，同心率更快</td>
+            </tr>
+            <tr>
+                <td><strong>Day 2</strong><br>强度课</td>
+                <td>热身2km + <strong>6x1000m</strong>(休息90s慢跑) + 冷身2km</td>
+                <td>~11 km</td>
+                <td>间歇段: 4:30-4:40/km<br><span class="hr-zone">HR 172-180bpm</span></td>
+                <td>+1组，恢复缩短到90s<br>比9月略快5s/km</td>
+            </tr>
+            <tr>
+                <td><strong>Day 3</strong><br>有氧跑</td>
+                <td>轻松有氧</td>
+                <td>11-12 km</td>
+                <td>5:35-5:45/km<br><span class="hr-zone">HR &le;150bpm</span></td>
+                <td>与Day1相同</td>
+            </tr>
+            <tr>
+                <td><strong>Day 4</strong><br>长距离</td>
+                <td>有氧长跑 + 末段节奏</td>
+                <td>17 km</td>
+                <td>前12km: 5:30-5:40<br>末5km: 5:10-5:20<br><span class="hr-zone">HR渐进148&rarr;160</span></td>
+                <td>模拟半马后半程提速<br>练习比赛节奏感</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="card-note" style="margin-top: 4px; padding: 8px 14px;">
+        <strong>10月要点</strong>：这是出成绩的月份。改变很小（间歇+1组+恢复缩短15s），但秋季气温红利会让你感觉"突然变快了"——这就是夏训的回报。比赛周：Day2改为3x1000m轻松刺激，Day4改为8km慢跑。
+    </div>
+
+    <!-- 11月 -->
+    <div class="week-header" style="margin-top: 28px;">11月 | PB冲击月 | 周跑量 50-53km</div>
+    <div class="card" style="margin-bottom: 8px; padding: 12px 16px; background: #dbeafe; border-left: 3px solid var(--primary);">
+        <span style="font-size: 13px;"><strong>本月变化</strong>：长距离首次推到18km，间歇配速再快5s。这是6个月最高负荷月，也是冲PB的关键月。赛前（廊坊半马）一周减量。</span>
+    </div>
+    <table class="plan-table">
+        <thead>
+            <tr>
+                <th>训练日</th>
+                <th>内容</th>
+                <th>距离</th>
+                <th>配速 / 心率</th>
+                <th>备注</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Day 1</strong><br>有氧跑</td>
+                <td>轻松有氧</td>
+                <td>11-12 km</td>
+                <td>5:30-5:45/km<br><span class="hr-zone">HR &le;150bpm</span></td>
+                <td>维持10月水平</td>
+            </tr>
+            <tr>
+                <td><strong>Day 2</strong><br>强度课</td>
+                <td>热身2km + <strong>6x1000m</strong>(休息90s) + 冷身2-3km</td>
+                <td>~11 km</td>
+                <td>间歇段: 4:25-4:35/km<br><span class="hr-zone">HR 172-180bpm</span></td>
+                <td>组数不变，配速再快5s<br>冷身可加长</td>
+            </tr>
+            <tr>
+                <td><strong>Day 3</strong><br>有氧跑</td>
+                <td>轻松有氧</td>
+                <td>11-12 km</td>
+                <td>5:30-5:45/km<br><span class="hr-zone">HR &le;150bpm</span></td>
+                <td>与Day1相同</td>
+            </tr>
+            <tr>
+                <td><strong>Day 4</strong><br>长距离</td>
+                <td>长距离渐进跑</td>
+                <td>17-18 km</td>
+                <td>前12km: 5:25-5:35<br>中4km: 5:10-5:20<br>末2km: 5:00-5:10<br><span class="hr-zone">HR渐进148&rarr;162</span></td>
+                <td>首次推到18km<br>状态不佳保持17km</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="card-note" style="margin-top: 4px; padding: 8px 14px;">
+        <strong>11月要点</strong>：峰值月。长距离18km是一个里程碑（接近半马距离），给你巨大的心理信心。间歇4:25-4:35配速已非常接近你的LT（4:37），可以充分刺激阈值提升。如果感觉累，第4周主动降量10%作为迷你恢复周。
+    </div>
+
+    <!-- 12月 -->
+    <div class="week-header" style="margin-top: 28px;">12月 | 巩固收官 | 周跑量 48-50km</div>
+    <div class="card" style="margin-bottom: 8px; padding: 12px 16px; background: #f1f5f9; border-left: 3px solid var(--text-muted);">
+        <span style="font-size: 13px;"><strong>本月变化</strong>：主动降载回到10月水平。赛季结束，巩固成果，避免年末累积疲劳。强度课可在间歇和节奏之间交替，保持新鲜感。</span>
+    </div>
+    <table class="plan-table">
+        <thead>
+            <tr>
+                <th>训练日</th>
+                <th>内容</th>
+                <th>距离</th>
+                <th>配速 / 心率</th>
+                <th>备注</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Day 1</strong><br>有氧跑</td>
+                <td>轻松有氧</td>
+                <td>11 km</td>
+                <td>5:35-5:45/km<br><span class="hr-zone">HR &le;150bpm</span></td>
+                <td>舒适即可</td>
+            </tr>
+            <tr>
+                <td><strong>Day 2</strong><br>强度课</td>
+                <td>交替进行：<br>A周: 5x1000m间歇<br>B周: 节奏跑6km</td>
+                <td>10 km</td>
+                <td>间歇: 4:30-4:40<br>节奏: 4:55-5:05<br><span class="hr-zone">HR 165-175bpm</span></td>
+                <td>两种课表轮换<br>保持多样性</td>
+            </tr>
+            <tr>
+                <td><strong>Day 3</strong><br>有氧跑</td>
+                <td>轻松有氧</td>
+                <td>11 km</td>
+                <td>5:35-5:45/km<br><span class="hr-zone">HR &le;150bpm</span></td>
+                <td>与Day1相同</td>
+            </tr>
+            <tr>
+                <td><strong>Day 4</strong><br>长距离</td>
+                <td>轻松长跑（不追速度）</td>
+                <td>16-17 km</td>
+                <td>5:30-5:45/km<br><span class="hr-zone">HR &le;155bpm</span></td>
+                <td>享受跑步<br>回到舒适节奏</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="card-note" style="margin-top: 4px; padding: 8px 14px;">
+        <strong>12月要点</strong>：收官月，不再追求突破。保持跑量和频率即可，为2027年打底。如果想参加12月收官赛（密云半马等），第2周安排一次18km确认状态，第3周减量。
+    </div>
+
+    <!-- 关键规则 -->
+    <div class="card" style="margin-top: 24px; border-left: 4px solid var(--primary);">
+        <h4 style="color: var(--primary); margin-bottom: 12px;">执行规则（保持坚持最重要）</h4>
+        <table style="box-shadow: none; font-size: 13px;">
+            <tr><td style="width: 30%;"><strong>状态不好怎么办</strong></td><td>降一档执行：强度课改有氧跑，长距离缩短2-3km。跑总比不跑好。</td></tr>
+            <tr><td><strong>加班/出差少跑一次</strong></td><td>优先保留长距离和强度课。有氧跑可以砍掉一次，影响最小。</td></tr>
+            <tr><td><strong>感觉太简单</strong></td><td>保持耐心。不要提前加量。"简单"说明你在恢复，下一次强度课会有更好表现。</td></tr>
+            <tr><td><strong>连续3天以上腿酸</strong></td><td>额外休息1-2天。宁可少跑不要带伤。</td></tr>
+            <tr><td><strong>比赛周怎么调整</strong></td><td>赛前3天：只跑一次3-5km慢跑+4-5个100m冲刺激活。赛前1天完全休息。</td></tr>
+        </table>
+    </div>
+
+    <!-- 月度里程碑 -->
+    <div class="card" style="margin-top: 16px; border-left: 4px solid var(--success);">
+        <h4 style="color: var(--success); margin-bottom: 12px;">每月检验里程碑</h4>
+        <table style="box-shadow: none; font-size: 13px;">
+            <tr>
+                <th>月份</th>
+                <th>里程碑指标</th>
+                <th>达成说明你在正轨</th>
+            </tr>
+            <tr><td><strong>7月末</strong></td><td>4周不中断，每周4练完成</td><td>夏天能坚持就是胜利</td></tr>
+            <tr><td><strong>8月末</strong></td><td>16km长距离完成时心率 &le;158bpm</td><td>有氧效率在提升</td></tr>
+            <tr><td><strong>9月末</strong></td><td>5x1000m均在4:40以内完成</td><td>速度储备足够</td></tr>
+            <tr><td><strong>10月末</strong></td><td>半马比赛跑进1:38</td><td>3个月目标达成</td></tr>
+            <tr><td><strong>11月末</strong></td><td>半马PB跑进1:35</td><td>6个月进步显著</td></tr>
+            <tr><td><strong>12月末</strong></td><td>无伤健康，保持跑步热情</td><td>最重要的里程碑</td></tr>
+        </table>
+    </div>
+</div>
+
+<!-- ========== 第七部分：训练建议 ========== -->
+<div class="section">
+    <div class="section-title">核心训练建议</div>
+    <div class="grid grid-3">
+        <div class="card">
+            <h4 style="color: var(--primary); margin-bottom: 8px;">1. 极化训练</h4>
+            <p style="font-size: 14px;">当前Z3（灰色地带）占比过高。严格执行：轻松跑日心率&le;145，速度课全力达到目标配速。"要么真的慢，要么真的快"。</p>
+        </div>
+        <div class="card">
+            <h4 style="color: var(--primary); margin-bottom: 8px;">2. 控制负荷节奏</h4>
+            <p style="font-size: 14px;">负荷比1.49已超最佳区间(1.0-1.3)。下周降载后逐步回升，遵循"3周递增+1周减量"周期。注意疲劳率>25%时安排休息。</p>
+        </div>
+        <div class="card">
+            <h4 style="color: var(--primary); margin-bottom: 8px;">3. 步频优化</h4>
+            <p style="font-size: 14px;">轻松跑步频184偏低（快跑时195正常）。尝试在轻松跑中维持188-192spm，通过"小步快频"降低每步冲击，提升经济性。</p>
+        </div>
+    </div>
+    <div class="grid grid-3" style="margin-top: 16px;">
+        <div class="card">
+            <h4 style="color: var(--warning); margin-bottom: 8px;">4. 夏季注意事项</h4>
+            <p style="font-size: 14px;">北京6月气温高，心率会自然偏高5-10bpm。建议：清晨或夜跑，配速参考心率而非GPS，充分补水。高温日允许配速放慢20-30s/km。</p>
+        </div>
+        <div class="card">
+            <h4 style="color: var(--warning); margin-bottom: 8px;">5. 睡眠优化</h4>
+            <p style="font-size: 14px;">6/17-18连续两晚睡眠不足6小时，影响恢复（HRV次日下降）。训练日确保7小时+睡眠，大课前一晚目标7.5小时。</p>
+        </div>
+        <div class="card">
+            <h4 style="color: var(--success); margin-bottom: 8px;">6. 你做得好的地方</h4>
+            <p style="font-size: 14px;">跑量和频率稳定（周4次），长距离末段加速能力优秀（6/21最后3km降至4:38-4:55），恢复后HRV反弹强劲，训练连贯性好。</p>
+        </div>
+    </div>
+</div>
+
+<div style="text-align: center; color: var(--text-muted); font-size: 12px; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);">
+    数据来源：COROS PACE Pro | 报告生成时间：2026-06-21 | coros-mcp
+</div>
+
+</div>
+</body>
+</html>

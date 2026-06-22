@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026-06-21 马拉松赛事报名指南</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #dbeafe;
+            --success: #16a34a;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --orange: #ea580c;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 24px;
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        h1 { font-size: 28px; margin-bottom: 4px; }
+        .subtitle { color: var(--text-muted); margin-bottom: 32px; font-size: 15px; }
+        .section { margin-bottom: 36px; }
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary);
+            display: inline-block;
+        }
+        .grid { display: grid; gap: 16px; }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); }
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid var(--border);
+        }
+        .card-label { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+        .card-value { font-size: 28px; font-weight: 700; color: var(--primary); }
+        .card-unit { font-size: 14px; color: var(--text-muted); font-weight: 400; }
+        .card-note { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        th, td { padding: 12px 14px; text-align: left; font-size: 14px; }
+        th { background: var(--primary-light); font-weight: 600; color: var(--primary); }
+        tr:not(:last-child) td { border-bottom: 1px solid var(--border); }
+        tr:hover td { background: #f1f5f9; }
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .tag-open { background: #dcfce7; color: #166534; }
+        .tag-soon { background: #fef3c7; color: #92400e; }
+        .tag-tbd { background: #e2e8f0; color: #475569; }
+        .tag-full { background: #dbeafe; color: #1e40af; }
+        .tag-half { background: #f3e8ff; color: #6b21a8; }
+        .tag-10k { background: #fef3c7; color: #92400e; }
+        .tag-recommend { background: #fecaca; color: #991b1b; }
+        .insight-box {
+            background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid var(--primary);
+            margin-top: 12px;
+        }
+        .insight-box h4 { margin-bottom: 8px; color: var(--primary); }
+        .insight-box ul { padding-left: 20px; }
+        .insight-box li { margin-bottom: 6px; font-size: 14px; }
+        .race-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            margin-bottom: 16px;
+        }
+        .race-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .race-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .race-date {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 4px 12px;
+            border-radius: 6px;
+        }
+        .race-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .race-meta span { display: flex; align-items: center; gap: 4px; }
+        .race-desc { font-size: 14px; color: var(--text); margin-top: 8px; }
+        .race-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+        .priority-badge {
+            position: absolute;
+            top: -8px;
+            right: 12px;
+            background: var(--danger);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .race-card.recommended {
+            border: 2px solid var(--primary);
+            position: relative;
+        }
+        .month-header {
+            background: var(--primary);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin: 24px 0 16px 0;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .timeline-bar {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin: 24px 0;
+            overflow-x: auto;
+        }
+        .timeline-month {
+            flex: 1;
+            min-width: 80px;
+            text-align: center;
+            padding: 8px 4px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .timeline-month.past { background: #e2e8f0; color: #94a3b8; }
+        .timeline-month.current { background: var(--primary); color: white; }
+        .timeline-month.hot { background: #fef3c7; color: #92400e; }
+        .timeline-month.peak { background: #dcfce7; color: #166534; }
+        .warning-box {
+            background: #fffbeb;
+            border-radius: 12px;
+            padding: 16px 20px;
+            border-left: 4px solid var(--warning);
+            margin-top: 12px;
+            font-size: 14px;
+        }
+        .warning-box strong { color: var(--warning); }
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            .race-card-header { flex-direction: column; gap: 8px; }
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<h1>2026-06-21 马拉松赛事报名指南</h1>
+<p class="subtitle">北京 / 天津 / 华北周边 | 2026下半年可报名赛事 | 基于你的半马1:37-1:40目标</p>
+
+<!-- 赛季时间线 -->
+<div class="section">
+    <div class="section-title">2026赛季时间线</div>
+    <div class="timeline-bar">
+        <div class="timeline-month past">1月</div>
+        <div class="timeline-month past">2月</div>
+        <div class="timeline-month past">3月</div>
+        <div class="timeline-month past">4月</div>
+        <div class="timeline-month past">5月</div>
+        <div class="timeline-month current">6月<br><span style="font-size:10px">当前</span></div>
+        <div class="timeline-month past">7月<br><span style="font-size:10px">酷暑</span></div>
+        <div class="timeline-month hot">8月<br><span style="font-size:10px">报名季</span></div>
+        <div class="timeline-month hot">9月<br><span style="font-size:10px">赛季开启</span></div>
+        <div class="timeline-month peak">10月<br><span style="font-size:10px">黄金月</span></div>
+        <div class="timeline-month peak">11月<br><span style="font-size:10px">黄金月</span></div>
+        <div class="timeline-month hot">12月<br><span style="font-size:10px">收官</span></div>
+    </div>
+    <div class="card-note" style="text-align: center;">华北地区马拉松黄金赛季：9月下旬 - 11月中旬（气温8-20&deg;C，最适合PB）</div>
+</div>
+
+<!-- 重点推荐赛事 -->
+<div class="section">
+    <div class="section-title">重点推荐赛事（北京/天津/周边）</div>
+
+    <div class="month-header">9月 | 赛季开启</div>
+
+    <div class="race-card recommended">
+        <div class="priority-badge">首选</div>
+        <div class="race-card-header">
+            <div class="race-name">衡水湖马拉松</div>
+            <div class="race-date">9月下旬（预计9/20前后）</div>
+        </div>
+        <div class="race-meta">
+            <span>河北衡水</span>
+            <span>距北京 ~280km（高铁1.5h）</span>
+            <span>中国田协金牌赛事</span>
+        </div>
+        <div class="race-tags">
+            <span class="tag tag-full">全马</span>
+            <span class="tag tag-half">半马</span>
+            <span class="tag tag-soon">预计7-8月报名</span>
+        </div>
+        <div class="race-desc">
+            <strong>推荐理由</strong>：湖区平坦赛道（几乎零爬升），气温适宜，是华北最容易PB的赛事之一。全程环湖跑，风景优美。完赛率高，补给到位。
+            <br><strong>适合你的项目</strong>：半马 - 作为秋季首场比赛检验夏训成果，目标1:40以内。
+            <br><strong>报名难度</strong>：中等，通常不需要抽签，先到先得。
+        </div>
+    </div>
+
+    <div class="race-card">
+        <div class="race-card-header">
+            <div class="race-name">北京·雁栖湖半程马拉松</div>
+            <div class="race-date">9月中旬（预计9/14前后）</div>
+        </div>
+        <div class="race-meta">
+            <span>北京怀柔</span>
+            <span>本地赛事</span>
+            <span>APEC会议中心周边</span>
+        </div>
+        <div class="race-tags">
+            <span class="tag tag-half">半马</span>
+            <span class="tag tag-10k">10K</span>
+            <span class="tag tag-soon">预计7-8月报名</span>
+        </div>
+        <div class="race-desc">
+            <strong>推荐理由</strong>：北京本地无需出行，赛道环湖且有一定起伏（~100m爬升），风景极好。规模适中（5000-8000人），不会太拥挤。
+            <br><strong>注意</strong>：9月中旬北京可能仍偏热（25-30&deg;C），作为赛季热身赛合适，不宜追求PB。
+        </div>
+    </div>
+
+    <div class="month-header">10月 | 黄金赛季</div>
+
+    <div class="race-card recommended">
+        <div class="priority-badge">必报</div>
+        <div class="race-card-header">
+            <div class="race-name">北京马拉松</div>
+            <div class="race-date">10月下旬（预计10/25前后）</div>
+        </div>
+        <div class="race-meta">
+            <span>北京天安门出发</span>
+            <span>中国最具历史的马拉松</span>
+            <span>世界田联金标赛事</span>
+        </div>
+        <div class="race-tags">
+            <span class="tag tag-full">全马</span>
+            <span class="tag tag-soon">预计8月报名/抽签</span>
+        </div>
+        <div class="race-desc">
+            <strong>推荐理由</strong>：中国最顶级马拉松，天安门起跑→长安街→奥森，氛围无敌。赛道平坦，10月底北京气温10-18&deg;C极其适合比赛。
+            <br><strong>适合你的项目</strong>：全马 - 如果目标是首马3:20-3:30，北马是最好的舞台。需在9月前将长距离推到30-35km。
+            <br><strong>报名难度</strong>：极高，需抽签。中签率约15-20%。建议同时报备选赛事。
+            <br><strong>注意</strong>：只设全马项目，无半马。
+        </div>
+    </div>
+
+    <div class="race-card recommended">
+        <div class="priority-badge">强烈推荐</div>
+        <div class="race-card-header">
+            <div class="race-name">天津马拉松</div>
+            <div class="race-date">10月中旬（预计10/19前后）</div>
+        </div>
+        <div class="race-meta">
+            <span>天津海河沿线</span>
+            <span>距北京30min高铁</span>
+            <span>中国田协金牌赛事</span>
+        </div>
+        <div class="race-tags">
+            <span class="tag tag-full">全马</span>
+            <span class="tag tag-half">半马</span>
+            <span class="tag tag-soon">预计8月报名</span>
+        </div>
+        <div class="race-desc">
+            <strong>推荐理由</strong>：赛道沿海河，平坦快速，城市风光好。高铁30分钟直达，几乎等于本地赛事。组织成熟，补给和氛围都不错。10月中旬天津气温12-20&deg;C，理想PB条件。
+            <br><strong>适合你的项目</strong>：半马 - 作为10月目标赛事，冲击1:37-1:38。
+            <br><strong>报名难度</strong>：中等，可能需抽签但中签率较高（40-60%）。
+        </div>
+    </div>
+
+    <div class="race-card">
+        <div class="race-card-header">
+            <div class="race-name">石家庄正定马拉松</div>
+            <div class="race-date">10月中旬（预计10/12前后）</div>
+        </div>
+        <div class="race-meta">
+            <span>河北石家庄正定</span>
+            <span>距北京 ~300km（高铁1.5h）</span>
+            <span>古城赛道</span>
+        </div>
+        <div class="race-tags">
+            <span class="tag tag-full">全马</span>
+            <span class="tag tag-half">半马</span>
+            <span class="tag tag-10k">欢乐跑</span>
+            <span class="tag tag-soon">预计8月报名</span>
+        </div>
+        <div class="race-desc">
+            <strong>推荐理由</strong>：正定古城赛道，文化氛围好，赛道平坦。规模较大但相比北马容易报上。
+            <br><strong>备选场景</strong>：如果北马没中签，这是同时间段的优质替代。
+        </div>
+    </div>
+
+    <div class="race-card">
+        <div class="race-card-header">
+            <div class="race-name">北京·通州半程马拉松</div>
+            <div class="race-date">10月中旬（预计10/12前后）</div>
+        </div>
+        <div class="race-meta">
+            <span>北京通州</span>
+            <span>大运河畔/城市副中心</span>
+            <span>本地赛事</span>
+        </div>
+        <div class="race-tags">
+            <span class="tag tag-half">半马</span>
+            <span class="tag tag-10k">10K</span>
+            <span class="tag tag-soon">预计8-9月报名</span>
+        </div>
+        <div class="race-desc">
+            <strong>推荐理由</strong>：北京本地，无需出行住宿。大运河沿线赛道平坦，副中心新城区道路宽阔。如果天津马没中签，这是同期本地替代。
+        </div>
+    </div>
+
+    <div class="month-header">11月 | 深秋收获</div>
+
+    <div class="race-card recommended">
+        <div class="priority-badge">PB首选</div>
+        <div class="race-card-header">
+            <div class="race-name">廊坊半程马拉松 / 固安半马</div>
+            <div class="race-date">11月上旬（预计11/1-2前后）</div>
+        </div>
+        <div class="race-meta">
+            <span>河北廊坊/固安</span>
+            <span>距北京50km（城际铁路30min）</span>
+            <span>平坦快速赛道</span>
+        </div>
+        <div class="race-tags">
+            <span class="tag tag-half">半马</span>
+            <span class="tag tag-10k">10K</span>
+            <span class="tag tag-soon">预计9月报名</span>
+        </div>
+        <div class="race-desc">
+            <strong>推荐理由</strong>：极度平坦的新城区赛道，适合刷PB。11月初气温5-15&deg;C，体感舒适。距北京极近，当天往返无压力。报名难度低，基本不抽签。
+            <br><strong>适合你的项目</strong>：半马 - 经过3个月训练积累，这是冲击PB（1:35-1:37）的最佳选择。
+        </div>
+    </div>
+
+    <div class="race-card">
+        <div class="race-card-header">
+            <div class="race-name">保定马拉松</div>
+            <div class="race-date">11月上旬（预计11/2前后）</div>
+        </div>
+        <div class="race-meta">
+            <span>河北保定</span>
+            <span>距北京 ~150km（高铁40min）</span>
+        </div>
+        <div class="race-tags">
+            <span class="tag tag-full">全马</span>
+            <span class="tag tag-half">半马</span>
+            <span class="tag tag-soon">预计9月报名</span>
+        </div>
+        <div class="race-desc">
+            赛道较平，高铁交通便利。规模适中，体验不错。
+        </div>
+    </div>
+
+    <div class="race-card">
+        <div class="race-card-header">
+            <div class="race-name">天津滨海半程马拉松</div>
+            <div class="race-date">11月中旬（预计11/9前后）</div>
+        </div>
+        <div class="race-meta">
+            <span>天津滨海新区</span>
+            <span>距北京1h高铁</span>
+            <span>海边赛道</span>
+        </div>
+        <div class="race-tags">
+            <span class="tag tag-half">半马</span>
+            <span class="tag tag-10k">10K</span>
+            <span class="tag tag-tbd">待定</span>
+        </div>
+        <div class="race-desc">
+            滨海新区沿海赛道，可能有海风影响配速。如果10月天津马跑了半马，这里可以尝试全马距离的入门挑战。
+        </div>
+    </div>
+
+    <div class="month-header">12月 | 赛季收官</div>
+
+    <div class="race-card">
+        <div class="race-card-header">
+            <div class="race-name">北京·密云半程马拉松 / 冬季长跑节</div>
+            <div class="race-date">12月上旬（预计12/7前后）</div>
+        </div>
+        <div class="race-meta">
+            <span>北京密云</span>
+            <span>冬季赛事</span>
+            <span>气温可能0-8&deg;C</span>
+        </div>
+        <div class="race-tags">
+            <span class="tag tag-half">半马</span>
+            <span class="tag tag-10k">10K</span>
+            <span class="tag tag-tbd">待定</span>
+        </div>
+        <div class="race-desc">
+            12月北京较冷，但保持在0度以上仍可比赛。作为年度收官赛，检验全年训练成果。穿着得当（手套+耳罩+紧身衣）可以跑出好成绩。
+        </div>
+    </div>
+</div>
+
+<!-- 赛事选择策略 -->
+<div class="section">
+    <div class="section-title">赛事选择策略</div>
+
+    <div class="insight-box">
+        <h4>基于你的目标（半马1:37-1:40 @ 3个月，1:33-1:37 @ 6个月）</h4>
+        <ul>
+            <li><strong>A级目标赛</strong>（全力冲PB）：天津马拉松(10月) 或 廊坊/固安半马(11月) - 赛道平坦、气温理想</li>
+            <li><strong>B级热身赛</strong>（检验状态）：衡水湖马拉松(9月) 或 雁栖湖半马(9月) - 赛季初期找比赛感觉</li>
+            <li><strong>C级彩票赛</strong>（中了就跑）：北京马拉松(10月全马) - 体验为主，如果训练到位也可冲首马</li>
+        </ul>
+    </div>
+
+    <div class="card" style="margin-top: 16px;">
+        <h4 style="color: var(--primary); margin-bottom: 12px;">推荐报名组合</h4>
+        <table style="box-shadow: none;">
+            <tr>
+                <th>方案</th>
+                <th>赛事安排</th>
+                <th>间隔</th>
+                <th>策略</th>
+            </tr>
+            <tr>
+                <td><strong>方案A（稳健型）</strong></td>
+                <td>9月衡水湖半马 → 10月天津半马 → 11月廊坊半马</td>
+                <td>4周/4周</td>
+                <td>逐次提速：1:40 → 1:38 → 1:35</td>
+            </tr>
+            <tr>
+                <td><strong>方案B（北马冲击型）</strong></td>
+                <td>9月衡水湖半马 → 10月北京马拉松全马</td>
+                <td>5周</td>
+                <td>半马测试 → 全马首秀3:25-3:35</td>
+            </tr>
+            <tr>
+                <td><strong>方案C（本地简约型）</strong></td>
+                <td>9月雁栖湖半马 → 11月廊坊半马</td>
+                <td>7周</td>
+                <td>不出京，两场递进：1:40 → 1:35</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="warning-box" style="margin-top: 16px;">
+        <strong>关于全马（北京马拉松）</strong>：你当前最长距离15km，全马需要在赛前8周内至少完成2-3次30km+长距离训练。如果决定报北马全马，需从7月开始系统性拉长距离（每周长距离递增2km），否则建议以半马为主赛季目标。
+    </div>
+</div>
+
+<!-- 报名时间表 -->
+<div class="section">
+    <div class="section-title">报名时间提醒</div>
+    <table>
+        <thead>
+            <tr>
+                <th>赛事</th>
+                <th>预计报名开放</th>
+                <th>报名方式</th>
+                <th>关注渠道</th>
+                <th>难度</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>北京马拉松</strong></td>
+                <td>8月上旬</td>
+                <td>抽签</td>
+                <td>官网 beijing-marathon.com<br>微信公众号"北京马拉松"</td>
+                <td><span class="tag tag-recommend">高（中签~15%）</span></td>
+            </tr>
+            <tr>
+                <td><strong>天津马拉松</strong></td>
+                <td>8月中旬</td>
+                <td>抽签/先到先得</td>
+                <td>微信公众号"天津马拉松"<br>官方APP</td>
+                <td>中等（中签~50%）</td>
+            </tr>
+            <tr>
+                <td><strong>衡水湖马拉松</strong></td>
+                <td>7月中-8月初</td>
+                <td>先到先得</td>
+                <td>微信公众号"衡水湖马拉松"<br>马拉马拉APP</td>
+                <td>低（通常不满）</td>
+            </tr>
+            <tr>
+                <td><strong>雁栖湖半马</strong></td>
+                <td>7月下旬</td>
+                <td>先到先得</td>
+                <td>微信公众号搜索</td>
+                <td>低</td>
+            </tr>
+            <tr>
+                <td><strong>通州半马</strong></td>
+                <td>8-9月</td>
+                <td>先到先得/抽签</td>
+                <td>微信公众号"北京通州半马"</td>
+                <td>中低</td>
+            </tr>
+            <tr>
+                <td><strong>石家庄正定马拉松</strong></td>
+                <td>8月</td>
+                <td>抽签</td>
+                <td>官方微信公众号</td>
+                <td>中等</td>
+            </tr>
+            <tr>
+                <td><strong>廊坊/固安半马</strong></td>
+                <td>9月中旬</td>
+                <td>先到先得</td>
+                <td>当地体育局公众号</td>
+                <td>低</td>
+            </tr>
+            <tr>
+                <td><strong>保定马拉松</strong></td>
+                <td>9月</td>
+                <td>先到先得</td>
+                <td>官方微信公众号</td>
+                <td>低</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="insight-box" style="margin-top: 16px;">
+        <h4>报名行动清单</h4>
+        <ul>
+            <li><strong>现在（6月）</strong>：关注以上所有赛事的微信公众号，开启通知</li>
+            <li><strong>7月</strong>：衡水湖开放报名时第一时间报名；雁栖湖同理</li>
+            <li><strong>8月初</strong>：北马报名抽签（中签率低但必须参与）；天津马报名</li>
+            <li><strong>9月</strong>：根据前面报名结果，补报11月赛事（廊坊/保定）</li>
+            <li><strong>备注</strong>：建议同时报2-3场，确保至少有一场中签/报上</li>
+        </ul>
+    </div>
+</div>
+
+<!-- 赛事与目标匹配 -->
+<div class="section">
+    <div class="section-title">赛事目标配速计划</div>
+    <table>
+        <thead>
+            <tr>
+                <th>赛事（按时间）</th>
+                <th>目标成绩</th>
+                <th>目标配速</th>
+                <th>分段策略</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>9月 衡水湖半马</strong><br><span style="font-size:12px;color:var(--text-muted)">赛季首战/检验状态</span></td>
+                <td>1:38-1:40</td>
+                <td>4:38-4:42/km</td>
+                <td>前10km 4:42 → 后11km 4:38<br>保守起步，后半段发力</td>
+            </tr>
+            <tr>
+                <td><strong>10月 天津半马</strong><br><span style="font-size:12px;color:var(--text-muted)">A级目标赛</span></td>
+                <td>1:36-1:38</td>
+                <td>4:33-4:38/km</td>
+                <td>匀速策略 4:36/km<br>根据衡水湖表现微调</td>
+            </tr>
+            <tr>
+                <td><strong>11月 廊坊/固安半马</strong><br><span style="font-size:12px;color:var(--text-muted)">PB冲击赛</span></td>
+                <td>1:33-1:36</td>
+                <td>4:25-4:33/km</td>
+                <td>前5km 4:32 → 中间11km 4:28 → 末5km 4:25<br>渐进加速策略</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="card" style="margin-top: 16px; border-left: 4px solid var(--success);">
+        <h4 style="color: var(--success); margin-bottom: 8px;">配速对照你的训练数据</h4>
+        <p style="font-size: 14px;">
+            你的乳酸阈值配速为4:37/km（LTHR 168bpm）。半马比赛配速通常在LT的88-95%区间：
+        </p>
+        <ul style="font-size: 14px; padding-left: 20px; margin-top: 8px;">
+            <li>保守目标 1:40 → 配速4:44/km → LT的86%，心率约155-158bpm（舒适完赛）</li>
+            <li>进取目标 1:37 → 配速4:36/km → LT的93%，心率约160-164bpm（需好状态）</li>
+            <li>激进目标 1:33 → 配速4:25/km → LT的96%，心率约165-168bpm（需LT提升到4:30后）</li>
+        </ul>
+    </div>
+</div>
+
+<!-- 信息来源说明 -->
+<div class="section">
+    <div class="section-title">信息确认渠道</div>
+    <div class="grid grid-3">
+        <div class="card">
+            <h4 style="color: var(--primary); margin-bottom: 8px;">官方平台</h4>
+            <ul style="font-size: 13px; padding-left: 16px;">
+                <li>中国马拉松官网：runchina.org.cn</li>
+                <li>各赛事官方微信公众号</li>
+                <li>中国田径协会通知</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4 style="color: var(--primary); margin-bottom: 8px;">报名入口</h4>
+            <ul style="font-size: 13px; padding-left: 16px;">
+                <li>马拉马拉 APP</li>
+                <li>最酷赛事 zuicool.com</li>
+                <li>爱燃烧 iranshao.com</li>
+                <li>各赛事独立官网</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4 style="color: var(--warning); margin-bottom: 8px;">注意事项</h4>
+            <ul style="font-size: 13px; padding-left: 16px;">
+                <li>日期基于往年惯例推测</li>
+                <li>具体日期以官方公告为准</li>
+                <li>2026年可能有新增/取消赛事</li>
+                <li>建议定期刷新关注</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div style="text-align: center; color: var(--text-muted); font-size: 12px; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);">
+    报告生成时间：2026-06-21 | 赛事日期为基于往年惯例的预测，具体以官方公告为准 | coros-mcp
+</div>
+
+</div>
+</body>
+</html>
