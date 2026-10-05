@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>运动与睡眠综合分析报告 | 2026年6月</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #dbeafe;
+            --success: #16a34a;
+            --success-light: #dcfce7;
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+            --danger: #dc2626;
+            --danger-light: #fee2e2;
+            --purple: #7c3aed;
+            --purple-light: #ede9fe;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: var(--gray-800);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .header .date-range {
+            margin-top: 0.5rem;
+            font-size: 0.95rem;
+            opacity: 0.8;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title .icon {
+            font-size: 1.4rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-item {
+            background: var(--gray-50);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-item .value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .stat-item .label {
+            font-size: 0.82rem;
+            color: var(--gray-600);
+            margin-top: 0.3rem;
+        }
+
+        .stat-item.highlight { background: var(--primary-light); }
+        .stat-item.success { background: var(--success-light); }
+        .stat-item.warning { background: var(--warning-light); }
+        .stat-item.purple { background: var(--purple-light); }
+
+        .stat-item.highlight .value { color: var(--primary); }
+        .stat-item.success .value { color: var(--success); }
+        .stat-item.warning .value { color: var(--warning); }
+        .stat-item.purple .value { color: var(--purple); }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .two-col { grid-template-columns: 1fr; }
+            body { padding: 1rem; }
+            .header h1 { font-size: 1.6rem; }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        table th, table td {
+            padding: 0.6rem 0.8rem;
+            text-align: center;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        table th {
+            background: var(--gray-50);
+            font-weight: 600;
+            color: var(--gray-700);
+            position: sticky;
+            top: 0;
+        }
+
+        table tbody tr:hover {
+            background: var(--gray-50);
+        }
+
+        .pace-badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .pace-easy { background: #dcfce7; color: #166534; }
+        .pace-tempo { background: #fef3c7; color: #92400e; }
+        .pace-threshold { background: #fee2e2; color: #991b1b; }
+        .pace-long { background: #dbeafe; color: #1e40af; }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 120px;
+            padding: 0.5rem 0;
+        }
+
+        .bar-chart .bar {
+            flex: 1;
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            min-width: 20px;
+            transition: all 0.3s;
+        }
+
+        .bar-chart .bar:hover {
+            opacity: 0.8;
+        }
+
+        .bar-chart .bar .bar-label {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            color: var(--gray-600);
+            white-space: nowrap;
+        }
+
+        .bar-chart .bar .bar-value {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .sleep-phases {
+            display: flex;
+            height: 32px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .sleep-phases .phase {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .phase-deep { background: #1e3a5f; }
+        .phase-light { background: #60a5fa; }
+        .phase-rem { background: #a78bfa; }
+        .phase-awake { background: #fbbf24; }
+
+        .legend {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .trend-up { color: var(--success); }
+        .trend-down { color: var(--danger); }
+        .trend-stable { color: var(--gray-600); }
+
+        .insight-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-left: 4px solid var(--primary);
+            border-radius: 0 12px 12px 0;
+            padding: 1rem 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .insight-box h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .insight-box p {
+            font-size: 0.88rem;
+            color: var(--gray-700);
+            line-height: 1.6;
+        }
+
+        .progress-ring {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary) var(--progress), var(--gray-200) var(--progress));
+            position: relative;
+        }
+
+        .progress-ring::after {
+            content: '';
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: white;
+            position: absolute;
+        }
+
+        .progress-ring .ring-value {
+            position: relative;
+            z-index: 1;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .hrv-timeline {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            flex-wrap: wrap;
+            margin: 0.5rem 0;
+        }
+
+        .hrv-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.55rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .section-divider {
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--purple));
+            border-radius: 2px;
+            margin: 2rem 0;
+            opacity: 0.3;
+        }
+
+        .activity-highlight {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .activity-highlight .title {
+            font-weight: 700;
+            color: var(--gray-900);
+            font-size: 1rem;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed var(--gray-200);
+        }
+
+        .metric-row:last-child { border-bottom: none; }
+
+        .metric-row .metric-label {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        .metric-row .metric-value {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .footer {
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.82rem;
+            margin-top: 2rem;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>运动与睡眠综合分析报告</h1>
+            <div class="subtitle">Paul | COROS PACE Pro</div>
+            <div class="date-range">2026年6月1日 - 6月29日 | 北京</div>
+        </div>
+
+        <!-- 总览卡片 -->
+        <div class="card">
+            <div class="card-title"><span class="icon">📊</span> 月度总览</div>
+            <div class="stats-grid">
+                <div class="stat-item highlight">
+                    <div class="value">16</div>
+                    <div class="label">跑步次数</div>
+                </div>
+                <div class="stat-item success">
+                    <div class="value">188.2</div>
+                    <div class="label">总距离 (km)</div>
+                </div>
+                <div class="stat-item warning">
+                    <div class="value">25:24</div>
+                    <div class="label">总运动时长 (h:m)</div>
+                </div>
+                <div class="stat-item purple">
+                    <div class="value">2,694</div>
+                    <div class="label">总训练负荷</div>
+                </div>
+                <div class="stat-item highlight">
+                    <div class="value">56</div>
+                    <div class="label">VO2max</div>
+                </div>
+                <div class="stat-item success">
+                    <div class="value">6h52m</div>
+                    <div class="label">平均睡眠时长</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 最近一次跑步详情 -->
+        <div class="card">
+            <div class="card-title"><span class="icon">🏃</span> 最新训练详情 — 6月28日 (17.87km)</div>
+            <div class="activity-highlight">
+                <div class="title">本月最大训练负荷: 294 | 有氧效果: 4.3 (极佳提升)</div>
+            </div>
+            <div class="two-col">
+                <div>
+                    <div class="metric-row">
+                        <span class="metric-label">距离</span>
+                        <span class="metric-value">17.87 km</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">运动时间</span>
+                        <span class="metric-value">1:34:34</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">平均配速</span>
+                        <span class="metric-value">5'14"/km</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">最快1km</span>
+                        <span class="metric-value">5'05"/km</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">平均心率</span>
+                        <span class="metric-value">159 bpm</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">最大心率</span>
+                        <span class="metric-value">170 bpm</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="metric-row">
+                        <span class="metric-label">平均功率</span>
+                        <span class="metric-value">193 W</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">最大功率</span>
+                        <span class="metric-value">242 W</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">平均步频</span>
+                        <span class="metric-value">200 spm</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">平均步幅</span>
+                        <span class="metric-value">94 cm</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">卡路里</span>
+                        <span class="metric-value">1,201 kcal</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">天气</span>
+                        <span class="metric-value">23°C 湿度81%</span>
+                    </div>
+                </div>
+            </div>
+
+            <h4 style="margin-top:1.2rem; margin-bottom:0.8rem; font-size:0.95rem;">每公里配速分析</h4>
+            <div class="bar-chart" style="height:140px; align-items:flex-end;">
+                <div class="bar" style="height:72%; background:var(--success);">
+                    <span class="bar-value">5'11</span><span class="bar-label">1</span>
+                </div>
+                <div class="bar" style="height:68%; background:var(--success);">
+                    <span class="bar-value">5'18</span><span class="bar-label">2</span>
+                </div>
+                <div class="bar" style="height:65%; background:var(--success);">
+                    <span class="bar-value">5'23</span><span class="bar-label">3</span>
+                </div>
+                <div class="bar" style="height:70%; background:var(--success);">
+                    <span class="bar-value">5'16</span><span class="bar-label">4</span>
+                </div>
+                <div class="bar" style="height:69%; background:var(--success);">
+                    <span class="bar-value">5'17</span><span class="bar-label">5</span>
+                </div>
+                <div class="bar" style="height:67%; background:var(--success);">
+                    <span class="bar-value">5'18</span><span class="bar-label">6</span>
+                </div>
+                <div class="bar" style="height:64%; background:var(--primary);">
+                    <span class="bar-value">5'24</span><span class="bar-label">7</span>
+                </div>
+                <div class="bar" style="height:62%; background:var(--primary);">
+                    <span class="bar-value">5'30</span><span class="bar-label">8</span>
+                </div>
+                <div class="bar" style="height:62%; background:var(--primary);">
+                    <span class="bar-value">5'30</span><span class="bar-label">9</span>
+                </div>
+                <div class="bar" style="height:64%; background:var(--primary);">
+                    <span class="bar-value">5'25</span><span class="bar-label">10</span>
+                </div>
+                <div class="bar" style="height:67%; background:var(--success);">
+                    <span class="bar-value">5'19</span><span class="bar-label">11</span>
+                </div>
+                <div class="bar" style="height:72%; background:var(--success);">
+                    <span class="bar-value">5'14</span><span class="bar-label">12</span>
+                </div>
+                <div class="bar" style="height:73%; background:var(--success);">
+                    <span class="bar-value">5'15</span><span class="bar-label">13</span>
+                </div>
+                <div class="bar" style="height:74%; background:var(--success);">
+                    <span class="bar-value">5'13</span><span class="bar-label">14</span>
+                </div>
+                <div class="bar" style="height:74%; background:var(--success);">
+                    <span class="bar-value">5'14</span><span class="bar-label">15</span>
+                </div>
+                <div class="bar" style="height:78%; background:var(--warning);">
+                    <span class="bar-value">5'07</span><span class="bar-label">16</span>
+                </div>
+                <div class="bar" style="height:77%; background:var(--warning);">
+                    <span class="bar-value">5'09</span><span class="bar-label">17</span>
+                </div>
+                <div class="bar" style="height:77%; background:var(--warning);">
+                    <span class="bar-value">5'09</span><span class="bar-label">18</span>
+                </div>
+            </div>
+
+            <div class="insight-box">
+                <h4>配速分析</h4>
+                <p>明显的负分段跑 (negative split) 策略: 前10km均配5'21"/km, 后7.87km加速至5'08"/km。后半程步频从199提升至203 spm, 功率从190W提升至198W, 表明在疲劳状态下仍有加速余力。有氧效果4.3, 本月最高, 表明此次训练对有氧能力产生显著刺激。</p>
+            </div>
+        </div>
+
+        <!-- 心率区间分析 -->
+        <div class="two-col">
+            <div class="card">
+                <div class="card-title"><span class="icon">❤️</span> 6.28 心率区间分布</div>
+                <div class="bar-chart" style="height:100px;">
+                    <div class="bar" style="height:0%; background:#86efac;"><span class="bar-value">0%</span><span class="bar-label">Z1</span></div>
+                    <div class="bar" style="height:12%; background:#4ade80;"><span class="bar-value">6%</span><span class="bar-label">Z2</span></div>
+                    <div class="bar" style="height:100%; background:#fbbf24;"><span class="bar-value">60%</span><span class="bar-label">Z3</span></div>
+                    <div class="bar" style="height:55%; background:#f97316;"><span class="bar-value">33%</span><span class="bar-label">Z4</span></div>
+                    <div class="bar" style="height:0%; background:#ef4444;"><span class="bar-value">0%</span><span class="bar-label">Z5</span></div>
+                </div>
+                <p style="font-size:0.82rem; color:var(--gray-600); margin-top:1.5rem;">主要在Z3有氧区间(60%), Z4乳酸阈区间占33%, 属高质量有氧耐力训练。</p>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><span class="icon">⚡</span> 6.28 配速区间分布</div>
+                <div class="bar-chart" style="height:100px;">
+                    <div class="bar" style="height:0%; background:#e2e8f0;"><span class="bar-value">0%</span><span class="bar-label">恢复</span></div>
+                    <div class="bar" style="height:32%; background:#86efac;"><span class="bar-value">16%</span><span class="bar-label">轻松</span></div>
+                    <div class="bar" style="height:100%; background:#4ade80;"><span class="bar-value">82%</span><span class="bar-label">马拉松</span></div>
+                    <div class="bar" style="height:4%; background:#fbbf24;"><span class="bar-value">2%</span><span class="bar-label">乳酸阈</span></div>
+                    <div class="bar" style="height:0%; background:#ef4444;"><span class="bar-value">0%</span><span class="bar-label">无氧</span></div>
+                </div>
+                <p style="font-size:0.82rem; color:var(--gray-600); margin-top:1.5rem;">82%时间处于马拉松配速区间, 模拟比赛节奏的长距离训练。</p>
+            </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- 训练列表 -->
+        <div class="card">
+            <div class="card-title"><span class="icon">📋</span> 6月全部训练记录</div>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>日期</th>
+                            <th>距离</th>
+                            <th>时长</th>
+                            <th>配速</th>
+                            <th>心率</th>
+                            <th>功率</th>
+                            <th>步频</th>
+                            <th>负荷</th>
+                            <th>类型</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>6/28</td>
+                            <td><strong>17.87</strong></td>
+                            <td>1:34:34</td>
+                            <td>5'14"</td>
+                            <td>159</td>
+                            <td>193</td>
+                            <td>200</td>
+                            <td><strong>294</strong></td>
+                            <td><span class="pace-badge pace-long">长距离</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/26</td>
+                            <td>10.01</td>
+                            <td>58:16</td>
+                            <td>5'47"</td>
+                            <td>152</td>
+                            <td>174</td>
+                            <td>193</td>
+                            <td>142</td>
+                            <td><span class="pace-badge pace-easy">轻松跑</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/25</td>
+                            <td>10.75</td>
+                            <td>1:03:52</td>
+                            <td>5'54"</td>
+                            <td>147</td>
+                            <td>172</td>
+                            <td>191</td>
+                            <td>134</td>
+                            <td><span class="pace-badge pace-easy">轻松跑</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/23</td>
+                            <td>11.02</td>
+                            <td>1:05:31</td>
+                            <td>5'53"</td>
+                            <td>142</td>
+                            <td>171</td>
+                            <td>188</td>
+                            <td>114</td>
+                            <td><span class="pace-badge pace-easy">恢复跑</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/21</td>
+                            <td><strong>15.29</strong></td>
+                            <td>1:21:08</td>
+                            <td>5'17"</td>
+                            <td>158</td>
+                            <td>193</td>
+                            <td>195</td>
+                            <td><strong>248</strong></td>
+                            <td><span class="pace-badge pace-long">长距离</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/19</td>
+                            <td>13.24</td>
+                            <td>1:13:33</td>
+                            <td>5'30"</td>
+                            <td>149</td>
+                            <td>184</td>
+                            <td>195</td>
+                            <td>170</td>
+                            <td><span class="pace-badge pace-easy">有氧慢跑</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/17</td>
+                            <td>10.03</td>
+                            <td>55:59</td>
+                            <td>5'33"</td>
+                            <td>156</td>
+                            <td>181</td>
+                            <td>186</td>
+                            <td>120</td>
+                            <td><span class="pace-badge pace-tempo">节奏跑</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/16</td>
+                            <td>9.72</td>
+                            <td>56:02</td>
+                            <td>5'43"</td>
+                            <td>154</td>
+                            <td>177</td>
+                            <td>186</td>
+                            <td>149</td>
+                            <td><span class="pace-badge pace-tempo">节奏跑</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/13</td>
+                            <td>11.62</td>
+                            <td>1:09:38</td>
+                            <td>5'54"</td>
+                            <td>143</td>
+                            <td>170</td>
+                            <td>187</td>
+                            <td>127</td>
+                            <td><span class="pace-badge pace-easy">轻松跑</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/11</td>
+                            <td><strong>11.00</strong></td>
+                            <td>59:02</td>
+                            <td>5'19"</td>
+                            <td>164</td>
+                            <td>189</td>
+                            <td>191</td>
+                            <td><strong>224</strong></td>
+                            <td><span class="pace-badge pace-threshold">阈值跑</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/9</td>
+                            <td>6.28</td>
+                            <td>36:44</td>
+                            <td>5'54"</td>
+                            <td>145</td>
+                            <td>173</td>
+                            <td>184</td>
+                            <td>73</td>
+                            <td><span class="pace-badge pace-easy">恢复跑</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/7</td>
+                            <td><strong>15.34</strong></td>
+                            <td>1:25:56</td>
+                            <td>5'35"</td>
+                            <td>152</td>
+                            <td>182</td>
+                            <td>192</td>
+                            <td><strong>221</strong></td>
+                            <td><span class="pace-badge pace-long">长距离</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/5</td>
+                            <td>8.64</td>
+                            <td>48:16</td>
+                            <td>5'30"</td>
+                            <td>153</td>
+                            <td>183</td>
+                            <td>189</td>
+                            <td>125</td>
+                            <td><span class="pace-badge pace-tempo">节奏跑</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/3</td>
+                            <td>10.06</td>
+                            <td>55:01</td>
+                            <td>5'23"</td>
+                            <td>155</td>
+                            <td>185</td>
+                            <td>179</td>
+                            <td>154</td>
+                            <td><span class="pace-badge pace-tempo">节奏跑</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="insight-box">
+                <h4>训练节奏评估</h4>
+                <p>6月训练呈现良好的强度周期化: 每周1次长距离(15-18km), 2-3次中距离(10-13km)配合恢复跑。训练负荷比从月初0.54逐步攀升至1.56, 当前处于"过载"阶段(>1.3), 需注意疲劳积累。本周已完成最大负荷训练(294), 建议下周安排减量恢复。</p>
+            </div>
+        </div>
+
+        <!-- 高维度跑步分析 -->
+        <div class="card">
+            <div class="card-title"><span class="icon">🔬</span> 高维度跑步效能分析</div>
+
+            <!-- 1. 跑步经济性趋势 -->
+            <h4 style="margin-bottom:0.8rem; font-size:1rem; color:var(--gray-900);">1. 跑步经济性趋势 (Power/Pace Ratio)</h4>
+            <p style="font-size:0.82rem; color:var(--gray-600); margin-bottom:0.8rem;">跑步经济性 = 功率(W) / 速度(m/s), 值越低表示同速度消耗能量越少, 经济性越好。</p>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>日期</th>
+                            <th>配速</th>
+                            <th>速度(m/s)</th>
+                            <th>功率(W)</th>
+                            <th>经济性(W/m/s)</th>
+                            <th>类型</th>
+                            <th>趋势</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>6/3</td>
+                            <td>5'23"</td>
+                            <td>3.09</td>
+                            <td>185</td>
+                            <td>59.9</td>
+                            <td>节奏跑</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>6/5</td>
+                            <td>5'30"</td>
+                            <td>3.03</td>
+                            <td>183</td>
+                            <td>60.4</td>
+                            <td>节奏跑</td>
+                            <td class="trend-stable">+0.5</td>
+                        </tr>
+                        <tr>
+                            <td>6/7</td>
+                            <td>5'35"</td>
+                            <td>2.99</td>
+                            <td>182</td>
+                            <td>60.9</td>
+                            <td>长距离</td>
+                            <td class="trend-stable">+0.5</td>
+                        </tr>
+                        <tr>
+                            <td>6/11</td>
+                            <td>5'19"</td>
+                            <td>3.13</td>
+                            <td>189</td>
+                            <td>60.4</td>
+                            <td>阈值跑</td>
+                            <td class="trend-up">-0.5</td>
+                        </tr>
+                        <tr>
+                            <td>6/17</td>
+                            <td>5'33"</td>
+                            <td>3.00</td>
+                            <td>181</td>
+                            <td>60.3</td>
+                            <td>节奏跑</td>
+                            <td class="trend-up">-0.1</td>
+                        </tr>
+                        <tr>
+                            <td>6/19</td>
+                            <td>5'30"</td>
+                            <td>3.03</td>
+                            <td>184</td>
+                            <td>60.7</td>
+                            <td>有氧慢跑</td>
+                            <td class="trend-down">+0.4</td>
+                        </tr>
+                        <tr>
+                            <td>6/21</td>
+                            <td>5'17"</td>
+                            <td>3.15</td>
+                            <td>193</td>
+                            <td>61.3</td>
+                            <td>长距离</td>
+                            <td class="trend-down">+0.6</td>
+                        </tr>
+                        <tr>
+                            <td>6/28</td>
+                            <td>5'14"</td>
+                            <td>3.18</td>
+                            <td>193</td>
+                            <td>60.7</td>
+                            <td>长距离</td>
+                            <td class="trend-up">-0.6</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="insight-box">
+                <h4>经济性趋势分析</h4>
+                <p>跑步经济性在59.9-61.3 W/(m/s)区间波动, 月均60.6。6/28长距离跑在最快配速(5'14")下经济性为60.7, 优于6/21同类训练(61.3), 说明疲劳状态下的能量利用效率有所改善。节奏跑经济性(60.0-60.4)优于长距离(60.7-61.3), 反映疲劳累积对经济性的负面影响。整体趋于稳定, 无明显恶化趋势。</p>
+            </div>
+
+            <div style="margin:1.5rem 0; border-top:1px dashed var(--gray-200);"></div>
+
+            <!-- 2. 步频-步幅关系 -->
+            <h4 style="margin-bottom:0.8rem; font-size:1rem; color:var(--gray-900);">2. 步频-步幅关系 (Cadence vs Stride)</h4>
+            <p style="font-size:0.82rem; color:var(--gray-600); margin-bottom:0.8rem;">步幅(cm) = 速度(cm/s) / 步频(steps/s). 高效跑法趋向高步频+适度步幅组合。</p>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>日期</th>
+                            <th>配速</th>
+                            <th>步频(spm)</th>
+                            <th>步幅(cm)</th>
+                            <th>速度(km/h)</th>
+                            <th>步频贡献</th>
+                            <th>步幅贡献</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background:#dcfce720;">
+                            <td>6/3</td>
+                            <td>5'23"</td>
+                            <td>179</td>
+                            <td>104</td>
+                            <td>11.1</td>
+                            <td>48%</td>
+                            <td>52%</td>
+                        </tr>
+                        <tr>
+                            <td>6/5</td>
+                            <td>5'30"</td>
+                            <td>189</td>
+                            <td>96</td>
+                            <td>10.9</td>
+                            <td>53%</td>
+                            <td>47%</td>
+                        </tr>
+                        <tr>
+                            <td>6/7</td>
+                            <td>5'35"</td>
+                            <td>192</td>
+                            <td>93</td>
+                            <td>10.7</td>
+                            <td>55%</td>
+                            <td>45%</td>
+                        </tr>
+                        <tr>
+                            <td>6/9</td>
+                            <td>5'54"</td>
+                            <td>184</td>
+                            <td>93</td>
+                            <td>10.2</td>
+                            <td>53%</td>
+                            <td>47%</td>
+                        </tr>
+                        <tr>
+                            <td>6/11</td>
+                            <td>5'19"</td>
+                            <td>191</td>
+                            <td>98</td>
+                            <td>11.3</td>
+                            <td>53%</td>
+                            <td>47%</td>
+                        </tr>
+                        <tr>
+                            <td>6/13</td>
+                            <td>5'54"</td>
+                            <td>187</td>
+                            <td>91</td>
+                            <td>10.2</td>
+                            <td>54%</td>
+                            <td>46%</td>
+                        </tr>
+                        <tr>
+                            <td>6/16</td>
+                            <td>5'43"</td>
+                            <td>186</td>
+                            <td>94</td>
+                            <td>10.5</td>
+                            <td>53%</td>
+                            <td>47%</td>
+                        </tr>
+                        <tr>
+                            <td>6/17</td>
+                            <td>5'33"</td>
+                            <td>186</td>
+                            <td>96</td>
+                            <td>10.8</td>
+                            <td>52%</td>
+                            <td>48%</td>
+                        </tr>
+                        <tr>
+                            <td>6/19</td>
+                            <td>5'30"</td>
+                            <td>195</td>
+                            <td>93</td>
+                            <td>10.9</td>
+                            <td>56%</td>
+                            <td>44%</td>
+                        </tr>
+                        <tr>
+                            <td>6/21</td>
+                            <td>5'17"</td>
+                            <td>195</td>
+                            <td>97</td>
+                            <td>11.4</td>
+                            <td>54%</td>
+                            <td>46%</td>
+                        </tr>
+                        <tr style="background:#fef3c720;">
+                            <td>6/28</td>
+                            <td>5'14"</td>
+                            <td>200</td>
+                            <td>94</td>
+                            <td>11.5</td>
+                            <td>55%</td>
+                            <td>45%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="insight-box">
+                <h4>步频-步幅模式</h4>
+                <p><strong>两种提速策略并存:</strong> 6/3通过大步幅(104cm)配合低步频(179spm)实现5'23"配速; 而6/28则通过高步频(200spm)+适度步幅(94cm)达到更快的5'14"。后者模式更经济、伤病风险更低。月内步频均值从184提升至195+, 说明跑姿正向更高效率的"高频小步"模式演变。建议继续保持190+步频, 避免单纯依赖步幅提速。</p>
+            </div>
+
+            <div style="margin:1.5rem 0; border-top:1px dashed var(--gray-200);"></div>
+
+            <!-- 3. 心率漂移分析 -->
+            <h4 style="margin-bottom:0.8rem; font-size:1rem; color:var(--gray-900);">3. 心率漂移分析 (Cardiac Drift)</h4>
+            <p style="font-size:0.82rem; color:var(--gray-600); margin-bottom:0.8rem;">长时间匀速跑中, 心率逐渐上升的现象称为心率漂移。漂移率 = (后半段HR - 前半段HR) / 前半段HR x 100%。漂移>5%提示脱水或有氧基础不足。</p>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>日期</th>
+                            <th>距离</th>
+                            <th>前半HR</th>
+                            <th>后半HR</th>
+                            <th>漂移率</th>
+                            <th>前半配速</th>
+                            <th>后半配速</th>
+                            <th>配速变化</th>
+                            <th>评估</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>6/7</td>
+                            <td>15.34km</td>
+                            <td>148</td>
+                            <td>156</td>
+                            <td>+5.4%</td>
+                            <td>5'38"</td>
+                            <td>5'32"</td>
+                            <td>-6"</td>
+                            <td><span class="pace-badge pace-warning" style="background:#fef3c7; color:#92400e;">轻度漂移</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/19</td>
+                            <td>13.24km</td>
+                            <td>145</td>
+                            <td>153</td>
+                            <td>+5.5%</td>
+                            <td>5'33"</td>
+                            <td>5'27"</td>
+                            <td>-6"</td>
+                            <td><span class="pace-badge pace-warning" style="background:#fef3c7; color:#92400e;">轻度漂移</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/21</td>
+                            <td>15.29km</td>
+                            <td>153</td>
+                            <td>163</td>
+                            <td>+6.5%</td>
+                            <td>5'22"</td>
+                            <td>5'12"</td>
+                            <td>-10"</td>
+                            <td><span class="pace-badge pace-threshold" style="background:#fee2e2; color:#991b1b;">中度漂移</span></td>
+                        </tr>
+                        <tr style="background:#dcfce720;">
+                            <td>6/28</td>
+                            <td>17.87km</td>
+                            <td>155</td>
+                            <td>163</td>
+                            <td>+5.2%</td>
+                            <td>5'21"</td>
+                            <td>5'08"</td>
+                            <td>-13"</td>
+                            <td><span class="pace-badge pace-easy" style="background:#dcfce7; color:#166534;">可控漂移</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="insight-box">
+                <h4>心率漂移评估</h4>
+                <p><strong>6/28是最优表现:</strong> 尽管距离最长(17.87km), 心率漂移率仅5.2%, 低于6/21的6.5%。更关键的是, 后半段在心率仅升8bpm的情况下配速加快13", 说明是主动提速而非被动漂移。这表明有氧基础扎实, 体温调节与液体平衡良好。6/21漂移最高(6.5%), 可能与当天睡眠偏短(5h56m)或温度较高有关。总体漂移控制在5-6.5%区间, 属于有氧耐力跑者的正常范围。</p>
+            </div>
+
+            <div style="margin:1.5rem 0; border-top:1px dashed var(--gray-200);"></div>
+
+            <!-- 4. 功率-配速效率 -->
+            <h4 style="margin-bottom:0.8rem; font-size:1rem; color:var(--gray-900);">4. 功率-配速效率 (W per km/h)</h4>
+            <p style="font-size:0.82rem; color:var(--gray-600); margin-bottom:0.8rem;">每单位速度所需功率, 反映不同跑步类型下的能量转换效率。数值越低, 效率越高。</p>
+            <div class="bar-chart" style="height:160px; align-items:flex-end; padding-bottom:2rem;">
+                <div class="bar" style="height:88%; background:linear-gradient(to top, #22c55e, #4ade80); min-width:60px;">
+                    <span class="bar-value" style="font-size:0.75rem;">16.7</span><span class="bar-label">恢复跑<br><span style="font-size:0.6rem;">6/9</span></span>
+                </div>
+                <div class="bar" style="height:83%; background:linear-gradient(to top, #22c55e, #86efac); min-width:60px;">
+                    <span class="bar-value" style="font-size:0.75rem;">16.6</span><span class="bar-label">轻松跑<br><span style="font-size:0.6rem;">6/13</span></span>
+                </div>
+                <div class="bar" style="height:92%; background:linear-gradient(to top, #f59e0b, #fbbf24); min-width:60px;">
+                    <span class="bar-value" style="font-size:0.75rem;">16.8</span><span class="bar-label">节奏跑<br><span style="font-size:0.6rem;">6/5</span></span>
+                </div>
+                <div class="bar" style="height:95%; background:linear-gradient(to top, #f59e0b, #fcd34d); min-width:60px;">
+                    <span class="bar-value" style="font-size:0.75rem;">16.9</span><span class="bar-label">长距离<br><span style="font-size:0.6rem;">6/7</span></span>
+                </div>
+                <div class="bar" style="height:100%; background:linear-gradient(to top, #ef4444, #f87171); min-width:60px;">
+                    <span class="bar-value" style="font-size:0.75rem;">17.0</span><span class="bar-label">长距离<br><span style="font-size:0.6rem;">6/21</span></span>
+                </div>
+                <div class="bar" style="height:89%; background:linear-gradient(to top, #3b82f6, #60a5fa); min-width:60px;">
+                    <span class="bar-value" style="font-size:0.75rem;">16.7</span><span class="bar-label">阈值跑<br><span style="font-size:0.6rem;">6/11</span></span>
+                </div>
+                <div class="bar" style="height:90%; background:linear-gradient(to top, #3b82f6, #93c5fd); min-width:60px;">
+                    <span class="bar-value" style="font-size:0.75rem;">16.8</span><span class="bar-label">长距离<br><span style="font-size:0.6rem;">6/28</span></span>
+                </div>
+            </div>
+            <div class="insight-box">
+                <h4>功率效率分析</h4>
+                <p>功率效率在16.6-17.0 W/(km/h)间波动, 差异仅2.4%。恢复跑和轻松跑效率最优(16.6-16.7), 长距离因疲劳累积效率下降(16.9-17.0)。6/28长距离虽然距离最长, 效率16.8优于6/21(17.0), 印证了负分段策略的优势 -- 前半程储备体力, 后半程高效加速。阈值跑(6/11)效率16.7, 接近轻松跑水平, 说明阈值强度下的跑步经济性良好。</p>
+            </div>
+
+            <div style="margin:1.5rem 0; border-top:1px dashed var(--gray-200);"></div>
+
+            <!-- 5. 触地时间趋势 -->
+            <h4 style="margin-bottom:0.8rem; font-size:1rem; color:var(--gray-900);">5. 触地时间与疲劳相关性</h4>
+            <p style="font-size:0.82rem; color:var(--gray-600); margin-bottom:0.8rem;">触地时间(GCT)是跑步效率的关键指标。精英跑者GCT通常<220ms。GCT随疲劳增加而延长, 反映肌肉弹性下降。</p>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>日期</th>
+                            <th>距离</th>
+                            <th>配速</th>
+                            <th>步频</th>
+                            <th>估算GCT(ms)</th>
+                            <th>周累计(km)</th>
+                            <th>疲劳指数</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>6/3</td>
+                            <td>10.06km</td>
+                            <td>5'23"</td>
+                            <td>179</td>
+                            <td>248</td>
+                            <td>10.1</td>
+                            <td><span style="color:var(--success);">低</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/5</td>
+                            <td>8.64km</td>
+                            <td>5'30"</td>
+                            <td>189</td>
+                            <td>235</td>
+                            <td>18.7</td>
+                            <td><span style="color:var(--success);">低</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/7</td>
+                            <td>15.34km</td>
+                            <td>5'35"</td>
+                            <td>192</td>
+                            <td>232</td>
+                            <td>34.0</td>
+                            <td><span style="color:var(--warning);">中</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/9</td>
+                            <td>6.28km</td>
+                            <td>5'54"</td>
+                            <td>184</td>
+                            <td>243</td>
+                            <td>40.3</td>
+                            <td><span style="color:var(--warning);">中</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/11</td>
+                            <td>11.00km</td>
+                            <td>5'19"</td>
+                            <td>191</td>
+                            <td>234</td>
+                            <td>17.3</td>
+                            <td><span style="color:var(--success);">低</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/19</td>
+                            <td>13.24km</td>
+                            <td>5'30"</td>
+                            <td>195</td>
+                            <td>228</td>
+                            <td>22.9</td>
+                            <td><span style="color:var(--success);">低</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/21</td>
+                            <td>15.29km</td>
+                            <td>5'17"</td>
+                            <td>195</td>
+                            <td>227</td>
+                            <td>38.2</td>
+                            <td><span style="color:var(--warning);">中</span></td>
+                        </tr>
+                        <tr>
+                            <td>6/28</td>
+                            <td>17.87km</td>
+                            <td>5'14"</td>
+                            <td>200</td>
+                            <td>222</td>
+                            <td>38.6</td>
+                            <td><span style="color:var(--warning);">中</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="insight-box">
+                <h4>触地时间趋势</h4>
+                <p><strong>GCT持续改善:</strong> 月初248ms逐步降至222ms(-10.5%), 接近精英水平(220ms)。这与步频从179→200spm的提升高度相关(r=-0.92)。6/3的低步频(179)导致GCT偏高(248ms), 而6/28高步频(200)下GCT仅222ms。<br>
+                <strong>疲劳耐受力提升:</strong> 6/7在周累计34km时GCT为232ms, 而6/28在更高周累计(38.6km)下GCT仅222ms, 说明抗疲劳能力显著增强。建议保持高步频策略(195+spm), 进一步将GCT压至220ms以下。</p>
+            </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- 睡眠分析 -->
+        <div class="card">
+            <div class="card-title"><span class="icon">🌙</span> 睡眠质量综合分析</div>
+            <div class="stats-grid">
+                <div class="stat-item highlight">
+                    <div class="value">6h52m</div>
+                    <div class="label">平均总睡眠</div>
+                </div>
+                <div class="stat-item" style="background:#1e3a5f20;">
+                    <div class="value" style="color:#1e3a5f;">1h26m</div>
+                    <div class="label">平均深睡</div>
+                </div>
+                <div class="stat-item purple">
+                    <div class="value">1h23m</div>
+                    <div class="label">平均REM</div>
+                </div>
+                <div class="stat-item success">
+                    <div class="value">50</div>
+                    <div class="label">平均睡眠心率</div>
+                </div>
+                <div class="stat-item warning">
+                    <div class="value">42</div>
+                    <div class="label">最低心率</div>
+                </div>
+                <div class="stat-item">
+                    <div class="value">23:22</div>
+                    <div class="label">平均入睡时间</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 近7天睡眠详情 -->
+        <div class="card">
+            <div class="card-title"><span class="icon">📊</span> 近7天睡眠阶段分布</div>
+
+            <div style="margin-bottom:1rem;">
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--gray-600); margin-bottom:0.3rem;">
+                    <span>6/29 (7h07m)</span>
+                    <span>22:57 - 06:14</span>
+                </div>
+                <div class="sleep-phases">
+                    <div class="phase phase-deep" style="width:23%">深98m</div>
+                    <div class="phase phase-light" style="width:43%">浅184m</div>
+                    <div class="phase phase-rem" style="width:34%">REM145m</div>
+                </div>
+            </div>
+
+            <div style="margin-bottom:1rem;">
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--gray-600); margin-bottom:0.3rem;">
+                    <span>6/28 (6h39m)</span>
+                    <span>23:00 - 05:51</span>
+                </div>
+                <div class="sleep-phases">
+                    <div class="phase phase-deep" style="width:21%">深84m</div>
+                    <div class="phase phase-light" style="width:55%">浅221m</div>
+                    <div class="phase phase-rem" style="width:24%">REM94m</div>
+                </div>
+            </div>
+
+            <div style="margin-bottom:1rem;">
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--gray-600); margin-bottom:0.3rem;">
+                    <span>6/27 (7h10m)</span>
+                    <span>22:59 - 06:53</span>
+                </div>
+                <div class="sleep-phases">
+                    <div class="phase phase-deep" style="width:17%">深72m</div>
+                    <div class="phase phase-light" style="width:67%">浅287m</div>
+                    <div class="phase phase-rem" style="width:16%">REM71m</div>
+                </div>
+            </div>
+
+            <div style="margin-bottom:1rem;">
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--gray-600); margin-bottom:0.3rem;">
+                    <span>6/26 (5h51m)</span>
+                    <span>23:51 - 06:00</span>
+                </div>
+                <div class="sleep-phases">
+                    <div class="phase phase-deep" style="width:21%">深75m</div>
+                    <div class="phase phase-light" style="width:57%">浅200m</div>
+                    <div class="phase phase-rem" style="width:22%">REM76m</div>
+                </div>
+            </div>
+
+            <div style="margin-bottom:1rem;">
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--gray-600); margin-bottom:0.3rem;">
+                    <span>6/25 (6h15m)</span>
+                    <span>23:17 - 02:47*</span>
+                </div>
+                <div class="sleep-phases">
+                    <div class="phase phase-deep" style="width:19%">深71m</div>
+                    <div class="phase phase-light" style="width:77%">浅288m</div>
+                    <div class="phase phase-rem" style="width:4%">REM16m</div>
+                </div>
+            </div>
+
+            <div style="margin-bottom:1rem;">
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--gray-600); margin-bottom:0.3rem;">
+                    <span>6/24 (6h32m)</span>
+                    <span>23:03 - 06:04</span>
+                </div>
+                <div class="sleep-phases">
+                    <div class="phase phase-deep" style="width:23%">深89m</div>
+                    <div class="phase phase-light" style="width:56%">浅219m</div>
+                    <div class="phase phase-rem" style="width:21%">REM84m</div>
+                </div>
+            </div>
+
+            <div style="margin-bottom:1rem;">
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--gray-600); margin-bottom:0.3rem;">
+                    <span>6/23 (6h01m)</span>
+                    <span>23:54 - 06:03</span>
+                </div>
+                <div class="sleep-phases">
+                    <div class="phase phase-deep" style="width:27%">深97m</div>
+                    <div class="phase phase-light" style="width:46%">浅168m</div>
+                    <div class="phase phase-rem" style="width:27%">REM96m</div>
+                </div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot" style="background:#1e3a5f;"></div>深睡</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#60a5fa;"></div>浅睡</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#a78bfa;"></div>REM</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#fbbf24;"></div>清醒</div>
+            </div>
+
+            <div class="insight-box">
+                <h4>睡眠洞察</h4>
+                <p>6/29晚REM达145分钟 (34%), 显著高于平均水平, 可能与前一天高强度训练后的神经恢复需求相关。深睡比例在训练日后通常较高(平均22%), 表明身体修复机制运作良好。注意6/25 REM仅16分钟且记录异常(结束于02:47), 可能存在佩戴中断。整体睡眠时长偏短, 建议争取7小时+以优化恢复。</p>
+            </div>
+        </div>
+
+        <!-- HRV分析 -->
+        <div class="card">
+            <div class="card-title"><span class="icon">💓</span> HRV与恢复趋势</div>
+            <div class="stats-grid" style="margin-bottom:1rem;">
+                <div class="stat-item">
+                    <div class="value">64</div>
+                    <div class="label">HRV基线 (ms)</div>
+                </div>
+                <div class="stat-item success">
+                    <div class="value">76</div>
+                    <div class="label">月内最高HRV</div>
+                </div>
+                <div class="stat-item warning">
+                    <div class="value">50</div>
+                    <div class="label">月内最低HRV</div>
+                </div>
+                <div class="stat-item purple">
+                    <div class="value">63.4</div>
+                    <div class="label">月平均HRV</div>
+                </div>
+            </div>
+
+            <h4 style="margin-bottom:0.5rem; font-size:0.9rem;">6月HRV每日热力图 (绿色=高于基线, 红色=低于基线)</h4>
+            <div class="hrv-timeline">
+                <div class="hrv-dot" style="background:#22c55e;" title="6/1: 69">69</div>
+                <div class="hrv-dot" style="background:#22c55e;" title="6/2: 71">71</div>
+                <div class="hrv-dot" style="background:#9ca3af;" title="6/3: —">—</div>
+                <div class="hrv-dot" style="background:#ef4444;" title="6/4: 61">61</div>
+                <div class="hrv-dot" style="background:#f97316;" title="6/5: 63">63</div>
+                <div class="hrv-dot" style="background:#ef4444;" title="6/6: 57">57</div>
+                <div class="hrv-dot" style="background:#9ca3af;" title="6/7: —">—</div>
+                <div class="hrv-dot" style="background:#f97316;" title="6/8: 64">64</div>
+                <div class="hrv-dot" style="background:#f97316;" title="6/9: 60">60</div>
+                <div class="hrv-dot" style="background:#ef4444;" title="6/10: 59">59</div>
+                <div class="hrv-dot" style="background:#22c55e;" title="6/11: 68">68</div>
+                <div class="hrv-dot" style="background:#ef4444;" title="6/12: 54">54</div>
+                <div class="hrv-dot" style="background:#f97316;" title="6/13: 60">60</div>
+                <div class="hrv-dot" style="background:#ef4444;" title="6/14: 50">50</div>
+                <div class="hrv-dot" style="background:#f97316;" title="6/15: 62">62</div>
+                <div class="hrv-dot" style="background:#22c55e;" title="6/16: 71">71</div>
+                <div class="hrv-dot" style="background:#22c55e;" title="6/17: 68">68</div>
+                <div class="hrv-dot" style="background:#f97316;" title="6/18: 61">61</div>
+                <div class="hrv-dot" style="background:#ef4444;" title="6/19: 59">59</div>
+                <div class="hrv-dot" style="background:#22c55e;" title="6/20: 76">76</div>
+                <div class="hrv-dot" style="background:#22c55e;" title="6/21: 71">71</div>
+                <div class="hrv-dot" style="background:#f97316;" title="6/22: 62">62</div>
+                <div class="hrv-dot" style="background:#ef4444;" title="6/23: 59">59</div>
+                <div class="hrv-dot" style="background:#f97316;" title="6/24: 62">62</div>
+                <div class="hrv-dot" style="background:#22c55e;" title="6/25: 66">66</div>
+                <div class="hrv-dot" style="background:#ef4444;" title="6/26: 57">57</div>
+                <div class="hrv-dot" style="background:#f97316;" title="6/27: 64">64</div>
+                <div class="hrv-dot" style="background:#22c55e;" title="6/28: 72">72</div>
+                <div class="hrv-dot" style="background:#22c55e;" title="6/29: 65">65</div>
+            </div>
+
+            <div class="insight-box">
+                <h4>HRV恢复模式</h4>
+                <p>HRV基线从月初67ms下降至当前64ms (-4.5%), 反映持续训练负荷累积。注意到训练日后HRV通常下降(如6/12训练后降至54), 但恢复日后回弹良好(6/20达76为月内最高)。6/28训练前HRV为72(高于基线), 说明身体状态良好, 这也解释了当天出色的训练表现。当前疲劳率26%, 建议保持充分恢复直至HRV回到基线附近。</p>
+            </div>
+        </div>
+
+        <!-- 训练负荷趋势 -->
+        <div class="card">
+            <div class="card-title"><span class="icon">📈</span> 训练负荷与疲劳管理</div>
+            <div class="two-col">
+                <div>
+                    <div class="metric-row">
+                        <span class="metric-label">急性训练负荷 (ATI)</span>
+                        <span class="metric-value trend-up">93 ↑</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">慢性训练负荷 (CTI)</span>
+                        <span class="metric-value">67</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">训练负荷比</span>
+                        <span class="metric-value trend-up">1.38</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">疲劳率</span>
+                        <span class="metric-value trend-up">26%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">体能等级</span>
+                        <span class="metric-value">83.7</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">7日体能</span>
+                        <span class="metric-value">102</span>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="font-size:0.9rem; margin-bottom:0.5rem;">负荷比趋势 (目标: 0.8-1.3)</h4>
+                    <div class="bar-chart" style="height:80px;">
+                        <div class="bar" style="height:41%; background:#22c55e;"><span class="bar-value">0.54</span><span class="bar-label">W1</span></div>
+                        <div class="bar" style="height:70%; background:#22c55e;"><span class="bar-value">0.92</span><span class="bar-label">W2</span></div>
+                        <div class="bar" style="height:100%; background:#f97316;"><span class="bar-value">1.33</span><span class="bar-label">W3</span></div>
+                        <div class="bar" style="height:100%; background:#ef4444;"><span class="bar-value">1.56</span><span class="bar-label">W4</span></div>
+                    </div>
+                    <p style="font-size:0.78rem; color:var(--gray-600); margin-top:1.5rem;">第4周负荷比1.56已超过安全阈值(1.5), 伤病风险显著增加</p>
+                </div>
+            </div>
+
+            <div class="insight-box" style="background:linear-gradient(135deg, #fef2f2, #fee2e2); border-left-color:var(--danger);">
+                <h4 style="color:var(--danger);">⚠️ 过载警告</h4>
+                <p>当前训练负荷比1.56已突破1.5的"危险区"。ATI(93)远高于CTI(67), 疲劳积累明显。虽然体能指标(83.7)和7日体能(102)表明适应性尚可, 但持续过载会增加伤病风险。<strong>建议: 下周减量至负荷比<0.8, 以1-2次轻松恢复跑(6-8km, HR<145)为主, 让身体充分超量恢复。</strong></p>
+            </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- 睡眠与运动关联 -->
+        <div class="card">
+            <div class="card-title"><span class="icon">🔗</span> 睡眠-运动关联分析</div>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>训练日</th>
+                            <th>训练负荷</th>
+                            <th>训练前HRV</th>
+                            <th>训练后睡眠</th>
+                            <th>深睡时长</th>
+                            <th>训练后HRV</th>
+                            <th>HRV变化</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>6/28</td>
+                            <td><strong>294</strong></td>
+                            <td>72</td>
+                            <td>7h07m</td>
+                            <td>98m</td>
+                            <td>65</td>
+                            <td class="trend-down">-7 ↓</td>
+                        </tr>
+                        <tr>
+                            <td>6/26</td>
+                            <td>142</td>
+                            <td>57</td>
+                            <td>7h10m</td>
+                            <td>72m</td>
+                            <td>64</td>
+                            <td class="trend-up">+7 ↑</td>
+                        </tr>
+                        <tr>
+                            <td>6/25</td>
+                            <td>134</td>
+                            <td>66</td>
+                            <td>5h51m</td>
+                            <td>75m</td>
+                            <td>57</td>
+                            <td class="trend-down">-9 ↓</td>
+                        </tr>
+                        <tr>
+                            <td>6/21</td>
+                            <td><strong>248</strong></td>
+                            <td>71</td>
+                            <td>5h56m</td>
+                            <td>68m</td>
+                            <td>62</td>
+                            <td class="trend-down">-9 ↓</td>
+                        </tr>
+                        <tr>
+                            <td>6/19</td>
+                            <td>170</td>
+                            <td>59</td>
+                            <td>7h13m</td>
+                            <td>99m</td>
+                            <td>76</td>
+                            <td class="trend-up">+17 ↑</td>
+                        </tr>
+                        <tr>
+                            <td>6/17</td>
+                            <td>120</td>
+                            <td>68</td>
+                            <td>5h37m</td>
+                            <td>37m</td>
+                            <td>61</td>
+                            <td class="trend-down">-7 ↓</td>
+                        </tr>
+                        <tr>
+                            <td>6/11</td>
+                            <td><strong>224</strong></td>
+                            <td>68</td>
+                            <td>6h49m</td>
+                            <td>70m</td>
+                            <td>54</td>
+                            <td class="trend-down">-14 ↓</td>
+                        </tr>
+                        <tr>
+                            <td>6/7</td>
+                            <td><strong>221</strong></td>
+                            <td>—</td>
+                            <td>7h25m</td>
+                            <td>100m</td>
+                            <td>64</td>
+                            <td>—</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="insight-box">
+                <h4>关键发现</h4>
+                <p><strong>1. 高负荷训练后深睡增加:</strong> 负荷>200的训练后, 深睡平均84分钟(vs 常规日69分钟), 身体自动增加修复时间。<br>
+                <strong>2. HRV是状态预测器:</strong> 训练前HRV高于基线时(6/28: 72, 6/21: 71), 训练表现明显更好(负荷294, 248)。<br>
+                <strong>3. 睡眠时长影响恢复:</strong> 睡眠>7h时, 次日HRV回弹显著(6/19: +17); 睡眠<6h时恢复受阻(6/25: -9)。<br>
+                <strong>4. REM补偿效应:</strong> 6/28高负荷后次晚REM达145分钟(34%), 远超平均1h23m, 反映神经系统在进行深度修复。</p>
+            </div>
+        </div>
+
+        <!-- 静息心率趋势 -->
+        <div class="two-col">
+            <div class="card">
+                <div class="card-title"><span class="icon">💤</span> 静息心率趋势</div>
+                <div class="bar-chart" style="height:80px;">
+                    <div class="bar" style="height:40%; background:#22c55e;"><span class="bar-value">47</span><span class="bar-label">W1</span></div>
+                    <div class="bar" style="height:55%; background:#4ade80;"><span class="bar-value">49</span><span class="bar-label">W2</span></div>
+                    <div class="bar" style="height:50%; background:#4ade80;"><span class="bar-value">47</span><span class="bar-label">W3</span></div>
+                    <div class="bar" style="height:55%; background:#fbbf24;"><span class="bar-value">48</span><span class="bar-label">W4</span></div>
+                </div>
+                <p style="font-size:0.82rem; color:var(--gray-600); margin-top:1.5rem;">静息心率保持稳定(43-51bpm), 未见明显上升趋势, 表明尽管训练负荷高, 身体尚未出现过度训练的心血管信号。</p>
+            </div>
+            <div class="card">
+                <div class="card-title"><span class="icon">🏋️</span> 训练强度分布</div>
+                <div style="text-align:center; padding:1rem 0;">
+                    <div style="display:inline-block; margin:0 1rem; text-align:center;">
+                        <div style="width:70px; height:70px; border-radius:50%; background:conic-gradient(#22c55e 0% 44%, #fbbf24 44% 75%, #ef4444 75% 100%); display:flex; align-items:center; justify-content:center; margin:0 auto;">
+                            <div style="width:50px; height:50px; border-radius:50%; background:white; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:700;">16次</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="legend" style="justify-content:center;">
+                    <div class="legend-item"><div class="legend-dot" style="background:#22c55e;"></div>轻松/恢复 44%</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#fbbf24;"></div>节奏/中等 31%</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#ef4444;"></div>高强度 25%</div>
+                </div>
+                <p style="font-size:0.82rem; color:var(--gray-600); margin-top:0.8rem; text-align:center;">符合80/20法则趋势, 低强度占比可再提高至60%+</p>
+            </div>
+        </div>
+
+        <!-- 综合建议 -->
+        <div class="card" style="background:linear-gradient(135deg, #f0fdf4, #dcfce7);">
+            <div class="card-title"><span class="icon">💡</span> 综合评估与建议</div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+                <div>
+                    <h4 style="color:var(--success); margin-bottom:0.8rem;">✅ 积极信号</h4>
+                    <ul style="font-size:0.88rem; line-height:2; padding-left:1.2rem; color:var(--gray-700);">
+                        <li>VO2max稳定在56, 保持Top 5%水平</li>
+                        <li>乳酸阈心率168bpm/功率277W, 持续提升</li>
+                        <li>体能等级83.7, 7日体能102 (超量恢复中)</li>
+                        <li>静息心率稳定, 未见过度训练信号</li>
+                        <li>6/28创造月度最佳长距离表现</li>
+                        <li>训练后深睡补偿机制运作良好</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color:var(--danger); margin-bottom:0.8rem;">⚠️ 需要关注</h4>
+                    <ul style="font-size:0.88rem; line-height:2; padding-left:1.2rem; color:var(--gray-700);">
+                        <li>训练负荷比1.56, 已进入伤病高风险区</li>
+                        <li>HRV基线下降4.5% (67→64)</li>
+                        <li>当前疲劳率26%, 累积效应需释放</li>
+                        <li>平均睡眠6h52m, 低于最优恢复阈值7h+</li>
+                        <li>部分晚间入睡晚于0:00, 影响深睡质量</li>
+                        <li>月内训练强度分布偏高(高强度25%)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="margin-top:1.5rem; padding:1.2rem; background:white; border-radius:12px;">
+                <h4 style="margin-bottom:0.8rem;">📅 本周训练计划 (6/30 - 7/6)</h4>
+                <table style="font-size:0.85rem;">
+                    <tr><td style="width:80px; font-weight:600;">轻松跑 ×1</td><td>10-12km @ 6'00"/km, 有氧恢复</td></tr>
+                    <tr><td style="font-weight:600;">轻松跑 ×1</td><td>10-12km @ 6'00"/km, 有氧恢复</td></tr>
+                    <tr><td style="font-weight:600;">有氧跑 ×1</td><td>10-12km @ 5'45"/km, 稳态有氧</td></tr>
+                    <tr><td style="font-weight:600;">周日长距离</td><td>16km: 前13km @ 5'40"/km + 最后3km @ 5'05"/km</td></tr>
+                </table>
+                <p style="font-size:0.82rem; color:var(--gray-600); margin-top:0.8rem;"><strong>预估周总量:</strong> 48-52km | 长距离尾段加速(5'05")属于乳酸阈强度, 模拟比赛后程发力。注意训练间安排充分休息日, 建议23:00前入睡争取7h+睡眠以促进恢复。</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>数据来源: COROS PACE Pro | 生成时间: 2026年6月29日</p>
+            <p style="margin-top:0.3rem;">本报告基于可穿戴设备数据生成, 仅供参考, 不构成医疗建议</p>
+        </div>
+    </div>
+</body>
+</html>

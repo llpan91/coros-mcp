@@ -4,6 +4,10 @@ COROS (高驰) 手表数据 MCP Server —— 让 Claude 直接读取和分析�
 
 Fork 自 [cygnusb/coros-mcp](https://github.com/cygnusb/coros-mcp)，新增了睡眠时间戳解析等功能。
 
+## 训练目标
+
+项目的阶段性比赛与能力目标统一维护在 [GOALS.md](GOALS.md)。训练分析、课表和报告应以该文件为目标基线。
+
 ## 能做什么
 
 在 Claude Code 中直接用自然语言提问：

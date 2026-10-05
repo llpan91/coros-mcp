@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>运动数据深度分析报告 · 2026-09-17</title>
+<style>
+:root{
+  --bg:#0d1117;--panel:#161b22;--panel2:#1c232d;--border:#2b333d;
+  --ink:#e6edf3;--muted:#9aa7b4;--accent:#3fb950;--accent2:#58a6ff;
+  --warn:#d29922;--danger:#f85149;--purple:#bc8cff;
+  --z1:#519aba;--z2:#3fb950;--z3:#d29922;--z4:#f0883e;--z5:#f85149;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;line-height:1.6;padding:0}
+.wrap{max-width:1140px;margin:0 auto;padding:32px 20px 80px}
+header.hero{background:linear-gradient(135deg,#132a1c 0%,#0d1117 60%);border:1px solid var(--border);border-radius:16px;padding:36px 32px;margin-bottom:28px}
+.hero h1{font-size:30px;font-weight:800;letter-spacing:.5px}
+.hero .sub{color:var(--muted);margin-top:8px;font-size:15px}
+.hero .badges{margin-top:18px;display:flex;flex-wrap:wrap;gap:10px}
+.badge{background:var(--panel2);border:1px solid var(--border);border-radius:999px;padding:5px 14px;font-size:13px;color:var(--muted)}
+.badge b{color:var(--accent)}
+h2{font-size:21px;margin:38px 0 16px;padding-bottom:10px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px}
+h2 .n{background:var(--accent);color:#04210f;font-size:14px;width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-weight:800}
+h3{font-size:16px;margin:22px 0 10px;color:var(--accent2)}
+p{margin:10px 0;color:#d7e0e8}
+.grid{display:grid;gap:16px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+@media(max-width:820px){.g4,.g3,.g2{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.g4,.g3,.g2{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px}
+.kpi{text-align:center}
+.kpi .v{font-size:28px;font-weight:800;color:var(--accent)}
+.kpi .l{font-size:12px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+.kpi .d{font-size:12px;margin-top:6px}
+.up{color:var(--accent)}.down{color:var(--danger)}.flat{color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--border)}
+th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.4px;position:sticky;top:0;background:var(--panel)}
+td:first-child,th:first-child{text-align:left}
+tbody tr:hover{background:var(--panel2)}
+.tbl-wrap{overflow-x:auto;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:6px 14px}
+.hl{color:var(--accent);font-weight:700}
+.hl2{color:var(--accent2);font-weight:700}
+.warnc{color:var(--warn)}
+.callout{border-left:4px solid var(--accent);background:var(--panel2);padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0}
+.callout.warn{border-color:var(--warn)}
+.callout.blue{border-color:var(--accent2)}
+.callout.danger{border-color:var(--danger)}
+.bar{height:22px;border-radius:5px;display:flex;overflow:hidden;background:#0a0e13;font-size:10px}
+.bar span{display:flex;align-items:center;justify-content:center;color:#04210f;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:8px 0}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:middle}
+.spark{display:flex;align-items:flex-end;gap:3px;height:60px;margin-top:8px}
+.spark div{flex:1;background:linear-gradient(180deg,var(--accent2),#1f6feb);border-radius:2px 2px 0 0;min-height:3px;position:relative}
+.chart{display:flex;align-items:flex-end;gap:6px;height:180px;padding:10px 0;border-bottom:1px solid var(--border)}
+.chart .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:2px}
+.chart .col .b{width:70%;background:linear-gradient(180deg,var(--accent),#238636);border-radius:3px 3px 0 0}
+.chart .col .lab{font-size:9px;color:var(--muted);margin-top:4px;transform:rotate(-45deg);white-space:nowrap}
+.xlabels{display:flex;gap:6px;margin-top:2px}
+.xlabels .x{flex:1;text-align:center;font-size:9px;color:var(--muted)}
+.tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700}
+.tag.q{background:#3d2f0a;color:var(--warn)}
+.tag.e{background:#0f2f1a;color:var(--accent)}
+.tag.long{background:#1a2740;color:var(--accent2)}
+.tag.race{background:#3a1620;color:var(--danger)}
+footer{margin-top:50px;padding-top:20px;border-top:1px solid var(--border);color:var(--muted);font-size:12px;text-align:center}
+.progress{background:#0a0e13;border-radius:999px;height:12px;overflow:hidden;margin:6px 0}
+.progress > div{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),#238636)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.two{grid-template-columns:1fr}}
+small.note{color:var(--muted);font-size:11px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>🏃 运动数据深度分析报告</h1>
+  <div class="sub">分析区间：2026-06-01 → 2026-09-17（16 周 · 63 次活动 · 全部为跑步）｜时区 Asia/Shanghai｜数据源：COROS 本地缓存（活动详情 workoutTime 口径）</div>
+  <div class="badges">
+    <span class="badge">总里程 <b>707.5 km</b></span>
+    <span class="badge">移动时间 <b>65.3 h</b></span>
+    <span class="badge">VO₂max <b>56 → 57</b></span>
+    <span class="badge">CTI 体能 <b>51.9 → 99.2</b></span>
+    <span class="badge">半马目标 <b>1:43 · 剩 44 天</b></span>
+  </div>
+</header>
+
+<div class="callout blue">
+  <b>核心结论（一句话）：</b>你正处在整个夏训周期的<b class="hl">巅峰上升期</b>。9/13 的奥森「K马」以 <b class="hl">21.16 km / 4:38 配速 / 1:38:23（移动时间）</b> 完成，按官方半马距离折算约 <b class="hl">1:38:05</b> —— 已经<b class="hl">大幅快于 10-31 的 1:43 目标</b>（配速快 15 秒/km，时间富余约 5 分钟）。当前风险不在能力不足，而在于近 4 周负荷爬升过快（training_load_ratio 持续 1.2–1.3），需要在赛前做好减量与恢复管理。
+</div>
+
+<!-- ===================== 1. 总览 KPI ===================== -->
+<h2><span class="n">1</span>总览 · 关键指标</h2>
+<div class="grid g4">
+  <div class="card kpi"><div class="v">707.5</div><div class="l">总里程 (km)</div><div class="d up">16 周 · 均 44.2 km/周</div></div>
+  <div class="card kpi"><div class="v">63</div><div class="l">跑步次数</div><div class="d flat">含 3 次室内跑</div></div>
+  <div class="card kpi"><div class="v">57</div><div class="l">VO₂max</div><div class="d up">▲ 8 月底由 56 提升</div></div>
+  <div class="card kpi"><div class="v">45–49</div><div class="l">静息心率 RHR</div><div class="d up">低位稳定 · 心肺良好</div></div>
+  <div class="card kpi"><div class="v">4:39</div><div class="l">正式半马配速</div><div class="d up">9/13 · 21.16 km</div></div>
+  <div class="card kpi"><div class="v">99.2</div><div class="l">CTI 体能指数</div><div class="d up">▲ 从 6 月的 52</div></div>
+  <div class="card kpi"><div class="v">63–72</div><div class="l">睡眠 HRV (ms)</div><div class="d flat">平稳 · 无过载信号</div></div>
+  <div class="card kpi"><div class="v">6.9 h</div><div class="l">平均睡眠时长</div><div class="d warnc">略偏短 · 建议 7.5h+</div></div>
+</div>
+
+<!-- ===================== 2. 月度趋势 ===================== -->
+<h2><span class="n">2</span>训练量趋势 · 月度与周度</h2>
+<div class="two">
+  <div class="card">
+    <h3 style="margin-top:0">月度里程 (km)</h3>
+    <div class="chart">
+      <div class="col"><div class="b" style="height:76%"></div><div class="lab">6月</div></div>
+      <div class="col"><div class="b" style="height:81%"></div><div class="lab">7月</div></div>
+      <div class="col"><div class="b" style="height:100%"></div><div class="lab">8月</div></div>
+      <div class="col"><div class="b" style="height:63%"></div><div class="lab">9月*</div></div>
+    </div>
+    <table>
+      <thead><tr><th>月</th><th>次</th><th>里程</th><th>移动时长</th><th>负荷TL</th><th>均配速</th></tr></thead>
+      <tbody>
+        <tr><td>6 月</td><td>16</td><td>167.2</td><td>15:40</td><td>2368</td><td>5:37</td></tr>
+        <tr><td>7 月</td><td>16</td><td>179.6</td><td>17:10</td><td>2461</td><td>5:44</td></tr>
+        <tr><td>8 月</td><td>20</td><td class="hl">220.7</td><td>20:28</td><td class="hl">3241</td><td>5:33</td></tr>
+        <tr><td>9 月*</td><td>11</td><td>140.0</td><td>12:02</td><td>2012</td><td class="hl">5:09</td></tr>
+      </tbody>
+    </table>
+    <small class="note">* 9 月为不完整月（截至 9-17）。9 月均配速 5:09 为四个月最快，说明强度显著上移。</small>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">周里程（Mon–Sun，km）</h3>
+    <div class="chart">
+      <div class="col"><div class="b" style="height:46%"></div><div class="lab">6/1</div></div>
+      <div class="col"><div class="b" style="height:48%"></div><div class="lab">6/8</div></div>
+      <div class="col"><div class="b" style="height:66%"></div><div class="lab">6/15</div></div>
+      <div class="col"><div class="b" style="height:68%"></div><div class="lab">6/22</div></div>
+      <div class="col"><div class="b" style="height:49%"></div><div class="lab">6/29</div></div>
+      <div class="col"><div class="b" style="height:42%"></div><div class="lab">7/6</div></div>
+      <div class="col"><div class="b" style="height:69%"></div><div class="lab">7/13</div></div>
+      <div class="col"><div class="b" style="height:51%"></div><div class="lab">7/20</div></div>
+      <div class="col"><div class="b" style="height:56%"></div><div class="lab">7/27</div></div>
+      <div class="col"><div class="b" style="height:81%"></div><div class="lab">8/3</div></div>
+      <div class="col"><div class="b" style="height:54%"></div><div class="lab">8/10</div></div>
+      <div class="col"><div class="b" style="height:41%"></div><div class="lab">8/17</div></div>
+      <div class="col"><div class="b" style="height:95%"></div><div class="lab">8/24</div></div>
+      <div class="col"><div class="b" style="height:63%"></div><div class="lab">8/31</div></div>
+      <div class="col"><div class="b" style="height:100%"></div><div class="lab">9/7</div></div>
+      <div class="col"><div class="b" style="height:34%;background:linear-gradient(180deg,#d29922,#a06f14)"></div><div class="lab">9/14*</div></div>
+    </div>
+    <small class="note">峰值周 9/7（73.4 km）与 8/24（69.7 km）。橙色 9/14 为进行中的不完整周（截至 9-17，仅 24.9 km）。</small>
+  </div>
+</div>
+
+<div class="tbl-wrap" style="margin-top:16px">
+<table>
+  <thead><tr><th>周(周一)</th><th>次数</th><th>里程 km</th><th>移动时长</th><th>负荷 TL</th><th>均配速</th><th>加权心率</th><th>最长 km</th><th>爬升 m</th><th>质量课</th><th>Z4-5 %</th></tr></thead>
+  <tbody>
+    <tr><td>06-01</td><td>3</td><td>34.0</td><td>3:09</td><td>500</td><td>5:34</td><td>153</td><td>15.3</td><td>50</td><td>0</td><td>2.2</td></tr>
+    <tr><td>06-08</td><td>5</td><td>35.2</td><td>3:22</td><td>500</td><td>5:45</td><td>150</td><td>11.6</td><td>22</td><td>1</td><td>5.3</td></tr>
+    <tr><td>06-15</td><td>4</td><td>48.3</td><td>4:27</td><td>687</td><td>5:31</td><td>154</td><td>15.3</td><td>98</td><td>1</td><td>2.2</td></tr>
+    <tr><td>06-22</td><td>4</td><td>49.7</td><td>4:42</td><td>681</td><td>5:41</td><td>151</td><td>17.9</td><td>32</td><td>1</td><td>0.0</td></tr>
+    <tr><td>06-29</td><td>3</td><td>36.1</td><td>3:23</td><td>496</td><td>5:38</td><td>151</td><td>16.4</td><td>44</td><td>1</td><td>3.8</td></tr>
+    <tr><td>07-06</td><td>3</td><td>30.7</td><td>3:05</td><td>354</td><td>6:01</td><td>144</td><td>10.7</td><td>25</td><td>0</td><td>0.0</td></tr>
+    <tr><td>07-13</td><td>5</td><td>50.9</td><td>4:40</td><td>707</td><td>5:30</td><td>150</td><td>17.3</td><td>35</td><td>2</td><td>1.5</td></tr>
+    <tr><td>07-20</td><td>3</td><td>37.8</td><td>3:34</td><td>605</td><td>5:40</td><td>153</td><td>15.2</td><td>101</td><td>2</td><td>10.0</td></tr>
+    <tr><td>07-27</td><td>4</td><td>41.3</td><td>4:03</td><td>558</td><td>5:53</td><td>149</td><td>13.3</td><td>57</td><td>0</td><td>0.0</td></tr>
+    <tr><td>08-03</td><td>5</td><td>59.5</td><td>5:41</td><td>941</td><td>5:44</td><td>151</td><td>14.8</td><td>81</td><td>2</td><td>6.6</td></tr>
+    <tr><td>08-10</td><td>4</td><td>39.9</td><td>3:50</td><td>478</td><td>5:45</td><td>142</td><td>11.8</td><td>46</td><td>1</td><td>5.8</td></tr>
+    <tr><td>08-17</td><td>3</td><td>30.1</td><td>2:47</td><td>470</td><td>5:34</td><td>151</td><td>11.8</td><td>26</td><td>1</td><td>4.7</td></tr>
+    <tr><td class="hl2">08-24</td><td>5</td><td class="hl">69.7</td><td>6:05</td><td>1058</td><td>5:14</td><td>152</td><td class="hl">23.6</td><td>56</td><td>3</td><td>8.4</td></tr>
+    <tr><td>08-31</td><td>5</td><td>46.0</td><td>4:20</td><td>576</td><td>5:40</td><td>145</td><td>11.7</td><td>61</td><td>1</td><td>0.1</td></tr>
+    <tr><td class="hl2">09-07</td><td>5</td><td class="hl">73.4</td><td>6:04</td><td class="hl">1124</td><td class="hl">4:58</td><td>155</td><td>21.2</td><td class="hl">366</td><td>2</td><td class="hl">13.9</td></tr>
+    <tr><td class="warnc">09-14*</td><td>2</td><td>24.9</td><td>2:06</td><td>347</td><td>5:03</td><td>152</td><td>14.6</td><td>23</td><td>1</td><td>5.6</td></tr>
+  </tbody>
+</table>
+</div>
+<small class="note">* 09-14 为进行中的不完整周，截止 2026-09-17（周四），不与前一完整周直接比较。</small>
+
+<!-- ===================== 3. 强度分布 ===================== -->
+<h2><span class="n">3</span>强度分布 · 心率区间</h2>
+<div class="callout">
+  整个周期以 <b>Z1–Z2 有氧基础</b>为主（典型轻松跑 60–86% 时间在 Z1），符合金字塔式训练结构。关键变化：<b class="hl">进入 9 月，高强度占比（Z4-5）显著上升</b>，9/7 周达 13.9%，是 16 周最高，与该周包含 21km 长课 + 间歇的组合一致。以下为近期代表性课次的区间构成。
+</div>
+<div class="legend">
+  <span><i style="background:var(--z1)"></i>Z1 热身/恢复</span>
+  <span><i style="background:var(--z2)"></i>Z2 有氧基础</span>
+  <span><i style="background:var(--z3)"></i>Z3 马拉松/节奏</span>
+  <span><i style="background:var(--z4)"></i>Z4 阈值</span>
+  <span><i style="background:var(--z5)"></i>Z5 无氧/最大</span>
+</div>
+<div class="grid g2" style="margin-top:10px">
+  <div class="card">
+    <p style="margin:0 0 6px"><b>9/13 奥森正式半马</b> · 21.16km · aHR 169 <span class="tag race">RACE</span></p>
+    <div class="bar">
+      <span style="width:0.4%;background:var(--z1)"></span>
+      <span style="width:5.2%;background:var(--z2)"></span>
+      <span style="width:49.1%;background:var(--z3)">Z3 49%</span>
+      <span style="width:44.3%;background:var(--z4)">Z4 44%</span>
+      <span style="width:0.9%;background:var(--z5)"></span>
+    </div>
+    <small class="note">几乎全程在 Z3-Z4（马拉松~阈值强度），末段 negative split 冲刺至 4:16。</small>
+  </div>
+  <div class="card">
+    <p style="margin:0 0 6px"><b>9/10 6×2.5km 长间歇</b> · 17.99km · aHR 164 <span class="tag q">QUALITY</span></p>
+    <div class="bar">
+      <span style="width:3.6%;background:var(--z1)"></span>
+      <span style="width:11%;background:var(--z2)">Z2</span>
+      <span style="width:8.5%;background:var(--z3)"></span>
+      <span style="width:69.8%;background:var(--z4)">Z4 70%</span>
+      <span style="width:7.1%;background:var(--z5)">Z5</span>
+    </div>
+    <small class="note">阈值刺激为主，重复段稳定在 4:32–4:36，恢复短（20–33s 慢跑）。</small>
+  </div>
+  <div class="card">
+    <p style="margin:0 0 6px"><b>9/16 3×4km 间歇</b> · 14.62km · aHR 161 <span class="tag q">QUALITY</span></p>
+    <div class="bar">
+      <span style="width:4.9%;background:var(--z1)"></span>
+      <span style="width:18.2%;background:var(--z2)">Z2</span>
+      <span style="width:7.1%;background:var(--z3)"></span>
+      <span style="width:59.8%;background:var(--z4)">Z4 60%</span>
+      <span style="width:10.2%;background:var(--z5)">Z5</span>
+    </div>
+    <small class="note">递进式：4km 段配速 4:39 → 4:35 → 4:26，末段进入 Z5。</small>
+  </div>
+  <div class="card">
+    <p style="margin:0 0 6px"><b>典型轻松跑（9/15）</b> · 10.29km · aHR 142 <span class="tag e">EASY</span></p>
+    <div class="bar">
+      <span style="width:10.7%;background:var(--z1)">Z1</span>
+      <span style="width:85.7%;background:var(--z2)">Z2 86%</span>
+      <span style="width:3.6%;background:var(--z3)"></span>
+    </div>
+    <small class="note">健康的有氧恢复课，心率控制良好，配速 5:29。</small>
+  </div>
+</div>
+
+<!-- ===================== 4. 质量课 ===================== -->
+<h2><span class="n">4</span>质量课演进 · 间歇与节奏</h2>
+<p>8 大间歇/节奏课的结构化数据显示了清晰的能力进阶：<b>800m 重复配速稳定在 4:12–4:25</b>，8 月末以来间歇量（4km/2.5km 长间歇）与 4km 段配速同步提升。</p>
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>日期</th><th>课次</th><th>里程</th><th>移动时长</th><th>均配速</th><th>aHR</th><th>关键段落表现</th><th>TL</th></tr></thead>
+  <tbody>
+    <tr><td>07-23</td><td>间歇 w1</td><td>12.15</td><td>1:07:59</td><td>5:36</td><td>156</td><td>5×800m @ 4:14–4:41</td><td>230</td></tr>
+    <tr><td>08-05</td><td>间歇 w2</td><td>12.45</td><td>1:09:58</td><td>5:37</td><td>155</td><td>6×800m @ 4:17–4:23</td><td>235</td></tr>
+    <tr><td>08-12</td><td>间歇 w3</td><td>11.49</td><td>1:01:25</td><td>5:21</td><td>158</td><td>6×800m @ 4:12–4:19</td><td>237</td></tr>
+    <tr><td>08-25</td><td>节奏 W05</td><td>10.02</td><td>0:52:20</td><td>5:13</td><td>164</td><td>6km @ 4:58 节奏</td><td>189</td></tr>
+    <tr><td>08-27</td><td>间歇 w05</td><td>13.65</td><td>1:14:08</td><td>5:26</td><td>156</td><td>8×800m @ 4:09–4:17</td><td>278</td></tr>
+    <tr><td class="hl2">08-30</td><td>25K 混合课</td><td class="hl">23.60</td><td>2:03:55</td><td>5:15</td><td>152</td><td>5K@5:34 + 5K@4:55 + 7×1200m</td><td class="hl">370</td></tr>
+    <tr><td>09-02</td><td>节奏 W06</td><td>11.32</td><td>0:57:13</td><td>5:03</td><td>159</td><td>8km @ 4:51 节奏</td><td>188</td></tr>
+    <tr><td class="hl2">09-10</td><td>长间歇</td><td>17.99</td><td>1:24:28</td><td>4:42</td><td>164</td><td>6×2.5km @ 4:32–4:36</td><td>336</td></tr>
+    <tr><td class="hl2">09-13</td><td>正式半马</td><td>21.16</td><td class="hl">1:38:23</td><td class="hl">4:39</td><td>169</td><td>渐进负分段，末 km 4:16</td><td class="hl">438</td></tr>
+    <tr><td>09-16</td><td>间歇 W08</td><td>14.62</td><td>1:09:33</td><td>4:46</td><td>161</td><td>3×4km @ 4:39/4:35/4:26</td><td>249</td></tr>
+  </tbody>
+</table>
+</div>
+<div class="callout">
+  <b>800m 重复配速趋势</b>：w1(4:14–4:41) → w2/w3(4:12–4:23) → w05(4:09–4:17)。配速在收窄且下探，说明<b class="hl">无氧/阈值耐受度提高</b>。9 月转向更长的间歇段（2.5–4km），是从「速度」向「专项耐力」的正确过渡。
+</div>
+
+<!-- ===================== 5. 跑姿 / 生物力学 ===================== -->
+<h2><span class="n">5</span>跑姿与效率 · 步频 / 步幅 / 功率</h2>
+<div class="grid g3">
+  <div class="card kpi"><div class="v">184–204</div><div class="l">步频 spm 区间</div><div class="d up">高强度课稳定 198–204，效率好</div></div>
+  <div class="card kpi"><div class="v">88–113</div><div class="l">步幅 cm 区间</div><div class="d up">配速越快步幅越大（速度靠步幅增益）</div></div>
+  <div class="card kpi"><div class="v">185–224</div><div class="l">跑步功率 W</div><div class="d flat">与配速/心率高度一致</div></div>
+</div>
+<div class="callout blue">
+  <b>技术观察：</b>轻松跑步频约 184–192、步幅 88–95cm；进入比赛/间歇强度时步频升至 198–204、步幅拉大到 105–114cm。这是<b class="hl">「以步幅提速为主、步频微增」</b>的成熟模式，说明力量与弹性储备到位。9/13 半马全程步频稳定 195–206，无明显疲劳掉频 —— 跑姿经济性优秀。
+</div>
+
+<!-- ===================== 6. 生理指标 ===================== -->
+<h2><span class="n">6</span>生理适应 · VO₂max / 体能模型 / RHR / HRV</h2>
+<div class="two">
+  <div class="card">
+    <h3 style="margin-top:0">CTI 体能指数（慢性负荷）持续上升</h3>
+    <div class="chart" style="height:140px">
+      <div class="col"><div class="b" style="height:52%"></div><div class="lab">6/1</div></div>
+      <div class="col"><div class="b" style="height:56%"></div><div class="lab">6/8</div></div>
+      <div class="col"><div class="b" style="height:59%"></div><div class="lab">6/15</div></div>
+      <div class="col"><div class="b" style="height:64%"></div><div class="lab">6/22</div></div>
+      <div class="col"><div class="b" style="height:67%"></div><div class="lab">6/29</div></div>
+      <div class="col"><div class="b" style="height:70%"></div><div class="lab">7/6</div></div>
+      <div class="col"><div class="b" style="height:69%"></div><div class="lab">7/13</div></div>
+      <div class="col"><div class="b" style="height:72%"></div><div class="lab">7/20</div></div>
+      <div class="col"><div class="b" style="height:75%"></div><div class="lab">7/27</div></div>
+      <div class="col"><div class="b" style="height:80%"></div><div class="lab">8/3</div></div>
+      <div class="col"><div class="b" style="height:85%"></div><div class="lab">8/10</div></div>
+      <div class="col"><div class="b" style="height:81%"></div><div class="lab">8/17</div></div>
+      <div class="col"><div class="b" style="height:86%"></div><div class="lab">8/24</div></div>
+      <div class="col"><div class="b" style="height:91%"></div><div class="lab">8/31</div></div>
+      <div class="col"><div class="b" style="height:95%"></div><div class="lab">9/7</div></div>
+      <div class="col"><div class="b" style="height:100%"></div><div class="lab">9/14</div></div>
+    </div>
+    <small class="note">CTI 52 → 99，几乎线性攀升，无平台或下滑 —— 体能储备处于生涯高位。</small>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">静息心率 / 睡眠 HRV（稳定 = 恢复良好）</h3>
+    <table>
+      <thead><tr><th>阶段</th><th>RHR</th><th>睡眠HRV</th><th>负荷比</th><th>疲劳率</th></tr></thead>
+      <tbody>
+        <tr><td>6 月</td><td>47.2</td><td>64.5</td><td>1.1</td><td>+10</td></tr>
+        <tr><td>7 月</td><td>46.6</td><td>65.1</td><td>1.1</td><td>+8</td></tr>
+        <tr><td>8 月</td><td>47.0</td><td>68.1</td><td>1.2</td><td>+15</td></tr>
+        <tr><td>9 月</td><td class="hl">47.0</td><td>66.4</td><td class="warnc">1.25</td><td class="warnc">+25</td></tr>
+      </tbody>
+    </table>
+    <small class="note">RHR 与 HRV 全程平稳，说明大负荷下恢复系统仍在代偿；但 9 月负荷比升至 1.25、疲劳率 +25，为最高档 —— 已接近承受上限。</small>
+  </div>
+</div>
+<div class="grid g4" style="margin-top:16px">
+  <div class="card kpi"><div class="v">56→57</div><div class="l">VO₂max</div><div class="d up">8 月底提升</div></div>
+  <div class="card kpi"><div class="v">168</div><div class="l">LTHR 阈值心率</div><div class="d flat">设备估计稳定</div></div>
+  <div class="card kpi"><div class="v">4:26</div><div class="l">LTSP 阈值配速趋势</div><div class="d up">由 4:37 提升(设备)</div></div>
+  <div class="card kpi"><div class="v">85.8</div><div class="l">耐力等级</div><div class="d up">缓慢持续上升</div></div>
+</div>
+
+<!-- ===================== 7. 睡眠 ===================== -->
+<h2><span class="n">7</span>睡眠与恢复</h2>
+<div class="two">
+  <div class="card">
+    <h3 style="margin-top:0">睡眠时长与心率</h3>
+    <table>
+      <thead><tr><th>阶段</th><th>时长(h)</th><th>睡眠均心率</th><th>最低心率</th></tr></thead>
+      <tbody>
+        <tr><td>6 月</td><td>6.4</td><td>50.9</td><td>43.2</td></tr>
+        <tr><td>7 月</td><td>6.8</td><td>50.4</td><td>42.4</td></tr>
+        <tr><td>8 月</td><td>6.8</td><td>51.3</td><td>42.9</td></tr>
+        <tr><td>9 月</td><td class="hl">7.2</td><td>50.6</td><td>41.6</td></tr>
+      </tbody>
+    </table>
+    <small class="note">平均约 6.9 h。9 月略有改善（7.2h），睡眠最低心率下探至 41.6，深度恢复质量不错。</small>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">最近一夜分期（9/16→9/17）</h3>
+    <p style="margin:6px 0"><b>总时长 7:47</b> · 入睡 22:53 · 醒来 07:02</p>
+    <div class="bar" style="height:26px">
+      <span style="width:18.8%;background:var(--accent2)">深睡 88'</span>
+      <span style="width:55.5%;background:var(--z1)">浅睡 259'</span>
+      <span style="width:25.7%;background:var(--purple)">REM 120'</span>
+    </div>
+    <div class="legend" style="margin-top:8px">
+      <span><i style="background:var(--accent2)"></i>深睡 88 min (18.8%)</span>
+      <span><i style="background:var(--z1)"></i>浅睡 259 min</span>
+      <span><i style="background:var(--purple)"></i>REM 120 min (25.7%)</span>
+      <span><i style="background:#555"></i>清醒 22 min</span>
+    </div>
+    <small class="note">深睡 + REM 占比健康，睡眠均心率 54，恢复充分。</small>
+  </div>
+</div>
+<div class="callout warn">
+  <b>建议：</b>平均 6.9h 的睡眠对当前的高负荷训练偏短。赛前 3–4 周把睡眠拉到 <b>7.5h+</b>，尤其质量课次日，能进一步压低 RHR、抬升 HRV，直接转化为比赛表现。
+</div>
+
+<!-- ===================== 8. 目标就绪度 ===================== -->
+<h2><span class="n">8</span>目标阶梯 · 就绪度评估</h2>
+<p>目标已重构为<b>进阶阶梯</b>（按难度递增排序）。当前基准：9/13 正式半马 <b class="hl">1:38:23（4:39/km）</b>；近期高强度课阈值配速约 <b>4:26–4:35</b>。</p>
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>#</th><th>目标</th><th>目标时间</th><th>所需均配速</th><th>状态 / 就绪度</th></tr></thead>
+  <tbody>
+    <tr><td>0</td><td>半马破 1:43</td><td>1:43:00</td><td>4:52.9/km</td><td><span class="tag e">✅ 已达成</span> 9/13 官方 1:38:23</td></tr>
+    <tr><td>1</td><td class="hl2">半马破 1:35</td><td>1:35:00</td><td>4:30.2/km</td><td><span class="tag q">进行中 · 近在咫尺</span> 差 ~9 s/km</td></tr>
+    <tr><td>2</td><td>半马破 1:30</td><td>1:30:00</td><td>4:16.0/km</td><td><span class="tag long">进行中 · 拉伸目标</span></td></tr>
+    <tr><td>3</td><td>全马破 3:30</td><td>3:30:00</td><td>4:58.6/km</td><td><span class="tag q">进行中 · 耐力就绪</span></td></tr>
+    <tr><td>4</td><td>全马破 3:10</td><td>3:10:00</td><td>4:30.2/km</td><td><span class="tag long">进行中 · 中期</span></td></tr>
+    <tr><td>5</td><td>全马破 3:00</td><td>2:59:59</td><td>4:15.0/km</td><td><span class="tag race">进行中 · 长期</span></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>各里程碑就绪度</h3>
+<div class="card" style="margin-top:6px">
+  <p style="margin:0 0 4px"><b>#0 半马 1:43</b> — 已由 9/13 官方赛事达成（1:38:23）</p>
+  <div class="progress"><div style="width:100%"></div></div>
+
+  <p style="margin:14px 0 4px"><b>#1 半马 1:35</b>（所需 4:30/km）— 当前 4:39，差约 9 s/km</p>
+  <div class="progress"><div style="width:82%;background:linear-gradient(90deg,var(--accent),#238636)"></div></div>
+  <p style="margin:6px 0 0"><span class="hl">最现实的下一目标。</span>把阈值配速从 ~4:35 稳定到 ~4:28、维持周量 55–70km，1–2 个训练周期内可冲击。</p>
+
+  <p style="margin:14px 0 4px"><b>#2 半马 1:30</b>（所需 4:16/km）</p>
+  <div class="progress"><div style="width:60%;background:linear-gradient(90deg,var(--accent2),#1f6feb)"></div></div>
+  <p style="margin:6px 0 0">拉伸目标。你 9/13 末 km 已能到 4:16、9/16 间歇段 4:26，速度储备有雏形，需把该配速的可持续距离显著拉长。</p>
+
+  <p style="margin:14px 0 4px"><b>#3 全马 3:30</b>（所需 4:59/km）</p>
+  <div class="progress"><div style="width:70%;background:linear-gradient(90deg,var(--accent2),#1f6feb)"></div></div>
+  <p style="margin:6px 0 0">配速上你的轻松跑就接近 4:59；瓶颈在<b>全马专项耐力</b>（32km+ 长课、赛前营养/补给），尚无全马完赛记录，需先完成一场。</p>
+
+  <p style="margin:14px 0 4px"><b>#4 全马 3:10（4:30）／ #5 全马破三（4:15）</b></p>
+  <div class="progress"><div style="width:42%;background:linear-gradient(90deg,var(--purple),#8957e5)"></div></div>
+  <p style="margin:6px 0 0">中长期目标。注意配速对齐：<b class="hl">半马 1:35 ≈ 全马 3:10（同为 4:30）</b>，<b class="hl">半马 1:30 ≈ 全马破三（同为 ~4:15）</b> —— 半马能力是全马目标的天然跳板。</p>
+</div>
+
+<div class="callout blue">
+  <b>合规说明：</b>依据 GOALS.md，目标不能仅凭设备估计或短距离训练判定达成。<b class="hl">#0（半马 1:43）由 9/13 正式半马赛事达成（成绩 1:38:23，距离 ≥ 官方 21.0975km）</b>；其余目标均需在对应距离的官方赛事成绩确认。全马目标尤其需要先完成一场全程比赛来验证耐力与补给。所有配速按官方标准距离（半马 21.0975km / 全马 42.195km）程序化计算。
+</div>
+
+<!-- ===================== 9. 风险与建议 ===================== -->
+<h2><span class="n">9</span>风险提示与行动建议</h2>
+<div class="grid g2">
+  <div class="card">
+    <h3 style="margin-top:0;color:var(--danger)">⚠ 风险</h3>
+    <p>1. <b>负荷爬升过快</b>：training_load_ratio 连续 4 周 1.2–1.3，疲劳率升至 +25（周期最高）。9/10、9/13、9/16 三次高 TL 课（336/438/249）集中在 7 天内，急性负荷偏高。</p>
+    <p>2. <b>睡眠偏短</b>：均 6.9h，恢复窗口不足以完全消化当前强度。</p>
+    <p>3. <b>高温训练</b>：夏季多次在 30–35℃、湿度 60–95% 训练，心率漂移明显（同配速心率偏高），需注意补水与电解质。</p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0;color:var(--accent)">✓ 建议</h3>
+    <p>1. <b>本周主动减量</b>：9/14 周控制在 40km 内，插入 1–2 天全休或纯有氧，让负荷比回落到 ≤1.1。</p>
+    <p>2. <b>赛前 2 周 taper</b>：里程减 30–40%，保留短促的比赛配速刺激（如 3–4×1km @ 4:35），维持锐度不掉。</p>
+    <p>3. <b>睡眠优先</b>：目标 7.5h+，质量课后尤其重要。</p>
+    <p>4. <b>比赛策略</b>：按 9/13 的渐进负分段执行 —— 前 5km 控在 4:50、中段 4:40、末段收。以你当前能力，1:40 以内稳妥，冲 1:38 有把握。</p>
+  </div>
+</div>
+
+<!-- ===================== 10. 本周训练安排建议（更新） ===================== -->
+<h2><span class="n">10</span>本周训练安排建议 · 9/17–9/19（更新）</h2>
+
+<div class="callout">
+  <b>事实更正：</b>经确认，<b class="hl">9-13 奥森为正式半马比赛</b>（非训练 TT）。官方成绩 <b class="hl">1:38:23</b>、距离 21.16 km（≥ 官方 21.0975 km），据此依 GOALS.md 判定 <b class="hl">半马 1:43 目标（10-31）已达成</b>。第 8 节的「能力层面已具备」应上修为「已达成」。长期 1:35 目标（2027-05-01）仍进行中。
+</div>
+
+<h3>本周（9/14 起）已发生的训练</h3>
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>日期</th><th>星期</th><th>原计划</th><th>实际执行</th><th>负荷/强度</th></tr></thead>
+  <tbody>
+    <tr><td>09-13</td><td>周日</td><td>—</td><td class="hl2">正式半马 21.16km @4:39</td><td>TL 438 · anTE 5.0（顶格）</td></tr>
+    <tr><td>09-14</td><td>周一</td><td>训练</td><td>休息（无活动记录）</td><td>—</td></tr>
+    <tr><td>09-15</td><td>周二</td><td>—</td><td>轻松跑 10.29km @5:29</td><td>TL 98 · Z2 为主</td></tr>
+    <tr><td>09-16</td><td>周三</td><td>轻松有氧 10km</td><td class="warnc">W08 间歇 14.62km @4:46（3×4km）</td><td class="warnc">TL 249 · anTE 4.0 · 末段入 Z5</td></tr>
+  </tbody>
+</table>
+</div>
+<div class="callout warn">
+  <b>关键偏差：</b>9-16 原定「轻松有氧」被跑成了<b class="warnc">高强度间歇课</b>（3×4km，末段 4:26 入 Z5）。这提前消耗了本周的恢复额度，是后续安排需要补偿的主因。
+</div>
+
+<h3>恢复信号（半马后趋势：走低）</h3>
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>日期</th><th>睡眠HRV</th><th>RHR</th><th>负荷比</th><th>疲劳率</th><th>急性负荷ATI</th><th>解读</th></tr></thead>
+  <tbody>
+    <tr><td>09-13</td><td>73</td><td>48</td><td>1.46</td><td>47</td><td>148</td><td>赛后即时高负荷</td></tr>
+    <tr><td>09-14</td><td>68</td><td>44</td><td>1.29</td><td>29</td><td>127</td><td>开始回落</td></tr>
+    <tr><td>09-15</td><td>67</td><td>48</td><td>1.25</td><td>25</td><td>123</td><td>恢复中</td></tr>
+    <tr><td>09-16</td><td class="warnc">60</td><td>51</td><td>1.38</td><td>39</td><td>141</td><td>间歇课致 ATI 反弹</td></tr>
+    <tr><td>09-17</td><td class="down">56</td><td class="warnc">51</td><td>1.22</td><td>22</td><td>121</td><td>HRV 已明显低于 baseline 69</td></tr>
+  </tbody>
+</table>
+</div>
+<small class="note">HRV 连续 4 天下滑（73→56，累计 −17ms），RHR 近两天升至 51 —— 典型急性疲劳累积信号。</small>
+
+<h3>结论与建议：原计划框架合理，但 9-18 建议降级</h3>
+<div class="callout blue">
+  <b>核心判断：</b>9-19 大课距正式半马 <b>6 天</b>、距 10-31 目标 <b>42 天</b>，间隔本身合理，<b class="hl">大课可以保留</b>。但鉴于本周 9-16 意外拉了高强度、恢复信号走低，<b class="hl">不宜再在 9-18 安排正经的 10km 有氧</b>——应把 9-18 降级为「轻到接近休息」的过渡，并给 9-19 大课加一道晨起指标闸门。
+</div>
+
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>日期</th><th>星期</th><th>原计划</th><th class="hl">建议调整</th><th>理由</th></tr></thead>
+  <tbody>
+    <tr><td>09-17</td><td>周四</td><td>休息</td><td class="hl">全休 ✓（不变）</td><td>按原计划，让 HRV 回升</td></tr>
+    <tr><td>09-18</td><td>周五</td><td>轻松有氧 10km</td><td class="hl">降级：4–6km 超轻松（≤6:15）或活动性恢复<br>（晨起 HRV&lt;60 或 RHR≥51 则直接全休）</td><td>目的是「唤醒」而非训练，不占用大课的恢复额度</td></tr>
+    <tr><td>09-19</td><td>周六</td><td>30km 大课<br>10@600+10@530+5@500+5@440</td><td class="hl">按晨起状态自适应（见下）</td><td>带疲劳硬冲收益低、风险高</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>9-19 大课 · 晨起指标闸门</h3>
+<div class="grid g3">
+  <div class="card">
+    <p style="margin:0"><span class="tag e">绿灯</span></p>
+    <p style="margin:8px 0 0"><b>HRV ≥63 且 RHR ≤48</b></p>
+    <p style="margin:6px 0 0">按<b class="hl">原版执行</b>：<br>10@6:00 + 10@5:30 + 5@5:00 + 5@4:40（30km）</p>
+  </div>
+  <div class="card">
+    <p style="margin:0"><span class="tag q">黄灯</span></p>
+    <p style="margin:8px 0 0"><b>HRV 55–62</b></p>
+    <p style="margin:6px 0 0">保留结构<b class="warnc">砍尾量</b>：<br>10@6:00 + 10@5:35 + 5@5:05（25km），<br>去掉最快的 5km@4:40</p>
+  </div>
+  <div class="card">
+    <p style="margin:0"><span class="tag race">红灯</span></p>
+    <p style="margin:8px 0 0"><b>HRV &lt;55 或 RHR ≥52</b></p>
+    <p style="margin:6px 0 0"><b class="down">推迟到 9-20（周日）</b>再跑，<br>9-19 改全休或超轻松慢跑</p>
+  </div>
+</div>
+
+<div class="callout">
+  <b>为什么这样排：</b>9-16 的间歇是本周的「意外高强度」，已消耗部分恢复额度。与其纠结 9-18 休不休，不如把 9-18 做成「轻到几乎等于休息」的过渡，并给 9-19 大课加「晨起指标闸门」。这样既尊重原计划框架，又对当前实际疲劳做自适应。距目标 42 天，没有任何理由带疲劳硬冲大课。
+</div>
+
+<footer>
+  报告由 COROS 本地缓存数据自动生成 · 配速/时长口径均采用活动详情 workoutTime（移动时间，剔除暂停）· 日期与星期已按 Asia/Shanghai 完整公历年份程序化核验<br>
+  生成时间 2026-09-17 · 分析区间 2026-06-01 → 2026-09-17 · 数据仅供训练参考，不构成医疗建议
+</footer>
+
+</div>
+</body>
+</html>

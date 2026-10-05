@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>半马 1:30｜三个月 · 每周四练训练计划</title>
+  <style>
+    :root {
+      --ink:#17201f; --muted:#62706d; --paper:#f4f6f3; --white:#fff;
+      --line:#d7ddda; --green:#0f6b50; --green2:#dcece5; --red:#b13b32;
+      --yellow:#e4a936; --blue:#276d8e; --dark:#162a26; --soft:#edf1ef;
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--ink); background:var(--paper); font:15px/1.62 Inter,"Noto Sans SC","Microsoft YaHei",sans-serif; letter-spacing:0; }
+    a { color:var(--green); text-underline-offset:3px; }
+    .hero { color:#fff; background:var(--dark); border-bottom:7px solid var(--yellow); }
+    .hero-inner { width:min(1180px,calc(100% - 40px)); min-height:390px; margin:auto; padding:55px 0 42px; display:grid; grid-template-columns:minmax(0,1.45fr) minmax(270px,.55fr); gap:48px; align-items:end; }
+    .kicker { color:#a8cfc0; font:700 12px/1.2 ui-monospace,SFMono-Regular,monospace; text-transform:uppercase; }
+    h1 { max-width:790px; margin:14px 0 20px; font-size:clamp(38px,6vw,72px); line-height:1.02; letter-spacing:0; }
+    .lead { max-width:760px; margin:0; color:#d8e3df; font-size:17px; }
+    .goal { border-top:1px solid #49625c; padding-top:18px; }
+    .goal b { display:block; color:#fff; font-size:43px; line-height:1; }
+    .goal span { display:block; margin-top:9px; color:#b7c8c3; }
+    nav { position:sticky; top:0; z-index:10; background:rgba(255,255,255,.96); border-bottom:1px solid var(--line); backdrop-filter:blur(10px); }
+    nav div { width:min(1180px,calc(100% - 40px)); margin:auto; display:flex; gap:22px; overflow:auto; padding:12px 0; white-space:nowrap; }
+    nav a { color:#33423f; text-decoration:none; font-size:13px; font-weight:700; }
+    main { width:min(1180px,calc(100% - 40px)); margin:auto; padding:35px 0 72px; }
+    section { padding:34px 0; border-bottom:1px solid var(--line); }
+    .section-head { display:flex; justify-content:space-between; gap:30px; align-items:end; margin-bottom:20px; }
+    h2 { margin:0; font-size:29px; line-height:1.15; letter-spacing:0; }
+    h3 { margin:0 0 8px; font-size:17px; letter-spacing:0; }
+    p { margin:7px 0; }
+    .note { max-width:520px; color:var(--muted); font-size:13px; text-align:right; }
+    .metrics { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:1px; overflow:hidden; border:1px solid var(--line); background:var(--line); }
+    .metric { min-height:128px; padding:18px; background:var(--white); }
+    .metric strong { display:block; color:var(--green); font-size:27px; line-height:1.15; }
+    .metric span { display:block; margin-top:8px; font-weight:750; }
+    .metric small { display:block; margin-top:4px; color:var(--muted); }
+    .grid-3 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+    .grid-2 { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+    .panel { padding:19px; border:1px solid var(--line); background:var(--white); }
+    .panel p, .panel li { color:#46534f; }
+    .callout { border-left:5px solid var(--green); }
+    .warn { border-left:5px solid var(--yellow); }
+    .risk { border-left:5px solid var(--red); }
+    .formula { margin:18px 0; padding:17px 20px; color:#e9f2ef; background:var(--dark); font:650 14px/1.7 ui-monospace,SFMono-Regular,monospace; }
+    .zones { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); border:1px solid var(--line); }
+    .zone { min-height:158px; padding:17px; border-right:1px solid var(--line); background:#fff; }
+    .zone:last-child { border-right:0; }
+    .zone i { display:block; width:28px; height:5px; margin-bottom:14px; background:var(--green); }
+    .zone:nth-child(3) i { background:var(--blue); } .zone:nth-child(4) i { background:var(--yellow); } .zone:nth-child(5) i { background:var(--red); }
+    .zone b { display:block; } .zone strong { display:block; margin:4px 0; font-size:19px; } .zone small { color:var(--muted); }
+    .phase { display:grid; grid-template-columns:160px 1fr; gap:25px; padding:18px 0; border-top:1px solid var(--line); }
+    .phase:first-of-type { border-top:0; }
+    .phase-no { color:var(--green); font:800 13px/1.3 ui-monospace,SFMono-Regular,monospace; }
+    .phase-no b { display:block; color:var(--ink); font-size:22px; }
+    .audit { width:100%; border-collapse:collapse; background:#fff; }
+    .audit th,.audit td { padding:12px 14px; border:1px solid var(--line); text-align:left; }
+    .audit th { color:#fff; background:var(--dark); font-size:12px; }
+    .ok { color:var(--green); font-weight:800; }
+    .schedule { display:grid; gap:15px; }
+    .week { border:1px solid var(--line); background:#fff; }
+    .week-head { display:grid; grid-template-columns:110px 1fr auto; gap:16px; align-items:center; padding:15px 18px; background:var(--soft); border-bottom:1px solid var(--line); }
+    .week-no { font:800 13px/1.2 ui-monospace,SFMono-Regular,monospace; color:var(--green); }
+    .week-head b { font-size:17px; }
+    .week-total { min-width:82px; text-align:right; font-size:22px; font-weight:850; }
+    .sessions { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); }
+    .session { min-height:236px; padding:17px; border-right:1px solid var(--line); }
+    .session:last-child { border-right:0; }
+    .date { display:flex; justify-content:space-between; gap:8px; color:var(--muted); font:700 12px/1.2 ui-monospace,SFMono-Regular,monospace; }
+    .type { display:inline-block; margin:13px 0 8px; padding:3px 7px; color:#fff; background:var(--green); border-radius:3px; font-size:11px; font-weight:800; }
+    .type.q { background:var(--red); } .type.l { background:var(--blue); } .type.t { background:#77601d; }
+    .session strong { display:block; min-height:44px; font-size:16px; line-height:1.35; }
+    .session p { color:#485550; font-size:13px; }
+    .km { color:var(--green); font-size:19px; font-weight:850; }
+    .check { margin-top:11px; padding:8px 10px; color:#5c4b16; background:#fff5d8; font-size:12px; }
+    .steps { counter-reset:item; display:grid; gap:10px; }
+    .step { display:grid; grid-template-columns:44px 1fr; gap:13px; padding:14px 0; border-top:1px solid var(--line); }
+    .step:before { counter-increment:item; content:counter(item,decimal-leading-zero); color:var(--green); font:800 14px/1.4 ui-monospace,SFMono-Regular,monospace; }
+    ul { margin:9px 0; padding-left:20px; }
+    .sources { display:grid; gap:10px; }
+    .source { padding:15px 17px; border:1px solid var(--line); background:#fff; }
+    .source b { display:block; } .source small { color:var(--muted); }
+    footer { padding:26px 0; color:var(--muted); font-size:12px; }
+    @media(max-width:900px) {
+      .hero-inner { grid-template-columns:1fr; min-height:0; gap:28px; }
+      .metrics,.zones { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .grid-3 { grid-template-columns:1fr; }
+      .sessions { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .session:nth-child(2) { border-right:0; } .session:nth-child(-n+2) { border-bottom:1px solid var(--line); }
+    }
+    @media(max-width:620px) {
+      .hero-inner,nav div,main { width:min(100% - 24px,1180px); }
+      .hero-inner { padding-top:38px; } h1 { font-size:40px; }
+      .section-head,.phase { display:block; } .note { margin-top:8px; text-align:left; }
+      .metrics,.zones,.grid-2,.sessions { grid-template-columns:1fr; }
+      .zone,.session { border-right:0; border-bottom:1px solid var(--line); }
+      .session:last-child,.zone:last-child { border-bottom:0; }
+      .week-head { grid-template-columns:78px 1fr; } .week-total { grid-column:2; text-align:left; }
+    }
+    @media print { nav { display:none; } body { background:#fff; } .week,.panel,.source { break-inside:avoid; } }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="kicker">13 weeks / 4 runs per week / 2026</div>
+        <h1>半马 1:30<br>三个月训练计划</h1>
+        <p class="lead">为当前 VO₂max 56、乳酸阈配速约 4:32/km、已具备稳定 6×800 m @约4:16/km 能力而定制。计划覆盖 2026-08-31 至 11-29，每周四跑，三个月每个自然月均超过 180 km。</p>
+      </div>
+      <div class="goal"><b>4:16/km</b><span>目标净计时 1:29:59<br>比赛距离 21.0975 km<br>训练计划量约 712 km</span></div>
+    </div>
+  </header>
+  <nav><div><a href="#verdict">可行性</a><a href="#zones">训练区间</a><a href="#logic">周期逻辑</a><a href="#volume">跑量审计</a><a href="#plan">13周课表</a><a href="#rules">执行规则</a><a href="#race">比赛策略</a><a href="#sources">参考依据</a></div></nav>
+  <main>
+    <section id="verdict">
+      <div class="section-head"><div><div class="kicker">01 / Readiness</div><h2>目标有挑战，但路径成立</h2></div><div class="note">能力基线来自本项目截至 2026-08-12 的 COROS 活动详情报告；时间/配速均按 workoutTime 有效运动时间口径</div></div>
+      <div class="metrics">
+        <div class="metric"><strong>56</strong><span>VO₂max</span><small>具备 1:30 的心肺潜力，不等于已有专项耐力</small></div>
+        <div class="metric"><strong>4:32</strong><span>当前 LT 配速 /km</span><small>需要把阈值继续推近约 4:20–4:24</small></div>
+        <div class="metric"><strong>4:16</strong><span>目标半马配速 /km</span><small>目前只在短间歇层面稳定命中</small></div>
+        <div class="metric"><strong>4×</strong><span>每周跑步</span><small>用单次质量 + 中长跑 + 长跑控制密度</small></div>
+        <div class="metric"><strong>3</strong><span>硬门槛检查</span><small>不通过则切换 1:32–1:35 目标</small></div>
+      </div>
+      <div class="grid-3" style="margin-top:16px">
+        <article class="panel callout"><h3>有利证据</h3><p>8/12 的 6×800 m 均配约 4:16，配速 CV 1.02%，六组无后程失速；VO₂max 56、LTSP 4:32/km，说明速度储备与有氧上限并不弱。</p></article>
+        <article class="panel warn"><h3>真正短板</h3><p>1:30 不是“跑得出 4:16”而是“连续维持 90 分钟”。计划重点是阈值时长、长跑耐力、HM 配速经济性和补给，而非继续把 800 m 做得更快。</p></article>
+        <article class="panel risk"><h3>负荷边界</h3><p>最近出现过 59.5 km / 945 TL 的单周高峰，且连续高强度课恢复成本大。本计划不安排同周两次完整质量课；长跑含专项段时，周三只做阈值控制。</p></article>
+      </div>
+      <div class="formula">1:30 必要条件 ≈ 4:16/km × 21.0975 km　｜　当前短间歇能力 ≠ 当前半马能力　｜　只有通过 W11 的 16 km 专项验证，才正式执行 1:30 比赛策略</div>
+    </section>
+
+    <section id="zones">
+      <div class="section-head"><div><div class="kicker">02 / Intensity</div><h2>训练区间与使用优先级</h2></div><div class="note">北京夏季先看 RPE/心率，再看配速；凉爽后再逐步以配速主导。心率区沿用当前报告：LT HR 约 168 bpm</div></div>
+      <div class="zones">
+        <div class="zone"><i></i><b>R / 恢复</b><strong>6:10–6:40</strong><small>RPE 2–3；HR 通常 &lt;145。疲劳、炎热或睡眠差时只守体感。</small></div>
+        <div class="zone"><i></i><b>E / 轻松</b><strong>5:35–6:10</strong><small>RPE 3–4；完整对话。计划大多数里程必须落在这里。</small></div>
+        <div class="zone"><i></i><b>S / 稳态</b><strong>4:45–5:05</strong><small>RPE 5–6；可说短句。长跑末段与中长跑使用。</small></div>
+        <div class="zone"><i></i><b>T / 阈值</b><strong>4:22–4:30</strong><small>RPE 7；可控、无冲刺。初期取慢端，测试通过后再收紧。</small></div>
+        <div class="zone"><i></i><b>I / 间歇</b><strong>4:02–4:12</strong><small>RPE 8–9；400–1000 m 使用。总工作量受控，不追单组 PB。</small></div>
+      </div>
+      <div class="grid-2" style="margin-top:16px">
+        <article class="panel"><h3>HM 专项配速</h3><p><b>4:16–4:20/km</b>。前 8 周专项段多从 4:20 起，W9 后才逐步接近 4:16。目标比赛配速不是日常阈值配速，更不能拿来跑轻松日。</p></article>
+        <article class="panel"><h3>炎热修正</h3><p>≥25°C 或高湿：E/L 配速放慢 10–30 秒/km；T/HM 课优先按 RPE 与心率，必要时每公里放慢 5–15 秒。不要为了“表上命中”把阈值课跑成无氧课。</p></article>
+      </div>
+    </section>
+
+    <section id="logic">
+      <div class="section-head"><div><div class="kicker">03 / Periodization</div><h2>四阶段，不是十三周硬顶</h2></div><div class="note">四跑固定在周一、周三、周五、周日；周二/周六可做短力量，但不是第 5 次跑步</div></div>
+      <div class="phase"><div class="phase-no">W01–W03<b>基础转换</b></div><div><h3>49 → 55 km</h3><p>把已有间歇速度转成阈值稳定性。周三交替短阈值与受控间歇，周日长跑 17–20 km，强度里程占比控制在约 10%–13%。</p></div></div>
+      <div class="phase"><div class="phase-no">W04<b>回撤 + 10K</b></div><div><h3>46 km</h3><p>降低总量并做 10 km 测试。目标不是透支，而是确定后 4 周阈值和 HM 配速是否需要调整。</p></div></div>
+      <div class="phase"><div class="phase-no">W05–W08<b>阈值扩容</b></div><div><h3>54 → 60 → 49 km</h3><p>阈值工作时长增加到 30–35 分钟，长跑提高到 22–23 km；W8 用 10 km 测试检验 1:30 路线是否仍成立。</p></div></div>
+      <div class="phase"><div class="phase-no">W09–W11<b>半马专项</b></div><div><h3>60 → 62 → 64 km</h3><p>把 HM 配速放进中长跑与长跑，峰值周只到 64 km。W11 的 24 km 含 2×8 km HM 配速，是全周期核心验证。</p></div></div>
+      <div class="phase"><div class="phase-no">W12–W13<b>减量 + 比赛</b></div><div><h3>53 → 48.1 km</h3><p>总量下降但保留少量阈值/HM 配速，避免“完全休息”带来的迟钝。比赛周仍计 4 跑，周日半马作为第 4 跑。</p></div></div>
+    </section>
+
+    <section id="volume">
+      <div class="section-head"><div><div class="kicker">04 / Volume Audit</div><h2>自然月跑量逐日核算</h2></div><div class="note">月跑量按实际日期归属；周跑量按周一至周日。计划从 8/31 开始，因此三个完整目标月是 9、10、11 月</div></div>
+      <table class="audit">
+        <thead><tr><th>自然月</th><th>计划跑量</th><th>最低要求</th><th>余量</th><th>结论</th></tr></thead>
+        <tbody>
+          <tr><td>2026 年 9 月</td><td>216 km</td><td>≥ 180 km</td><td>+36 km</td><td class="ok">通过</td></tr>
+          <tr><td>2026 年 10 月</td><td>237 km</td><td>≥ 180 km</td><td>+57 km</td><td class="ok">通过</td></tr>
+          <tr><td>2026 年 11 月</td><td>约 249.1 km</td><td>≥ 180 km</td><td>约 +69.1 km</td><td class="ok">通过</td></tr>
+          <tr><td><b>计划合计</b></td><td><b>约 712.1 km</b></td><td>52 次跑步</td><td>平均约 54.8 km/周</td><td class="ok">4 跑/周</td></tr>
+        </tbody>
+      </table>
+      <p style="color:var(--muted);font-size:13px">重要：月跑量是约束，不是伤病时必须完成的债务。任何连续疼痛、步态改变或恢复红旗都优先于 180 km 指标；缺跑不补跑、不跨周追里程。</p>
+    </section>
+
+    <section id="plan">
+      <div class="section-head"><div><div class="kicker">05 / 52 Sessions</div><h2>13 周逐日课表</h2></div><div class="note">每格标题后的 km 是该次训练总距离；质量课已经包含热身、恢复和冷身。加速跑 strides 默认 20 秒快 / 60–80 秒走或慢跑</div></div>
+      <div class="schedule">
+        <article class="week">
+          <div class="week-head"><span class="week-no">W01</span><b>08/31–09/06 · 重建节奏</b><span class="week-total">49 km</span></div>
+          <div class="sessions">
+            <div class="session"><div class="date"><span>08/31</span><span>周一</span></div><span class="type">EASY</span><strong>轻松跑 + 6×20秒加速</strong><span class="km">10 km</span><p>E 9 km；末段 6 次加速，动作放松，不冲刺。</p></div>
+            <div class="session"><div class="date"><span>09/02</span><span>周三</span></div><span class="type q">THRESHOLD</span><strong>3×2 km 阈值</strong><span class="km">12 km</span><p>3 km E；3×2 km @4:28–4:32，组间 2 min 慢跑；冷身补足。</p></div>
+            <div class="session"><div class="date"><span>09/04</span><span>周五</span></div><span class="type">EASY</span><strong>轻松有氧</strong><span class="km">10 km</span><p>全程 E/R，HR 尽量 &lt;150；不加速。</p></div>
+            <div class="session"><div class="date"><span>09/06</span><span>周日</span></div><span class="type l">LONG</span><strong>长跑</strong><span class="km">17 km</span><p>前 14 km E，末 3 km S 慢端约 5:00–5:05。</p></div>
+          </div>
+        </article>
+        <article class="week">
+          <div class="week-head"><span class="week-no">W02</span><b>09/07–09/13 · 有氧速度</b><span class="week-total">52 km</span></div>
+          <div class="sessions">
+            <div class="session"><div class="date"><span>09/07</span><span>周一</span></div><span class="type">EASY</span><strong>恢复轻松跑</strong><span class="km">10 km</span><p>R/E 体感；长跑后双腿应越跑越松。</p></div>
+            <div class="session"><div class="date"><span>09/09</span><span>周三</span></div><span class="type q">INTERVAL</span><strong>6×800 m</strong><span class="km">13 km</span><p>3 km E + drills；6×800 m @4:10–4:15，400 m 慢跑；冷身补足。</p></div>
+            <div class="session"><div class="date"><span>09/11</span><span>周五</span></div><span class="type">EASY</span><strong>轻松跑 + 6×20秒加速</strong><span class="km">11 km</span><p>大部分 E；加速跑只做神经激活。</p></div>
+            <div class="session"><div class="date"><span>09/13</span><span>周日</span></div><span class="type l">LONG</span><strong>均匀长跑</strong><span class="km">18 km</span><p>全程 E，补水；不做末段冲刺。</p></div>
+          </div>
+        </article>
+        <article class="week">
+          <div class="week-head"><span class="week-no">W03</span><b>09/14–09/20 · 阈值延长</b><span class="week-total">55 km</span></div>
+          <div class="sessions">
+            <div class="session"><div class="date"><span>09/14</span><span>周一</span></div><span class="type">EASY</span><strong>轻松跑</strong><span class="km">11 km</span><p>E 体感，最后 2 km 仍应能完整对话。</p></div>
+            <div class="session"><div class="date"><span>09/16</span><span>周三</span></div><span class="type q">THRESHOLD</span><strong>2×4 km 阈值</strong><span class="km">14 km</span><p>3 km E；2×4 km @4:26–4:30，组间 3 min 慢跑；冷身。</p></div>
+            <div class="session"><div class="date"><span>09/18</span><span>周五</span></div><span class="type">EASY</span><strong>恢复轻松跑</strong><span class="km">10 km</span><p>R/E；若周三残余疲劳明显，全程取 R。</p></div>
+            <div class="session"><div class="date"><span>09/20</span><span>周日</span></div><span class="type l">LONG</span><strong>渐进长跑</strong><span class="km">20 km</span><p>前 15 km E，末 5 km S @4:55–5:05。</p></div>
+          </div>
+        </article>
+        <article class="week">
+          <div class="week-head"><span class="week-no">W04</span><b>09/21–09/27 · 回撤与首测</b><span class="week-total">46 km</span></div>
+          <div class="sessions">
+            <div class="session"><div class="date"><span>09/21</span><span>周一</span></div><span class="type">EASY</span><strong>恢复跑</strong><span class="km">9 km</span><p>全程 R/E，不看配速。</p></div>
+            <div class="session"><div class="date"><span>09/23</span><span>周三</span></div><span class="type t">SHARPEN</span><strong>5×1 km 受控间歇</strong><span class="km">11 km</span><p>2.5 km E；5×1 km @4:08–4:12，400 m 慢跑；冷身。</p></div>
+            <div class="session"><div class="date"><span>09/25</span><span>周五</span></div><span class="type">EASY</span><strong>轻松跑 + 4×20秒</strong><span class="km">8 km</span><p>低负荷唤醒，第二天完全休息。</p></div>
+            <div class="session"><div class="date"><span>09/27</span><span>周日</span></div><span class="type q">TEST</span><strong>10 km 测试</strong><span class="km">18 km</span><p>4 km 热身 + 10 km 均匀测试 + 4 km 冷身。</p><div class="check">检查点 1：≤42:30 且后 5 km 不掉速；否则后续 T/HM 配速统一放慢 5–8 秒/km。</div></div>
+          </div>
+        </article>
+        <article class="week">
+          <div class="week-head"><span class="week-no">W05</span><b>09/28–10/04 · 阈值容量</b><span class="week-total">56 km</span></div>
+          <div class="sessions">
+            <div class="session"><div class="date"><span>09/28</span><span>周一</span></div><span class="type">EASY</span><strong>测试后恢复</strong><span class="km">10 km</span><p>R 配速为主；酸痛未退可缩短，但不跨天补。</p></div>
+            <div class="session"><div class="date"><span>09/30</span><span>周三</span></div><span class="type q">THRESHOLD</span><strong>4×2 km 阈值</strong><span class="km">14 km</span><p>3 km E；4×2 km @4:24–4:28，2 min 慢跑；冷身。</p></div>
+            <div class="session"><div class="date"><span>10/02</span><span>周五</span></div><span class="type">EASY</span><strong>轻松跑</strong><span class="km">11 km</span><p>全程 E，跑姿放松。</p></div>
+            <div class="session"><div class="date"><span>10/04</span><span>周日</span></div><span class="type l">LONG</span><strong>长跑 + 稳态末段</strong><span class="km">21 km</span><p>前 15 km E；末 6 km S @4:50–5:00。</p></div>
+          </div>
+        </article>
+        <article class="week">
+          <div class="week-head"><span class="week-no">W06</span><b>10/05–10/11 · VO₂ 维护</b><span class="week-total">58 km</span></div>
+          <div class="sessions">
+            <div class="session"><div class="date"><span>10/05</span><span>周一</span></div><span class="type">EASY</span><strong>轻松跑 + 6×20秒</strong><span class="km">12 km</span><p>E 体感；加速跑完全恢复再开始下一次。</p></div>
+            <div class="session"><div class="date"><span>10/07</span><span>周三</span></div><span class="type q">INTERVAL</span><strong>5×1 km</strong><span class="km">14 km</span><p>3 km E + drills；5×1 km @4:03–4:08，400 m 慢跑；冷身补足。</p></div>
+            <div class="session"><div class="date"><span>10/09</span><span>周五</span></div><span class="type">EASY</span><strong>恢复轻松跑</strong><span class="km">10 km</span><p>R/E；心率异常上飘则提前结束。</p></div>
+            <div class="session"><div class="date"><span>10/11</span><span>周日</span></div><span class="type l">LONG</span><strong>均匀长跑</strong><span class="km">22 km</span><p>E 配速，练 30–40 g 碳水/小时和饮水节奏。</p></div>
+          </div>
+        </article>
+        <article class="week">
+          <div class="week-head"><span class="week-no">W07</span><b>10/12–10/18 · 连续阈值</b><span class="week-total">60 km</span></div>
+          <div class="sessions">
+            <div class="session"><div class="date"><span>10/12</span><span>周一</span></div><span class="type">EASY</span><strong>轻松跑</strong><span class="km">12 km</span><p>全程 E，避免自然加速成稳态。</p></div>
+            <div class="session"><div class="date"><span>10/14</span><span>周三</span></div><span class="type q">THRESHOLD</span><strong>连续 8 km 阈值</strong><span class="km">15 km</span><p>4 km E；8 km @4:24–4:28，配速波动 ≤5 秒/km；3 km 冷身。</p></div>
+            <div class="session"><div class="date"><span>10/16</span><span>周五</span></div><span class="type">EASY</span><strong>轻松跑 + 6×20秒</strong><span class="km">11 km</span><p>先完成 E 跑，只有腿轻时才做加速。</p></div>
+            <div class="session"><div class="date"><span>10/18</span><span>周日</span></div><span class="type l">LONG</span><strong>长跑含稳态</strong><span class="km">22 km</span><p>12 km E + 8 km S @4:45–4:55 + 2 km E。</p></div>
+          </div>
+        </article>
+        <article class="week">
+          <div class="week-head"><span class="week-no">W08</span><b>10/19–10/25 · 回撤与二测</b><span class="week-total">49 km</span></div>
+          <div class="sessions">
+            <div class="session"><div class="date"><span>10/19</span><span>周一</span></div><span class="type">EASY</span><strong>恢复跑</strong><span class="km">10 km</span><p>R/E，保持松弛。</p></div>
+            <div class="session"><div class="date"><span>10/21</span><span>周三</span></div><span class="type t">SHARPEN</span><strong>3×2 km 阈值</strong><span class="km">12 km</span><p>3 km E；3×2 km @4:22–4:26，2 min 慢跑；冷身。</p></div>
+            <div class="session"><div class="date"><span>10/23</span><span>周五</span></div><span class="type">EASY</span><strong>轻松跑 + 4×20秒</strong><span class="km">8 km</span><p>只唤醒，不制造疲劳。</p></div>
+            <div class="session"><div class="date"><span>10/25</span><span>周日</span></div><span class="type q">TEST</span><strong>10 km 正式测试</strong><span class="km">19 km</span><p>5 km 热身 + 10 km 测试 + 4 km 冷身。</p><div class="check">检查点 2：≤41:30 才保留 A 目标；41:31–42:00 暂转 B 目标，只有 W11 专项总测通过才恢复 A；&gt;42:00 则改为 1:32–1:35。后 5 km 不应慢于前 5 km 超过 20 秒。</div></div>
+          </div>
+        </article>
+        <article class="week">
+          <div class="week-head"><span class="week-no">W09</span><b>10/26–11/01 · 专项导入</b><span class="week-total">60 km</span></div>
+          <div class="sessions">
+            <div class="session"><div class="date"><span>10/26</span><span>周一</span></div><span class="type">EASY</span><strong>测试后轻松跑</strong><span class="km">11 km</span><p>R/E，前一日测试残余明显则全程 R。</p></div>
+            <div class="session"><div class="date"><span>10/28</span><span>周三</span></div><span class="type q">HM PACE</span><strong>3×3 km 半马配速</strong><span class="km">16 km</span><p>3 km E；3×3 km @4:18–4:20，1 km E 浮动恢复；冷身补足。</p></div>
+            <div class="session"><div class="date"><span>10/30</span><span>周五</span></div><span class="type">EASY</span><strong>轻松跑</strong><span class="km">11 km</span><p>全程 E，保持低强度。</p></div>
+            <div class="session"><div class="date"><span>11/01</span><span>周日</span></div><span class="type l">LONG</span><strong>长跑含 HM 段</strong><span class="km">22 km</span><p>12 km E + 6 km @4:20–4:22 + 4 km E。首次完整练比赛早餐与胶。</p></div>
+          </div>
+        </article>
+        <article class="week">
+          <div class="week-head"><span class="week-no">W10</span><b>11/02–11/08 · 阈值巩固</b><span class="week-total">62 km</span></div>
+          <div class="sessions">
+            <div class="session"><div class="date"><span>11/02</span><span>周一</span></div><span class="type">EASY</span><strong>轻松跑 + 6×20秒</strong><span class="km">12 km</span><p>E 体感，神经激活。</p></div>
+            <div class="session"><div class="date"><span>11/04</span><span>周三</span></div><span class="type q">THRESHOLD</span><strong>3×3 km 阈值</strong><span class="km">16 km</span><p>3 km E；3×3 km @4:20–4:24，2 min 慢跑；冷身补足。</p></div>
+            <div class="session"><div class="date"><span>11/06</span><span>周五</span></div><span class="type">EASY</span><strong>恢复轻松跑</strong><span class="km">11 km</span><p>R/E，不追加稳态段。</p></div>
+            <div class="session"><div class="date"><span>11/08</span><span>周日</span></div><span class="type l">LONG</span><strong>渐进长跑</strong><span class="km">23 km</span><p>15 km E + 6 km S @4:40–4:50 + 2 km E；补给 40–50 g/h。</p></div>
+          </div>
+        </article>
+        <article class="week">
+          <div class="week-head"><span class="week-no">W11</span><b>11/09–11/15 · 峰值与专项总测</b><span class="week-total">64 km</span></div>
+          <div class="sessions">
+            <div class="session"><div class="date"><span>11/09</span><span>周一</span></div><span class="type">EASY</span><strong>轻松跑</strong><span class="km">13 km</span><p>全程 E，给周三和周日留余量。</p></div>
+            <div class="session"><div class="date"><span>11/11</span><span>周三</span></div><span class="type">MEDIUM EASY</span><strong>中长轻松跑 + 6×20秒</strong><span class="km">16 km</span><p>全程 E；末段做 6 次放松加速，完整恢复。不给周日专项总测制造代谢疲劳。</p></div>
+            <div class="session"><div class="date"><span>11/13</span><span>周五</span></div><span class="type">EASY</span><strong>恢复轻松跑</strong><span class="km">11 km</span><p>R/E；若 HRV/睡眠差，不做加速。</p></div>
+            <div class="session"><div class="date"><span>11/15</span><span>周日</span></div><span class="type q">KEY TEST</span><strong>2×8 km 半马配速</strong><span class="km">24 km</span><p>3 km E + 8 km @4:18 → 2 km E + 8 km @4:16–4:18 → 3 km E。全套比赛补给。</p><div class="check">检查点 3：第二段不掉速、HR 漂移可控、结束后仍有余量。通过才执行 1:30；勉强完成改 1:31:30–1:33，失败则 1:34–1:36。</div></div>
+          </div>
+        </article>
+        <article class="week">
+          <div class="week-head"><span class="week-no">W12</span><b>11/16–11/22 · 减量 1</b><span class="week-total">53 km</span></div>
+          <div class="sessions">
+            <div class="session"><div class="date"><span>11/16</span><span>周一</span></div><span class="type">EASY</span><strong>峰值课后恢复</strong><span class="km">10 km</span><p>全程 R；若肌肉损伤感明显可减量。</p></div>
+            <div class="session"><div class="date"><span>11/18</span><span>周三</span></div><span class="type q">THRESHOLD</span><strong>4×2 km 阈值</strong><span class="km">14 km</span><p>3 km E；4×2 km @4:20–4:24，2 min 慢跑；冷身。</p></div>
+            <div class="session"><div class="date"><span>11/20</span><span>周五</span></div><span class="type">EASY</span><strong>轻松跑 + 6×20秒</strong><span class="km">10 km</span><p>E 为主，保持腿部弹性。</p></div>
+            <div class="session"><div class="date"><span>11/22</span><span>周日</span></div><span class="type l">LONG</span><strong>短长跑含 HM 段</strong><span class="km">19 km</span><p>8 km E + 6 km @4:18–4:20 + 5 km E；结束应感觉克制。</p></div>
+          </div>
+        </article>
+        <article class="week">
+          <div class="week-head"><span class="week-no">W13</span><b>11/23–11/29 · 比赛周</b><span class="week-total">48.1 km</span></div>
+          <div class="sessions">
+            <div class="session"><div class="date"><span>11/23</span><span>周一</span></div><span class="type">EASY</span><strong>轻松跑 + 4×20秒</strong><span class="km">10 km</span><p>E 体感；不测试状态。</p></div>
+            <div class="session"><div class="date"><span>11/25</span><span>周三</span></div><span class="type t">SHARPEN</span><strong>3×1 km 半马配速</strong><span class="km">9 km</span><p>3 km E；3×1 km @4:16，500 m E；冷身补足。必须轻松可控。</p></div>
+            <div class="session"><div class="date"><span>11/27</span><span>周五</span></div><span class="type">SHAKEOUT</span><strong>赛前唤醒</strong><span class="km">8 km</span><p>6 km E + 4×20秒加速 + 冷身；周六休息。</p></div>
+            <div class="session"><div class="date"><span>11/29</span><span>周日</span></div><span class="type q">RACE</span><strong>目标半程马拉松</strong><span class="km">21.1 km</span><p>按下方分段策略执行。比赛计时以赛事净计时为准。</p><div class="check">A 目标只在 W11 门槛通过、赛日天气与健康正常时启用。</div></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="rules">
+      <div class="section-head"><div><div class="kicker">06 / Operating System</div><h2>训练如何落地</h2></div><div class="note">跑量只是输入，恢复后形成的适应才是产出</div></div>
+      <div class="grid-2">
+        <article class="panel"><h3>质量课标准流程</h3><p>热身至少 2–4 km E，随后动态活动与 3–4 次 15–20 秒加速；工作段结束后 E 跑冷身。表中总距离已经包含这些内容。</p></article>
+        <article class="panel"><h3>力量训练</h3><p>周二 30–35 分钟主力量：分腿蹲、罗马尼亚硬拉、提踵、臀桥、划船/俯卧撑、抗旋转核心，各 2–3 组；周六只做 15–20 分钟激活。W11 后减半，比赛周停重力量。</p></article>
+        <article class="panel"><h3>长跑补给</h3><p>≥90 分钟训练：目标 30–50 g 碳水/小时，水 400–700 ml/小时，钠约 300–600 mg/小时，按出汗量与天气调整。W9–W12 固定使用赛日产品。</p></article>
+        <article class="panel"><h3>COROS / Garmin 使用</h3><p>手表课表按距离分段建立；E/L 课用心率/RPE预警，不设死配速；T/HM 工作段设配速范围。结束后看有效运动时间、分段稳定性、HR 漂移和恢复，不用总耗时评价。</p></article>
+      </div>
+      <div class="steps" style="margin-top:18px">
+        <div class="step"><div><h3>绿灯：照计划</h3><p>无局部疼痛，睡眠/HRV接近个人基线，热身后腿感正常；质量课前 2 km 心率与日常相符。</p></div></div>
+        <div class="step"><div><h3>黄灯：降一级</h3><p>HRV 连续 2 天明显低于基线、静息心率高 5–7 bpm、睡眠差或热身心率异常：I 改 T、T/HM 改 E，距离减 20%–30%。</p></div></div>
+        <div class="step"><div><h3>红灯：停止跑步</h3><p>局部疼痛随跑加重、步态改变、胸痛/眩晕、发热或感染症状：停止训练并评估。漏课不补，尤其不把质量课挪到长跑前一天。</p></div></div>
+        <div class="step"><div><h3>调整顺序</h3><p>疲劳时优先删除 strides，再删除长跑专项段，再缩短质量工作量；最后才减少纯 E 里程。任何时候都不靠加跑追回自然月数字。</p></div></div>
+      </div>
+    </section>
+
+    <section id="race">
+      <div class="section-head"><div><div class="kicker">07 / Race Execution</div><h2>1:30 比赛分段</h2></div><div class="note">假设赛道平坦、温度适宜且 W11 检查点通过；高温、大风或明显起伏应按功率/体感调整</div></div>
+      <table class="audit">
+        <thead><tr><th>赛段</th><th>目标配速</th><th>累计参考</th><th>执行重点</th></tr></thead>
+        <tbody>
+          <tr><td>0–3 km</td><td>4:18–4:20/km</td><td>约 13:00</td><td>避开起跑拥挤，不借下坡透支</td></tr>
+          <tr><td>3–10 km</td><td>4:16–4:17/km</td><td>10 km 约 42:45–42:55</td><td>稳定呼吸；约 30–35 分钟第一胶</td></tr>
+          <tr><td>10–16 km</td><td>4:15–4:17/km</td><td>15 km 约 1:04:05</td><td>约 60–65 分钟第二胶；逐个追人</td></tr>
+          <tr><td>16–20 km</td><td>守住 4:15–4:17/km</td><td>20 km 约 1:25:20</td><td>专注动作和步频，不提前冲刺</td></tr>
+          <tr><td>最后 1.1 km</td><td>有余量再渐进</td><td>终点 &lt;1:30:00</td><td>20 km 后才允许全力</td></tr>
+        </tbody>
+      </table>
+      <div class="grid-3" style="margin-top:16px">
+        <article class="panel callout"><h3>A 目标</h3><p><b>1:29:30–1:29:59</b><br>W11 专项课完整通过，天气与身体正常。</p></article>
+        <article class="panel warn"><h3>B 目标</h3><p><b>1:31:30–1:33:00</b><br>专项课勉强完成或赛日条件一般，按 4:20–4:24/km 起跑。</p></article>
+        <article class="panel risk"><h3>C 目标</h3><p><b>1:34–1:36</b><br>检查点失败、恢复不足或天气恶劣，优先均匀完赛。</p></article>
+      </div>
+    </section>
+
+    <section id="sources">
+      <div class="section-head"><div><div class="kicker">08 / Sources & Boundaries</div><h2>参考依据与适用边界</h2></div><div class="note">本计划是基于个人数据的综合设计，不是任何单一机构课表的复制，也不代表元大都跑团官方发布</div></div>
+      <div class="sources">
+        <div class="source"><b>Garmin · Half Marathon Training Plan – Intermediate</b><small>参考内容：轻松跑、阈值重复、坡跑、长跑、10K 测试赛与比赛周减量的周期组合。公开 PDF：<a href="https://static.garmincdn.com/shared/emea/custom/training/downloads/running/Half-Marathon-Training-Plan-Intermediate-ENGLISH.pdf">garmincdn.com</a>（访问于 2026-08-13）。本报告提高了跑量并改为固定每周四跑。</small></div>
+        <div class="source"><b>COROS Coaches · Half Marathon Training Plan / EvoLab 思路</b><small>参考内容：按训练阶段组织半马准备，以配速区、阈值和设备恢复反馈管理执行。公开页面：<a href="https://www.coros.com/stories/coros-coaches/c/half-marathon-training-plan">coros.com</a>（访问于 2026-08-13）。具体训练处方以你的 COROS 历史数据二次校准。</small></div>
+        <div class="source"><b>Stöggl & Sperlich, 2014 · Polarized training</b><small>参考内容：在训练良好的耐力运动员中，低强度大体量与有限高强度组合优于长期堆积阈值。本计划据此限制完整质量课频率。全文：<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3912323/">Frontiers in Physiology / PMC</a>。</small></div>
+        <div class="source"><b>Bosquet et al., 2007 · Taper meta-analysis</b><small>参考内容：赛前保留强度并下降训练量的减量逻辑。文献：Effects of tapering on performance: a meta-analysis，<a href="https://pubmed.ncbi.nlm.nih.gov/17762369/">PMID 17762369</a>。</small></div>
+        <div class="source"><b>Daniels / Pfitzinger 的成熟教练框架</b><small>参考内容：E、T、I 的功能分离，阈值巡航间歇、专项配速长跑和测试成绩反校准。为避免虚构逐页引用，本报告只采用广为使用的训练原则，没有声称复刻其版权课表。</small></div>
+        <div class="source"><b>元大都跑团与本地跑团实践</b><small>采用的是“固定工作日集体质量课 + 周末 LSD + 配速分组”的组织方式。未找到可公开核验的元大都跑团官方“半马 1:30 三个月完整课表”，因此不把任何具体训练处方署名为该跑团官方方案。</small></div>
+        <div class="source"><b>个人数据来源</b><small>本项目报告《2026-08-12 最近三次强度课分析》《2026-08-10 六周跑步分析》《2026-08-04 24 周跑步能力趋势》。所有活动时长、配速和负荷计算按 COROS 活动详情 workoutTime 有效运动时间，不使用活动摘要 totalTime。</small></div>
+      </div>
+    </section>
+    <footer>生成日期：2026-08-13｜时区：Asia/Shanghai｜日期与星期已按完整公历年份程序校验｜训练建议不能替代医疗诊断</footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全马配速策略与目标 · 基于近期训练数据</title>
+<style>
+:root{
+  --bg:#0d1117;--panel:#161b22;--panel2:#1c232d;--border:#2b333d;
+  --ink:#e6edf3;--muted:#9aa7b4;--accent:#3fb950;--accent2:#58a6ff;
+  --warn:#d29922;--danger:#f85149;--purple:#bc8cff;
+  --z1:#519aba;--z2:#3fb950;--z3:#d29922;--z4:#f0883e;--z5:#f85149;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;line-height:1.6}
+.wrap{max-width:1140px;margin:0 auto;padding:32px 20px 80px}
+header.hero{background:linear-gradient(135deg,#101d33 0%,#0d1117 60%);border:1px solid var(--border);border-radius:16px;padding:36px 32px;margin-bottom:28px}
+.hero h1{font-size:29px;font-weight:800;letter-spacing:.5px}
+.hero .sub{color:var(--muted);margin-top:8px;font-size:15px}
+.hero .badges{margin-top:18px;display:flex;flex-wrap:wrap;gap:10px}
+.badge{background:var(--panel2);border:1px solid var(--border);border-radius:999px;padding:5px 14px;font-size:13px;color:var(--muted)}
+.badge b{color:var(--accent2)}
+h2{font-size:21px;margin:38px 0 16px;padding-bottom:10px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px}
+h2 .n{background:var(--accent2);color:#04152b;font-size:14px;width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-weight:800}
+h3{font-size:16px;margin:22px 0 10px;color:var(--accent2)}
+p{margin:10px 0;color:#d7e0e8}
+.grid{display:grid;gap:16px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+@media(max-width:820px){.g4,.g3,.g2{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.g4,.g3,.g2{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px}
+.kpi{text-align:center}
+.kpi .v{font-size:25px;font-weight:800;color:var(--accent2)}
+.kpi .l{font-size:12px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+.kpi .d{font-size:12px;margin-top:6px}
+.up{color:var(--accent)}.down{color:var(--danger)}.flat{color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--border)}
+th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.4px}
+td:first-child,th:first-child{text-align:left}
+tbody tr:hover{background:var(--panel2)}
+.tbl-wrap{overflow-x:auto;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:6px 14px}
+.hl{color:var(--accent);font-weight:700}
+.hl2{color:var(--accent2);font-weight:700}
+.warnc{color:var(--warn)}
+.callout{border-left:4px solid var(--accent2);background:var(--panel2);padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0}
+.callout.warn{border-color:var(--warn)}
+.callout.green{border-color:var(--accent)}
+.callout.danger{border-color:var(--danger)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:8px 0}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:middle}
+.muted{color:var(--muted)}
+small{color:var(--muted);font-size:12px}
+.foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--muted);font-size:12px}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;background:var(--panel2);border:1px solid var(--border);color:var(--muted)}
+.tag.g{color:var(--accent);border-color:#204d2c}
+.tag.w{color:var(--warn);border-color:#5a4718}
+.tag.b{color:var(--accent2);border-color:#1c3a5e}
+.tag.r{color:var(--danger);border-color:#5e2020}
+.big{font-size:34px;font-weight:800}
+svg text{font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>全马配速策略与目标建议</h1>
+  <div class="sub">基于近一个月真实训练数据（比赛 + 长距离 + 阈值指标）的三角推算 · 生成于 2026-09-20 (Asia/Shanghai)</div>
+  <div class="badges">
+    <span class="badge">半马基准 <b>1:38:23 @4:39</b></span>
+    <span class="badge">30K长距离 <b>5:04/km(可控)</b></span>
+    <span class="badge">乳酸阈配速 <b>4:25/km↑</b></span>
+    <span class="badge">阈值心率 <b>168</b></span>
+    <span class="badge">VO₂max <b>57</b></span>
+    <span class="badge">目标赛 <b>北马 10-18</b></span>
+  </div>
+  <p style="margin-top:14px;font-size:13px" class="muted">口径：配速/时间取活动详情 workoutTime（移动时间）；乳酸阈配速(ltsp)/阈值心率(lthr)/静息心率/HRV/急慢性负荷比取每日健康数据。日期星期已按公历核验。</p>
+</header>
+
+<!-- 1. 一句话结论 -->
+<h2><span class="n">1</span> 结论先行</h2>
+<div class="callout green">
+  <p style="margin-top:0">你目前的有氧引擎足以支撑一场 <b class="hl">3:20–3:35</b> 的全马；但由于<b>尚未完成任何一场全程</b>、且当前处于高负荷疲劳期（急慢性负荷比 1.44），首马应以<b class="hl2">“稳妥完赛 + 验证耐力”</b>为第一目标，而非搏最快时间。</p>
+  <p style="margin-bottom:0"><b>推荐首马目标：sub-3:30（配速 4:59/km），A/B/C 三档执行；北马(10-18)作为首马验证。</b></p>
+</div>
+
+<!-- 2. 数据依据 -->
+<h2><span class="n">2</span> 数据依据：为什么是这个区间</h2>
+<div class="tbl-wrap">
+<table>
+<thead><tr><th>关键信号</th><th>近期读数</th><th>趋势</th><th>对全马的含义</th></tr></thead>
+<tbody>
+<tr><td>官方半马 (9-13)</td><td>1:38:23 · 4:39/km · HR169</td><td class="up">已达 sub-1:43↑</td><td style="text-align:left">最可靠的比赛级速度基准</td></tr>
+<tr><td>30K 长距离 (9-19)</td><td>30.37km · 5:04/km · HR155</td><td class="up">里程新高↑</td><td style="text-align:left">30km 处仍轻松+末段加速，耐力有富余</td></tr>
+<tr><td>乳酸阈配速 ltsp</td><td>4:25/km（265s）</td><td class="up">270→265，一月内提速↑</td><td style="text-align:left">全马配速通常 = 阈值+18~25s</td></tr>
+<tr><td>阈值心率 lthr</td><td>168</td><td class="flat">稳定</td><td style="text-align:left">全马应控制在 ~150–160（阈下）</td></tr>
+<tr><td>VO₂max</td><td>57</td><td class="flat">稳定</td><td style="text-align:left">对应竞技潜力约 sub-3:10~3:20</td></tr>
+<tr><td>静息心率 / HRV</td><td>rHR ~45 · HRV 56–79</td><td class="warnc">HRV 近日偏低</td><td style="text-align:left">恢复尚可但存疲劳，需减载</td></tr>
+<tr><td>急慢性负荷比 (ACWR)</td><td>1.44（9-19）</td><td class="down">偏高 (安全<1.3)</td><td style="text-align:left">近期堆量过快，受伤/过度训练风险↑</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- 3. 三角推算 -->
+<h2><span class="n">3</span> 完赛时间三角推算</h2>
+<p>用三种独立方法交叉验证，避免单一模型误差：</p>
+<div class="grid g3">
+  <div class="card">
+    <h3 style="margin-top:0">① 半马外推 (Riegel)</h3>
+    <p class="muted" style="margin:6px 0">以 9-13 比赛为基准，耐力衰减系数 1.06–1.10</p>
+    <div class="big hl2">3:24–3:30</div>
+    <small>配速 4:51–4:59/km · 乐观上限（假设全马耐力=半马水平）</small>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">② 30K 外推 (Riegel)</h3>
+    <p class="muted" style="margin:6px 0">以 9-19 长距离为基准（该次为轻松跑，非全力）</p>
+    <div class="big warnc">3:37–3:39</div>
+    <small>配速 ~5:10/km · 保守下限（30K 是打底强度，非竞速）</small>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">③ 阈值法</h3>
+    <p class="muted" style="margin:6px 0">阈值配速 4:25 + 18~25s 作全马配速</p>
+    <div class="big hl">3:19–3:24</div>
+    <small>配速 4:43–4:50/km · 生理潜力上限</small>
+  </div>
+</div>
+<div class="callout">
+  <b>收敛判断：</b>三法给出 <b>3:19（潜力上限）～ 3:39（保守下限）</b>。乐观法基于比赛全力值、保守法基于轻松长距离——真实首马落点通常在两者之间偏保守一侧，尤其考虑<b>从未跑过 30km 以上、补给未验证、当前疲劳</b>。因此把<b class="hl">3:30</b> 设为务实目标，上限留给状态好的日子。
+</div>
+
+<!-- 4. 目标分档 -->
+<h2><span class="n">4</span> 首马目标分档（北马 10-18）</h2>
+<div class="tbl-wrap">
+<table>
+<thead><tr><th>档位</th><th>目标</th><th>目标配速</th><th>触发条件</th><th>定位</th></tr></thead>
+<tbody>
+<tr>
+  <td><span class="tag b">A 冲</span></td><td class="hl2">3:20–3:25</td><td>4:44–4:52/km</td>
+  <td style="text-align:left">状态极佳、天气凉爽、前30km感觉轻松</td><td style="text-align:left">仅在30km后确认有余力再启动</td></tr>
+<tr style="background:#101d2e">
+  <td><span class="tag g">B 主</span></td><td class="hl">3:28–3:32</td><td>4:56–5:02/km</td>
+  <td style="text-align:left">默认执行方案，稳定完赛 sub-3:30</td><td style="text-align:left"><b>推荐首马目标</b></td></tr>
+<tr>
+  <td><span class="tag w">C 保</span></td><td>3:38–3:45</td><td>5:10–5:20/km</td>
+  <td style="text-align:left">天气热/湿、身体疲劳信号明显</td><td style="text-align:left">保证完赛、积累经验为先</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout warn">
+  <b>为什么不建议一上来就冲 sub-3:10（4:30/km）：</b>虽然 VO₂max 与阈值配速显示你有 sub-3:10 的<b>生理潜力</b>，但首马缺乏 32km+ 的实战与补给验证，且 4:30/km 全程需要长期专项耐力堆积。按 GOALS.md 合规规则，全马目标须由真实全程比赛坐实——先用 sub-3:30 完成首马、拿到真实数据，再迭代到 sub-3:10。
+</div>
+
+<!-- 5. 分段配速表 -->
+<h2><span class="n">5</span> B 方案分段配速执行表（目标 sub-3:30）</h2>
+<p>采用<b class="hl">均匀偏微负分段</b>：前程压住、末程若有余力再收。切忌前 10km 超速——这是首马撞墙的头号原因。</p>
+<div class="tbl-wrap">
+<table>
+<thead><tr><th>阶段</th><th>里程</th><th>目标配速</th><th>目标心率</th><th>执行要点</th></tr></thead>
+<tbody>
+<tr><td>热身控制</td><td>0–5 km</td><td>5:02–5:05/km</td><td>145–152</td><td style="text-align:left">刻意比目标慢 2–3s，别被人流带快</td></tr>
+<tr><td>进入节奏</td><td>5–21 km</td><td>4:58–5:00/km</td><td>150–156</td><td style="text-align:left">锁定目标配速，呼吸对话式，规律补给</td></tr>
+<tr><td>维持</td><td>21–32 km</td><td>4:56–5:00/km</td><td>156–162</td><td style="text-align:left">此段最关键，专注节奏与补给不掉速</td></tr>
+<tr><td>决胜段</td><td>32–42 km</td><td>4:52–5:00/km</td><td>162–172</td><td style="text-align:left">有余力则微提速；否则守住 5:00 完赛</td></tr>
+<tr><td>冲刺</td><td>42–42.2</td><td>全力</td><td>—</td><td style="text-align:left">最后 195m 清空</td></tr>
+</tbody>
+</table>
+</div>
+<div class="card" style="margin-top:12px">
+  <div class="legend"><span><i style="background:var(--accent2)"></i>目标区间 4:56–5:02/km</span><span><i style="background:var(--warn)"></i>撞墙警戒（前程>目标配速即高危）</span></div>
+  <svg viewBox="0 0 960 200" width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="分段配速带">
+    <g id="paceband"></g>
+    <line x1="40" y1="150" x2="930" y2="150" stroke="#2b333d"/>
+    <text x="485" y="185" fill="#9aa7b4" font-size="11" text-anchor="middle">里程 (km) — 目标：均匀，末段可微负分段</text>
+  </svg>
+</div>
+
+<!-- 6. 心率与补给 -->
+<h2><span class="n">6</span> 心率闸门与补给</h2>
+<div class="grid g2">
+  <div class="card">
+    <h3 style="margin-top:0">心率闸门（阈值 168）</h3>
+    <p style="margin:0">• 前半程心率若 <b>>158</b> 而配速正常 → 果断降速，说明当天成本偏高；<br>• 30km 前不应触及 <b>165</b>；<br>• 只有 32km 后才允许进入 165–172；<br>• 长距离 9-19 全程 155、82% 有氧占比，是很好的参照锚点。</p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">补给（30K 已耗 ~1900 kcal）</h3>
+    <p style="margin:0">• 全马预计消耗 <b>2600–2900 kcal</b>，糖原必然见底；<br>• 每 <b>35–45 分钟</b>一次能量胶（约 <b>每小时 60–90g 碳水</b>）；<br>• 每个补给站少量多次饮水/电解质；<br>• <b>务必在赛前长距离里演练</b>同款补给，避免肠胃意外。</p>
+  </div>
+</div>
+
+<!-- 7. 未来4周 -->
+<h2><span class="n">7</span> 通往北马的 4 周节奏（10-18，剩 28 天）</h2>
+<div class="callout danger">
+  <b>首要提醒：当前 ACWR 1.44 偏高、HRV 近日下滑。</b> 未来一周<b>必须减载恢复</b>，不可再叠加大课，否则带伤/带疲劳上首马得不偿失。
+</div>
+<div class="tbl-wrap">
+<table>
+<thead><tr><th>周</th><th>重点</th><th>关键课</th><th>周量参考</th></tr></thead>
+<tbody>
+<tr><td>W1 (9-21~9-27)</td><td class="hl">减载恢复</td><td style="text-align:left">轻松有氧为主，1 次短节奏(4~5km@目标MP)，降 ACWR 至 &lt;1.2</td><td>~40–45 km</td></tr>
+<tr><td>W2 (9-28~10-4)</td><td>专项耐力</td><td style="text-align:left">1 次 32–35km 长距离，末 10km @ 4:55–5:00（模拟MP+补给演练）</td><td>~60–70 km</td></tr>
+<tr><td>W3 (10-5~10-11)</td><td>刺激维持</td><td style="text-align:left">1 次 MP 组合跑(如 3×5km@MP)，1 次中长距离 24–26km</td><td>~55–65 km</td></tr>
+<tr><td>W4 (10-12~10-18)</td><td class="hl2">减量冲刺(Taper)</td><td style="text-align:left">量降 40–50%，保留少量 MP 短段维持手感，赛前 2–3 天充分休息</td><td>~30–35 km</td></tr>
+</tbody>
+</table>
+</div>
+<small>注：10 月赛程密集（10-01/10-06 半马等），若这些赛事要参加，须相应下调训练量、把北马作为唯一“全力”目标，避免多线过载。</small>
+
+<!-- 8. 目标阶梯 -->
+<h2><span class="n">8</span> 与目标阶梯的衔接</h2>
+<div class="grid g3">
+  <div class="card kpi"><div class="v">sub-3:30</div><div class="l">首马目标(本次)</div><div class="d up">数据高度支持</div></div>
+  <div class="card kpi"><div class="v">sub-3:10</div><div class="l">中期目标</div><div class="d flat">潜力已具备,需专项验证</div></div>
+  <div class="card kpi"><div class="v">sub-3:00</div><div class="l">长期目标</div><div class="d muted">需阈值配速再进~10s/km</div></div>
+</div>
+<div class="callout">
+  <b>路线：</b>首马 sub-3:30 拿到真实全程数据 → 分析 30–42km 的掉速与补给表现 → 针对性补强专项耐力 → 下一场冲 sub-3:20/3:10。你的 VO₂max(57) 与阈值配速(4:25↑)已指向 sub-3:10 的天花板，瓶颈只在<b>专项耐力的实战积累</b>，而非速度本身。
+</div>
+
+<div class="foot">
+  数据来源：COROS 高驰 API（本地缓存，同步至 2026-09-20）。推算方法：Riegel 耐力衰减模型（HM 与 30K 双基准，系数 1.06–1.10）+ 乳酸阈配速法（ltsp 4:25/km，全马=阈值+18~25s）三角交叉。配速/时间用 workoutTime；阈值/恢复信号取每日健康数据；日期星期按公历核验。全马目标依 GOALS.md 合规规则，须由真实全程比赛坐实，设备/推算不作达成依据。<br>
+  报告生成时间：2026-09-20 (Asia/Shanghai)。
+</div>
+
+</div>
+<script>
+// pace band: uniform ~4:58 with slight negative option. draw as ribbon 0-42km
+var x0=40,x1=930,yTop=40,yBot=150;
+var segs=[[0,5,'5:03'],[5,21,'4:59'],[21,32,'4:58'],[32,42,'4:56']];
+function px(k){return x0+(x1-x0)*(k/42);}
+var g="";
+// target ribbon
+var yb=95;
+for(var i=0;i<segs.length;i++){
+  var a=px(segs[i][0]),b=px(segs[i][1]);
+  g+='<rect x="'+a.toFixed(1)+'" y="'+(yb-10)+'" width="'+(b-a).toFixed(1)+'" height="20" fill="#58a6ff" opacity="0.28"/>';
+  g+='<line x1="'+a.toFixed(1)+'" y1="'+yb+'" x2="'+b.toFixed(1)+'" y2="'+yb+'" stroke="#58a6ff" stroke-width="2"/>';
+  g+='<text x="'+((a+b)/2).toFixed(1)+'" y="'+(yb-16)+'" fill="#58a6ff" font-size="10" text-anchor="middle">'+segs[i][2]+'</text>';
+}
+// danger zone (too fast early)
+g+='<rect x="'+px(0).toFixed(1)+'" y="55" width="'+(px(15)-px(0)).toFixed(1)+'" height="18" fill="#d29922" opacity="0.15"/>';
+g+='<text x="'+px(7).toFixed(1)+'" y="67" fill="#d29922" font-size="9" text-anchor="middle">前15km若快于4:55 = 撞墙高危</text>';
+// km axis
+for(var k=0;k<=42;k+=7){
+  g+='<text x="'+px(k).toFixed(1)+'" y="166" fill="#9aa7b4" font-size="10" text-anchor="middle">'+k+'</text>';
+  g+='<line x1="'+px(k).toFixed(1)+'" y1="147" x2="'+px(k).toFixed(1)+'" y2="153" stroke="#2b333d"/>';
+}
+g+='<text x="'+px(42).toFixed(1)+'" y="166" fill="#9aa7b4" font-size="10" text-anchor="middle">42</text>';
+document.getElementById('paceband').innerHTML=g;
+</script>
+</body>
+</html>

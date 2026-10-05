@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026 年 8 月跑步课表汇总</title>
+  <style>
+    :root {
+      --bg: #f7f6f1;
+      --paper: #ffffff;
+      --ink: #1e2527;
+      --muted: #667174;
+      --line: #d9ddd6;
+      --green: #1f7a5a;
+      --teal: #0d6b72;
+      --amber: #b88318;
+      --coral: #bf4d3e;
+      --blue: #d9e6ee;
+      --mint: #d8eadc;
+      --rose: #efd2cc;
+      --shadow: 0 14px 34px rgba(30, 37, 39, .08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font: 15px/1.58 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    }
+    header {
+      background: linear-gradient(125deg, #183a34 0%, #205e56 48%, #a34a3e 100%);
+      color: #fff;
+    }
+    .hero {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 42px 24px 38px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+    }
+    h1 { margin: 8px 0 12px; font-size: 38px; line-height: 1.1; letter-spacing: 0; }
+    h2 { margin: 0; font-size: 24px; letter-spacing: 0; }
+    h3 { margin: 0 0 10px; font-size: 17px; letter-spacing: 0; }
+    p { margin: 0; }
+    .lead { max-width: 740px; color: rgba(255, 255, 255, .86); font-size: 17px; }
+    .eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.72); }
+    .stamp {
+      min-width: 300px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255,255,255,.24);
+      border-radius: 8px;
+      background: rgba(255,255,255,.12);
+      color: rgba(255,255,255,.84);
+    }
+    .stamp strong { display: block; color: #fff; font-size: 18px; margin-bottom: 4px; }
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: rgba(247, 246, 241, .94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+    }
+    nav div { max-width: 1120px; margin: 0 auto; padding: 10px 24px; display: flex; gap: 10px; overflow: auto; }
+    nav a { color: var(--ink); text-decoration: none; padding: 6px 10px; border-radius: 6px; white-space: nowrap; font-size: 13px; }
+    nav a:hover { background: #e8ebe4; }
+    main { max-width: 1120px; margin: 0 auto; padding: 28px 24px 54px; }
+    section { margin-bottom: 34px; }
+    .section-head { display: flex; justify-content: space-between; gap: 16px; align-items: end; margin-bottom: 16px; }
+    .section-note { color: var(--muted); font-size: 13px; max-width: 520px; text-align: right; }
+    .metrics { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+    .metric, .panel {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+    .metric { padding: 16px; min-height: 112px; }
+    .metric b { display: block; color: #173f39; font-size: 28px; line-height: 1.05; margin-bottom: 10px; }
+    .metric span, small, .muted { color: var(--muted); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .panel { padding: 18px; }
+    .panel p + p { margin-top: 10px; }
+    .callout { border-left: 4px solid var(--green); }
+    .warn { border-left: 4px solid var(--amber); }
+    .risk { border-left: 4px solid var(--coral); }
+    .table-wrap { overflow: auto; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); }
+    table { width: 100%; min-width: 980px; border-collapse: collapse; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid #e7e9e4; text-align: left; vertical-align: middle; white-space: nowrap; }
+    th { background: #f0f2ed; color: #526064; font-size: 12px; }
+    tr:last-child td { border-bottom: 0; }
+    .bar-list { display: grid; gap: 10px; }
+    .bar-row { display: grid; grid-template-columns: 170px 1fr 74px; gap: 12px; align-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: #fbfcfa; }
+    .bar-row b, .bar-row span { display: block; }
+    .bar-row span { color: var(--muted); font-size: 12px; }
+    .bar-track { height: 16px; border-radius: 4px; background: #e7ebe5; overflow: hidden; }
+    .bar-track i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--green), var(--teal)); }
+    .bar-row.peak .bar-track i { background: linear-gradient(90deg, var(--amber), var(--coral)); }
+    .pattern { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+    .day { border: 1px solid var(--line); border-radius: 8px; background: #fbfcfa; padding: 12px; min-height: 104px; }
+    .day b { display: block; margin-bottom: 8px; }
+    .day.easy { background: var(--mint); }
+    .day.quality { background: var(--blue); }
+    .day.long { background: var(--rose); }
+    .day.rest { color: var(--muted); }
+    .tag { display: inline-block; padding: 2px 7px; border-radius: 5px; background: #e8f1ea; color: #1d654b; font-size: 12px; }
+    footer { color: var(--muted); text-align: center; padding: 24px; border-top: 1px solid var(--line); }
+    @media (max-width: 880px) {
+      .hero { grid-template-columns: 1fr; padding: 34px 18px 30px; }
+      h1 { font-size: 31px; }
+      main { padding: 22px 16px 44px; }
+      .metrics { grid-template-columns: 1fr 1fr; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .section-head { display: block; }
+      .section-note { margin-top: 6px; text-align: left; }
+      .bar-row { grid-template-columns: 1fr; }
+      .pattern { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 520px) {
+      .metrics, .pattern { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="hero">
+    <div>
+      <div class="eyebrow">Running Schedule / August 2026</div>
+      <h1>2026 年 8 月跑步课表汇总</h1>
+      <p class="lead">根据截图可见课表整理。统计范围为 2026-08-03（周一）至 2026-08-30（周日）四个完整训练周；8/1-8/2 与 8/31 在截图中未显示计划，因此未纳入汇总。</p>
+    </div>
+    <div class="stamp"><strong>16 节计划课</strong>204.71 km · 19:53:07<br>日期星期已按 2026 年日历校验</div>
+  </div>
+</header>
+<nav><div><a href="#overview">总览</a><a href="#pattern">结构</a><a href="#weeks">周度</a><a href="#table">明细</a><a href="#notes">执行提示</a><a href="#method">口径</a></div></nav>
+<main>
+  <section id="overview">
+    <div class="section-head"><h2>课表总览</h2><div class="section-note">这是计划课表，不是已完成训练数据；计划时长按截图显示值统计</div></div>
+    <div class="metrics">
+      <div class="metric"><b>16 节</b><span>4 周可见计划<br>每周 4 节</span></div>
+      <div class="metric"><b>204.71 km</b><span>计划总距离<br>周均 51.18 km</span></div>
+      <div class="metric"><b>19:53:07</b><span>计划总时长<br>周均约 4:58:17</span></div>
+      <div class="metric"><b>8 次</b><span>轻松跑<br>共 96.00 km</span></div>
+      <div class="metric"><b>4 次</b><span>LSD 长距离<br>共 70.00 km</span></div>
+    </div>
+    <div class="grid-2" style="margin-top:16px">
+      <article class="panel callout"><h3>固定节奏很清晰</h3><p>每周采用周二轻松跑、周四质量课、周五轻松跑、周日 LSD 的四练结构。周一、周三、周六没有安排跑步课，分别承担长距离后恢复、质量课前缓冲和长距离前恢复。</p></article>
+      <article class="panel warn"><h3>月跑量集中在 50 km/周</h3><p>第一周为 49.76 km，后面三周分别为 51.93、51.05、51.97 km，整体非常稳定。课表不是递增堆量，而是维持总量、通过周四质量课改变刺激类型。</p></article>
+      <article class="panel"><h3>质量课安排</h3><p>周四共 4 次质量课：8/6 间歇课 W1、8/13 节奏跑 5 km @ 5'10&quot;/km、8/20 8 x 400 m @ 4'30&quot;/km、8/27 节奏跑 5 km @ 5'10&quot;/km。质量课计划合计 38.71 km、3:40:27。</p></article>
+      <article class="panel risk"><h3>主要压力点</h3><p>周四质量课后隔天仍有 12 km 轻松跑，周日又有 16-18 km LSD。若周四或周五执行偏快，周日长距离会变成疲劳叠加课。</p></article>
+    </div>
+  </section>
+
+  <section id="pattern">
+    <div class="section-head"><h2>每周结构</h2><div class="section-note">四周保持同一节奏：2 次轻松跑、1 次质量课、1 次长距离</div></div>
+    <div class="pattern">
+      <div class="day rest"><b>周一</b><span>休息 / 恢复</span></div>
+      <div class="day easy"><b>周二</b><span>轻松跑 12 km<br>1:12:00</span></div>
+      <div class="day rest"><b>周三</b><span>休息 / 质量课前缓冲</span></div>
+      <div class="day quality"><b>周四</b><span>间歇或节奏跑<br>50-60 分钟</span></div>
+      <div class="day easy"><b>周五</b><span>轻松跑 12 km<br>1:12:00</span></div>
+      <div class="day rest"><b>周六</b><span>休息 / 长跑前恢复</span></div>
+      <div class="day long"><b>周日</b><span>LSD 16-18 km<br>1:30-1:42</span></div>
+    </div>
+  </section>
+
+  <section id="weeks">
+    <div class="section-head"><h2>周度汇总</h2><div class="section-note">右侧负荷状态为截图周统计值；距离与时长为按课表逐项相加</div></div>
+    <div class="grid-2">
+      <div class="panel">
+        <h3>周跑量</h3>
+        <div class="bar-list">
+          <div class="bar-row"><div><b>8/03-8/09</b><span>4 节 · 含 LSD 16 km</span></div><div class="bar-track"><i style="width:95.8%"></i></div><strong>49.76 km</strong></div>
+          <div class="bar-row peak"><div><b>8/10-8/16</b><span>4 节 · 节奏跑 + LSD 18 km</span></div><div class="bar-track"><i style="width:99.9%"></i></div><strong>51.93 km</strong></div>
+          <div class="bar-row"><div><b>8/17-8/23</b><span>4 节 · 8 x 400 m + LSD 18 km</span></div><div class="bar-track"><i style="width:98.2%"></i></div><strong>51.05 km</strong></div>
+          <div class="bar-row peak"><div><b>8/24-8/30</b><span>4 节 · 节奏跑 + LSD 18 km</span></div><div class="bar-track"><i style="width:100%"></i></div><strong>51.97 km</strong></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>课程类型占比</h3>
+        <div class="bar-list">
+          <div class="bar-row"><div><b>轻松跑</b><span>8 次，每次 12 km</span></div><div class="bar-track"><i style="width:46.9%"></i></div><strong>46.9%</strong></div>
+          <div class="bar-row"><div><b>质量课</b><span>4 次，间歇 / 节奏</span></div><div class="bar-track"><i style="width:18.9%"></i></div><strong>18.9%</strong></div>
+          <div class="bar-row"><div><b>LSD</b><span>4 次，16-18 km</span></div><div class="bar-track"><i style="width:34.2%"></i></div><strong>34.2%</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="table-wrap" style="margin-top:16px">
+      <table>
+        <thead><tr><th>自然周</th><th>课程数</th><th>计划距离</th><th>计划时长</th><th>周四质量课</th><th>周日 LSD</th><th>截图长期负荷</th><th>截图短期负荷</th><th>截图负荷比</th></tr></thead>
+        <tbody>
+          <tr><td>8/03-8/09</td><td>4</td><td>49.76 km</td><td>4:54:43</td><td>间歇课-w1 · 9.76 km</td><td>16 km</td><td>67</td><td>45</td><td>67%</td></tr>
+          <tr><td>8/10-8/16</td><td>4</td><td>51.93 km</td><td>5:01:00</td><td>W01 节奏跑 5 km @ 5'10&quot; · 9.93 km</td><td>18 km</td><td>57</td><td>15</td><td>26%</td></tr>
+          <tr><td>8/17-8/23</td><td>4</td><td>51.05 km</td><td>4:56:24</td><td>W02 8 x 400 m 间歇 @ 4'30&quot; · 9.05 km</td><td>18 km</td><td>48</td><td>5</td><td>10%</td></tr>
+          <tr><td>8/24-8/30</td><td>4</td><td>51.97 km</td><td>5:01:00</td><td>W03 节奏跑 5 km @ 5'10&quot; · 9.97 km</td><td>18 km</td><td>40</td><td>2</td><td>5%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="table">
+    <div class="section-head"><h2>逐日课表</h2><div class="section-note">日期星期已按 Asia/Shanghai / 2026 年日历校验</div></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>日期</th><th>星期</th><th>课程</th><th>计划时长</th><th>计划距离</th><th>备注</th></tr></thead>
+        <tbody>
+          <tr><td>2026-08-04</td><td>周二</td><td>轻松跑 12 km</td><td>1:12:00</td><td>12.00 km</td><td><span class="tag">轻松跑</span></td></tr>
+          <tr><td>2026-08-06</td><td>周四</td><td>间歇课-w1</td><td>1:00:03</td><td>9.76 km</td><td><span class="tag">质量课</span> 截图显示 160 TL</td></tr>
+          <tr><td>2026-08-07</td><td>周五</td><td>轻松跑 12 km</td><td>1:12:00</td><td>12.00 km</td><td><span class="tag">轻松跑</span></td></tr>
+          <tr><td>2026-08-09</td><td>周日</td><td>LSD 16 km 全程</td><td>1:30:40</td><td>16.00 km</td><td><span class="tag">长距离</span></td></tr>
+          <tr><td>2026-08-11</td><td>周二</td><td>轻松跑 12 km</td><td>1:12:00</td><td>12.00 km</td><td><span class="tag">轻松跑</span></td></tr>
+          <tr><td>2026-08-13</td><td>周四</td><td>W01 节奏跑 5 km @ 5'10&quot;</td><td>0:55:00</td><td>9.93 km</td><td><span class="tag">质量课</span></td></tr>
+          <tr><td>2026-08-14</td><td>周五</td><td>轻松跑 12 km</td><td>1:12:00</td><td>12.00 km</td><td><span class="tag">轻松跑</span></td></tr>
+          <tr><td>2026-08-16</td><td>周日</td><td>LSD 18 km 全程</td><td>1:42:00</td><td>18.00 km</td><td><span class="tag">长距离</span></td></tr>
+          <tr><td>2026-08-18</td><td>周二</td><td>轻松跑 12 km</td><td>1:12:00</td><td>12.00 km</td><td><span class="tag">轻松跑</span></td></tr>
+          <tr><td>2026-08-20</td><td>周四</td><td>W02 8 x 400 m 间歇 @ 4'30&quot;</td><td>0:50:24</td><td>9.05 km</td><td><span class="tag">质量课</span></td></tr>
+          <tr><td>2026-08-21</td><td>周五</td><td>轻松跑 12 km</td><td>1:12:00</td><td>12.00 km</td><td><span class="tag">轻松跑</span></td></tr>
+          <tr><td>2026-08-23</td><td>周日</td><td>LSD 18 km 全程</td><td>1:42:00</td><td>18.00 km</td><td><span class="tag">长距离</span></td></tr>
+          <tr><td>2026-08-25</td><td>周二</td><td>轻松跑 12 km</td><td>1:12:00</td><td>12.00 km</td><td><span class="tag">轻松跑</span></td></tr>
+          <tr><td>2026-08-27</td><td>周四</td><td>W03 节奏跑 5 km @ 5'10&quot;</td><td>0:55:00</td><td>9.97 km</td><td><span class="tag">质量课</span></td></tr>
+          <tr><td>2026-08-28</td><td>周五</td><td>轻松跑 12 km</td><td>1:12:00</td><td>12.00 km</td><td><span class="tag">轻松跑</span></td></tr>
+          <tr><td>2026-08-30</td><td>周日</td><td>LSD 18 km 全程</td><td>1:42:00</td><td>18.00 km</td><td><span class="tag">长距离</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="notes">
+    <div class="section-head"><h2>执行提示</h2><div class="section-note">基于课表结构的执行建议，不替代实际训练反馈</div></div>
+    <div class="grid-2">
+      <article class="panel callout"><h3>轻松跑要真轻松</h3><p>8 次 12 km 轻松跑占总跑量 46.9%，是这张课表能否顺利完成的关键。周五轻松跑尤其要控制强度，因为后面只隔一天就是 LSD。</p></article>
+      <article class="panel warn"><h3>周四质量课不要加量</h3><p>周四已经承担节奏或间歇刺激；如果当天体感、HRV、RHR 或天气不佳，优先保留结构、降低目标配速，而不是硬顶完成。</p></article>
+      <article class="panel"><h3>LSD 保持全程可控</h3><p>后三周 LSD 都是 18 km。建议把它当作耐力课而不是渐进质量课，避免把周四质量、周五轻松和周日长跑叠成连续压力。</p></article>
+      <article class="panel risk"><h3>需要关注的连续压力</h3><p>每周四、周五、周日三节跑课集中在 4 天内。若周五仍有腿沉、晨脉偏高或睡眠不足，周日 LSD 应优先缩短或降强度。</p></article>
+    </div>
+  </section>
+
+  <section id="method">
+    <div class="section-head"><h2>整理口径</h2><div class="section-note">生成日：2026-08-02（周日）</div></div>
+    <div class="grid-2">
+      <article class="panel"><h3>数据来源</h3><p>本文件只根据用户提供的截图整理，不调用 COROS 登录、同步或移动端接口，因此不会影响任何现有会话。</p></article>
+      <article class="panel"><h3>日期范围</h3><p>截图可见训练周为 2026-08-03 至 2026-08-30。2026-08-01、2026-08-02 和 2026-08-31 没有在截图中显示课表，未纳入统计。</p></article>
+      <article class="panel"><h3>计划与实际</h3><p>这里统计的是计划课表里的目标时长和目标距离，不是实际完成后的活动详情。实际训练分析仍应使用活动详情的 workoutTime。</p></article>
+      <article class="panel"><h3>周定义</h3><p>周汇总使用周一至周日自然周；所有星期由 2026 年完整日期程序校验。</p></article>
+    </div>
+  </section>
+</main>
+<footer>2026 年 8 月跑步课表汇总 · 计划数据来自截图 · 周一至周日自然周</footer>
+</body>
+</html>

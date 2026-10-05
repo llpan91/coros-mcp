@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>过去四周运动多维实验报告 | 2026-06-29 至 2026-07-26</title>
+  <style>
+    :root {
+      --ink: #19212a;
+      --muted: #68727d;
+      --line: #d9dfe4;
+      --paper: #f7f8f9;
+      --white: #ffffff;
+      --red: #c8473a;
+      --teal: #167d79;
+      --green: #3e7c54;
+      --gold: #b27b1c;
+      --blue: #356aa0;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Inter, "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
+      letter-spacing: 0;
+      line-height: 1.65;
+    }
+    header {
+      color: white;
+      background: #18242c;
+      border-bottom: 5px solid var(--red);
+    }
+    .hero {
+      width: min(1120px, calc(100% - 36px));
+      margin: auto;
+      padding: 46px 0 38px;
+      display: grid;
+      grid-template-columns: 1fr 310px;
+      gap: 42px;
+      align-items: end;
+    }
+    .eyebrow { color: #9cc8c5; font-size: 12px; font-weight: 800; text-transform: uppercase; }
+    h1 { margin: 8px 0 10px; max-width: 760px; font-size: clamp(30px, 5vw, 54px); line-height: 1.08; letter-spacing: 0; }
+    .lead { max-width: 730px; margin: 0; color: #c7d0d5; }
+    .stamp { padding-left: 18px; border-left: 3px solid #d99a4a; color: #dce3e7; font-size: 13px; }
+    .stamp strong { display: block; color: white; font-size: 17px; }
+    nav { background: var(--white); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 2; }
+    nav div { width: min(1120px, calc(100% - 36px)); margin: auto; display: flex; gap: 24px; overflow-x: auto; }
+    nav a { padding: 13px 0 11px; color: var(--muted); border-bottom: 2px solid transparent; text-decoration: none; white-space: nowrap; font-size: 13px; font-weight: 700; }
+    nav a:hover { color: var(--red); border-color: var(--red); }
+    main { width: min(1120px, calc(100% - 36px)); margin: auto; padding: 30px 0 56px; }
+    section { padding: 27px 0; border-bottom: 1px solid var(--line); }
+    h2 { margin: 0 0 17px; font-size: 25px; line-height: 1.25; letter-spacing: 0; }
+    h3 { margin: 0 0 8px; font-size: 16px; letter-spacing: 0; }
+    p { margin: 0 0 12px; }
+    .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; }
+    .section-note { color: var(--muted); font-size: 12px; text-align: right; }
+    .metrics { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+    .metrics.metrics-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .metric { min-height: 118px; padding: 16px; background: var(--white); border: 1px solid var(--line); border-top: 3px solid var(--teal); border-radius: 5px; }
+    .metric b { display: block; max-width: 100%; overflow-wrap: anywhere; font-size: 25px; line-height: 1.2; }
+    .metric span { display: block; margin-top: 8px; color: var(--muted); font-size: 12px; }
+    .alert { margin-top: 14px; padding: 15px 18px; background: #fff7e8; border: 1px solid #e7c98f; border-left: 4px solid var(--gold); border-radius: 4px; }
+    .alert strong { color: #76500f; }
+    .verdicts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .verdict { padding: 18px 0; border-top: 4px solid var(--green); }
+    .verdict.warn { border-color: var(--gold); }
+    .verdict.risk { border-color: var(--red); }
+    .verdict p { color: #4f5a63; font-size: 14px; }
+    .table-wrap { overflow-x: auto; background: var(--white); border: 1px solid var(--line); border-radius: 5px; }
+    table { width: 100%; border-collapse: collapse; min-width: 850px; }
+    th, td { padding: 12px 13px; border-bottom: 1px solid #e7ebee; text-align: right; font-size: 13px; white-space: nowrap; }
+    th { color: #5c6670; background: #f0f3f4; font-size: 11px; text-transform: uppercase; }
+    th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
+    tr:last-child td { border-bottom: 0; }
+    .partial td { background: #fff9ed; }
+    .bars { margin: 20px 0 8px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; align-items: end; height: 250px; }
+    .bar-col { height: 100%; display: flex; flex-direction: column; justify-content: end; text-align: center; }
+    .bar { position: relative; min-height: 24px; height: var(--h); background: var(--blue); border-top: 5px solid #244e77; }
+    .bar.peak { background: var(--red); border-color: #8d2c24; }
+    .bar.partial { background: repeating-linear-gradient(135deg, #c8a35e 0, #c8a35e 8px, #e1ca99 8px, #e1ca99 16px); border-color: #957025; }
+    .bar b { position: absolute; top: -29px; left: 0; right: 0; font-size: 17px; }
+    .bar-col small { min-height: 42px; padding-top: 8px; color: var(--muted); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+    .analysis-block { padding-top: 15px; border-top: 3px solid var(--teal); }
+    .analysis-block p, .analysis-block li { color: #4d5862; font-size: 14px; }
+    ul { margin: 8px 0 0; padding-left: 20px; }
+    li { margin: 7px 0; }
+    .signal { display: grid; grid-template-columns: 150px 1fr 75px; gap: 13px; align-items: center; margin: 11px 0; font-size: 13px; }
+    .track { height: 10px; background: #e5e9eb; }
+    .fill { height: 100%; width: var(--w); background: var(--teal); }
+    .fill.red { background: var(--red); }
+    .fill.gold { background: var(--gold); }
+    .decision { display: grid; grid-template-columns: 135px 1fr; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .decision:last-child { border-bottom: 0; }
+    .decision strong { color: var(--teal); }
+    .decision span { color: #4e5962; font-size: 14px; }
+    .tag { display: inline-block; padding: 2px 7px; border: 1px solid currentColor; border-radius: 3px; color: var(--green); font-size: 11px; font-weight: 800; }
+    .tag.pending { color: var(--gold); }
+    .method { color: var(--muted); font-size: 12px; }
+    .zone-row { display: grid; grid-template-columns: 120px 1fr 145px; gap: 12px; align-items: center; margin: 12px 0; font-size: 12px; }
+    .zone-stack { display: flex; height: 22px; overflow: hidden; background: #e5e9eb; border-radius: 3px; }
+    .zone-stack span { display: block; min-width: 1px; }
+    .zone-low { background: var(--teal); }
+    .zone-mid { background: var(--gold); }
+    .zone-high { background: var(--red); }
+    .zone-values { color: var(--muted); text-align: right; white-space: nowrap; }
+    .legend { display: flex; flex-wrap: wrap; gap: 18px; margin: 10px 0 18px; color: var(--muted); font-size: 12px; }
+    .legend i { display: inline-block; width: 11px; height: 11px; margin-right: 5px; vertical-align: -1px; }
+    .coverage { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+    .coverage div { padding: 12px; background: var(--white); border: 1px solid var(--line); border-radius: 4px; }
+    .coverage b, .coverage span { display: block; }
+    .coverage span { color: var(--muted); font-size: 11px; }
+    .hypothesis { display: grid; grid-template-columns: 155px 1fr 1fr; gap: 16px; padding: 15px 0; border-bottom: 1px solid var(--line); }
+    .hypothesis:last-child { border-bottom: 0; }
+    .hypothesis b { color: var(--teal); }
+    .hypothesis p { margin: 0; color: #4e5962; font-size: 13px; }
+    footer { padding: 24px 18px; color: #aeb9bf; background: #18242c; text-align: center; font-size: 12px; }
+    @media (max-width: 820px) {
+      .hero { grid-template-columns: 1fr; gap: 22px; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .metrics.metrics-6 { grid-template-columns: repeat(2, 1fr); }
+      .verdicts, .grid-2 { grid-template-columns: 1fr; }
+      .section-head { display: block; }
+      .section-note { margin-top: 5px; text-align: left; }
+      .signal { grid-template-columns: 115px 1fr 58px; }
+      .coverage { grid-template-columns: repeat(2, 1fr); }
+      .hypothesis { grid-template-columns: 1fr; gap: 3px; }
+      .zone-row { grid-template-columns: 82px 1fr; }
+      .zone-values { grid-column: 2; text-align: left; }
+    }
+    @media (max-width: 480px) {
+      .metrics { grid-template-columns: 1fr; }
+      .metrics.metrics-6 { grid-template-columns: 1fr; }
+      .bars { gap: 8px; height: 220px; }
+      .bar-col small { font-size: 10px; }
+      .decision { grid-template-columns: 1fr; gap: 3px; }
+    }
+    @media (max-width: 600px) {
+      .metrics { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="hero">
+    <div>
+      <div class="eyebrow">Coros / Advanced Training Review</div>
+      <h1>过去四周运动多维实验报告</h1>
+      <p class="lead">从有效运动时间、强度结构、训练剂量、跑步机械、环境暴露和次晨恢复反应检验训练适应，而不是只看里程累计。</p>
+    </div>
+    <div class="stamp"><strong>2026-06-29 至 2026-07-26</strong>Asia/Shanghai · 自然周按周一至周日<br>活动数据验证截止：2026-07-26（周日）</div>
+  </div>
+</header>
+<nav><div><a href="#summary">结论</a><a href="#weeks">周度</a><a href="#dimensions">多维指标</a><a href="#load">负荷</a><a href="#efficiency">效率</a><a href="#ledger">台账</a><a href="#recovery">恢复</a><a href="#actions">实验</a><a href="#methods">口径</a></div></nav>
+<main>
+  <section id="summary">
+    <div class="section-head"><h2>周期总览</h2><div class="section-note">已验证的 13 次活动均为跑步；所有时间均为 detail.workoutTime</div></div>
+    <div class="metrics">
+      <div class="metric"><b>13 次</b><span>已核验训练<br>四周活动覆盖完整</span></div>
+      <div class="metric"><b>155.24 km</b><span>四周跑量<br>周均 38.81 km</span></div>
+      <div class="metric"><b>14:41:34</b><span>有效运动时间<br>暂停时间已排除</span></div>
+      <div class="metric"><b>2,157</b><span>详情训练负荷<br>周均 539</span></div>
+      <div class="metric"><b>5'41"/km</b><span>全周期加权有效配速<br>加权心率 149.5 bpm</span></div>
+    </div>
+    <div class="alert"><strong>7 月 26 日已补齐：</strong>15.23 km，detail.workoutTime 1:22:44，5'26"/km，平均心率 160 bpm、瞬时峰值 197 bpm（待连续采样核验），平均功率 189 W，训练负荷 270。活动列表确认 7 月 20–26 日共 3 次训练。</div>
+    <div class="verdicts" style="margin-top:24px">
+      <article class="verdict"><h3>设备模型与混合指标偏正</h3><p>7/13–19 的混合训练心率效率较高；COROS 阈值配速估计从约 4'35"微调至 4'33"/km，耐力等级从 83.7 到 84.5。这些是待验证信号，不是实测能力提升的证据。</p></article>
+      <article class="verdict warn"><h3>连续两周处于高负荷</h3><p>周负荷为 497 → 356 → 699 → 605。减量周后连续两周显著加载，W4 虽比 W3 低 13.4%，但单位运动小时负荷达到周期最高的 169.5。</p></article>
+      <article class="verdict risk"><h3>最需要控制的是质量课密度</h3><p>7/17 阈值、7/19 渐进长跑、7/23 间歇、7/26 强渐进跑集中在 10 天内。7/26 前后 RHR 分别为 56、58 bpm，当前不宜继续追加刺激。</p></article>
+    </div>
+  </section>
+
+  <section id="weeks">
+    <div class="section-head"><h2>周度对比</h2><div class="section-note">四个完整自然周，训练负荷均来自活动详情</div></div>
+    <div class="bars" aria-label="每周训练负荷：497、356、699、605">
+      <div class="bar-col"><div class="bar" style="--h:71%"><b>497</b></div><small>6/29–7/05<br>完整</small></div>
+      <div class="bar-col"><div class="bar" style="--h:51%"><b>356</b></div><small>7/06–12<br>完整</small></div>
+      <div class="bar-col"><div class="bar peak" style="--h:100%"><b>699</b></div><small>7/13–19<br>完整</small></div>
+      <div class="bar-col"><div class="bar" style="--h:87%"><b>605</b></div><small>7/20–26<br>完整</small></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>自然周</th><th>状态</th><th>次数</th><th>距离</th><th>有效时间</th><th>负荷</th><th>加权配速</th><th>加权 HR</th><th>HR 效率</th><th>负荷/小时</th></tr></thead>
+        <tbody>
+          <tr><td>6/29–7/05</td><td><span class="tag">完整</span></td><td>3</td><td>36.08 km</td><td>3:23:27</td><td>497</td><td>5'38"</td><td>150.8</td><td>1.176</td><td>146.6</td></tr>
+          <tr><td>7/06–12</td><td><span class="tag">完整</span></td><td>3</td><td>30.72 km</td><td>3:05:03</td><td>356</td><td>6'01"</td><td>144.3</td><td>1.151</td><td>115.4</td></tr>
+          <tr><td>7/13–19</td><td><span class="tag">完整</span></td><td>4</td><td>50.63 km</td><td>4:38:57</td><td>699</td><td>5'31"</td><td>149.6</td><td>1.213</td><td>150.3</td></tr>
+          <tr><td>7/20–26</td><td><span class="tag">完整</span></td><td>3</td><td>37.81 km</td><td>3:34:07</td><td>605</td><td>5'40"</td><td>152.8</td><td>1.156</td><td>169.5</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="dimensions">
+    <div class="section-head"><h2>多维训练画像</h2><div class="section-note">13/13 次详情覆盖 · 区间秒数合计与 workoutTime 完全一致</div></div>
+    <div class="coverage">
+      <div><b>13/13</b><span>活动详情 · 可复算</span></div>
+      <div><b>13/13</b><span>心率区间 · 可比较</span></div>
+      <div><b>13/13</b><span>功率/跑姿 · 模型指标</span></div>
+      <div><b>26/28</b><span>HRV · 探索性</span></div>
+      <div><b>28/28</b><span>RHR · 可比较</span></div>
+      <div><b>7/28 夜</b><span>睡眠 · 不足以推断</span></div>
+    </div>
+
+    <h3 style="margin-top:26px">心率强度时间结构</h3>
+    <div class="legend"><span><i class="zone-low"></i>低：低于 Z1 + Z1</span><span><i class="zone-mid"></i>中：Z2</span><span><i class="zone-high"></i>高：Z3–Z5</span></div>
+    <div class="zone-row"><b>四周整体</b><div class="zone-stack"><span class="zone-low" style="width:57.7%"></span><span class="zone-mid" style="width:22.2%"></span><span class="zone-high" style="width:20.1%"></span></div><div class="zone-values">57.7 / 22.2 / 20.1%</div></div>
+    <div class="zone-row"><b>6/29–7/05</b><div class="zone-stack"><span class="zone-low" style="width:56.7%"></span><span class="zone-mid" style="width:27.9%"></span><span class="zone-high" style="width:15.3%"></span></div><div class="zone-values">56.7 / 27.9 / 15.3%</div></div>
+    <div class="zone-row"><b>7/06–12</b><div class="zone-stack"><span class="zone-low" style="width:74.4%"></span><span class="zone-mid" style="width:22.6%"></span><span class="zone-high" style="width:3%"></span></div><div class="zone-values">74.4 / 22.6 / 3.0%</div></div>
+    <div class="zone-row"><b>7/13–19</b><div class="zone-stack"><span class="zone-low" style="width:55.9%"></span><span class="zone-mid" style="width:18.9%"></span><span class="zone-high" style="width:25.2%"></span></div><div class="zone-values">55.9 / 18.9 / 25.2%</div></div>
+    <div class="zone-row"><b>7/20–26</b><div class="zone-stack"><span class="zone-low" style="width:46.9%"></span><span class="zone-mid" style="width:20.5%"></span><span class="zone-high" style="width:32.6%"></span></div><div class="zone-values">46.9 / 20.5 / 32.6%</div></div>
+    <div class="alert"><strong>结构性结论：</strong>W2 是真正的低强度减量周；W3、W4 高强度占比连续升至 25.2%、32.6%。四周整体并非典型 80/20 结构，最近一周尤其偏向中高强度。这是当前恢复压力最清晰的剂量证据。</div>
+
+    <div class="metrics metrics-6" style="margin-top:24px">
+      <div class="metric"><b>43.9%</b><span>四节关键课负荷占比<br>946 / 2,157</span></div>
+      <div class="metric"><b>30.2%</b><span>超过 75 分钟训练<br>占总有效时间</span></div>
+      <div class="metric"><b>187.7</b><span>有效时间加权步频<br>spm</span></div>
+      <div class="metric"><b>93.8 cm</b><span>有效时间加权步幅<br>受配速影响</span></div>
+      <div class="metric"><b>61.1 J/m</b><span>跑步功率代价代理<br>设备模型估计</span></div>
+      <div class="metric"><b>205 m</b><span>累计爬升<br>W4 占 101 m</span></div>
+    </div>
+
+    <div class="table-wrap" style="margin-top:18px">
+      <table>
+        <thead><tr><th>自然周</th><th>低强度</th><th>Z3+</th><th>负荷/km</th><th>负荷/h</th><th>步频</th><th>步幅</th><th>功率代价</th><th>爬升</th><th>体感温度</th><th>湿度</th></tr></thead>
+        <tbody>
+          <tr><td>6/29–7/05</td><td>56.7%</td><td>15.3%</td><td>13.8</td><td>146.6</td><td>190.2</td><td>93.1 cm</td><td>61.10 J/m</td><td>44 m</td><td>30.7°C</td><td>76.6%</td></tr>
+          <tr><td>7/06–12</td><td>74.4%</td><td>3.0%</td><td>11.6</td><td>115.4</td><td>185.4</td><td>89.6 cm</td><td>60.77 J/m</td><td>25 m</td><td>33.2°C</td><td>69.4%</td></tr>
+          <tr><td>7/13–19</td><td>55.9%</td><td>25.2%</td><td>13.8</td><td>150.3</td><td>186.2</td><td>97.3 cm</td><td>60.97 J/m</td><td>35 m</td><td>29.6°C</td><td>70.9%</td></tr>
+          <tr><td>7/20–26</td><td>46.9%</td><td>32.6%</td><td>16.0</td><td>169.5</td><td>189.1</td><td>93.5 cm</td><td>61.35 J/m</td><td>101 m</td><td>30.0°C</td><td>88.9%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid-2" style="margin-top:24px">
+      <article class="analysis-block"><h3>关键课密度</h3><p>7/17、7/19、7/23、7/26 在 10 天内形成 4 次质量刺激，间隔约 48、96、72 小时。四节课贡献全周期负荷 43.9%，并贡献 W3+W4 负荷的 72.5%。频率本身不高，但刺激高度集中。</p></article>
+      <article class="analysis-block"><h3>长时耐力暴露</h3><p>超过 75 分钟共 3 次：7/05、7/19、7/26，合计占总有效时间 30.2%、总距离 31.5%。它们分别占所在周距离 45.5%、34.1%、40.3%，单次长跑占比总体可控，但后两次都带有明显质量属性。</p></article>
+      <article class="analysis-block"><h3>机械指标稳定，但不能直接称为经济性</h3><p>活动级功率代价为 60.34–61.58 J/m，波动很小；周加权值也仅为 60.77–61.35 J/m。COROS 跑步功率是模型估计，适合个体内同条件复测，不应解释为代谢效率或与他人横向比较。</p></article>
+      <article class="analysis-block"><h3>环境是重要混杂变量</h3><p>体感温度 ≥32°C 的训练累计约 7:27，湿度 ≥85% 的训练约 7:07。W4 加权湿度 88.9%，且爬升为其他周的 2–4 倍，因此 W4 的配速、心率和功率效率不能只归因于体能变化。</p></article>
+    </div>
+  </section>
+
+  <section id="load">
+    <div class="section-head"><h2>负荷结构与风险</h2><div class="section-note">单调度使用每日详情负荷（休息日为 0）；不把 ACWR 当作伤病诊断</div></div>
+    <div class="grid-2">
+      <article class="analysis-block">
+        <h3>减量后连续两周加载</h3>
+        <p>四周平均负荷 539，周间总体变异系数 23.7%。7/06–12 是明确的减量周；随后两周为 699、605，恢复余量已经比单个高峰周更值得关注。</p>
+        <div class="signal"><span>W1 单调度</span><div class="track"><div class="fill" style="--w:65%"></div></div><b>0.81</b></div>
+        <div class="signal"><span>W2 单调度</span><div class="track"><div class="fill" style="--w:68%"></div></div><b>0.85</b></div>
+        <div class="signal"><span>W3 单调度</span><div class="track"><div class="fill gold" style="--w:83%"></div></div><b>1.04</b></div>
+        <div class="signal"><span>W4 单调度</span><div class="track"><div class="fill" style="--w:63%"></div></div><b>0.79</b></div>
+      </article>
+      <article class="analysis-block">
+        <h3>W4 的刺激更加集中</h3>
+        <p>7/20–26 周负荷 605，其中 7/23 间歇与 7/26 渐进跑合计贡献 82.6%。单调度不高，是因为休息日充足；但两次关键课承担了绝大部分刺激。</p>
+        <div class="signal"><span>7/21 轻松跑</span><div class="track"><div class="fill" style="--w:17%"></div></div><b>17.4%</b></div>
+        <div class="signal"><span>7/23 间歇</span><div class="track"><div class="fill gold" style="--w:38%"></div></div><b>38.0%</b></div>
+        <div class="signal"><span>7/26 渐进跑</span><div class="track"><div class="fill red" style="--w:45%"></div></div><b>44.6%</b></div>
+      </article>
+    </div>
+    <div class="alert"><strong>ACWR 的正确用法：</strong>四个周末读数为 1.36 → 0.89 → 1.27 → 1.32；7/26 ATI/CTI 为 98/74，7/27 回落至 84/73（ACWR 1.15）。这些值描述急性负荷变化，不是通用伤病概率线。</div>
+  </section>
+
+  <section id="efficiency">
+    <div class="section-head"><h2>跑步效率与专项刺激</h2><div class="section-note">效率 = 距离 ÷ 心搏数；不同训练类型、气温与路线会造成混杂</div></div>
+    <div class="grid-2">
+      <article class="analysis-block">
+        <h3>混合样本效率峰值出现在最高负荷周</h3>
+        <p>W3 的加权配速比 W1 快 7 秒/km、加权心率低 1.2 bpm，HR 效率高 3.1%。但训练类型、W4 地形和热湿条件差异明显，这只能作为描述性发现，不能证明有氧能力提升。</p>
+        <div class="signal"><span>W1</span><div class="track"><div class="fill" style="--w:92%"></div></div><b>1.176</b></div>
+        <div class="signal"><span>W2</span><div class="track"><div class="fill" style="--w:90%"></div></div><b>1.151</b></div>
+        <div class="signal"><span>W3</span><div class="track"><div class="fill" style="--w:95%"></div></div><b>1.213</b></div>
+        <div class="signal"><span>W4</span><div class="track"><div class="fill" style="--w:90%"></div></div><b>1.156</b></div>
+      </article>
+      <article class="analysis-block">
+        <h3>7/26 是强渐进跑，不是轻松长跑</h3>
+        <p>15.23 km 的三个 5 km 分段依次约为 27'46"（HR 151）、27'27"（HR 161）、26'31"（HR 167），最后 1 km 加速到约 4'28"。高温高湿背景下心率随提速持续上升，不能把它当作纯心率漂移。</p>
+        <ul>
+          <li>54.5% 有效时间心率 ≥161 bpm，6.7% 达到 ≥172 bpm。</li>
+          <li>有氧训练效果 4.2、无氧 2.3，训练负荷 270，为明确质量刺激。</li>
+          <li>天气快照 26°C、湿度 91%；公里分段温度记录约 29–32°C。</li>
+        </ul>
+      </article>
+    </div>
+    <div class="alert"><strong>7/23 间歇仍需优化均匀性：</strong>5 × 800 m 约为 4'14"、4'14"、4'25"、4'41"、4'16"/km。第 4 组明显掉速但第 5 组恢复，下一次优先缩小组间差异，不提高最快组速度。</div>
+    <div class="alert"><strong>稳态轻松跑解耦基线：</strong>只有 7/03、7/06、7/21 三次较接近稳态条件，后半程速度/心率效率相对前半程约为 -3.6%、-3.0%、-0.1%。样本仅 n=3 且环境不同，暂不判定趋势；渐进跑和间歇课未混入该指标。</div>
+  </section>
+
+  <section id="ledger">
+    <div class="section-head"><h2>活动级实验台账</h2><div class="section-note">Z3+ 为 COROS 心率 Z3–Z5 有效时间占比 · AE/AN 为有氧/无氧训练效果</div></div>
+    <div class="table-wrap">
+      <table style="min-width:1480px">
+        <thead><tr><th>日期</th><th>训练判读</th><th>距离</th><th>workoutTime</th><th>有效配速</th><th>均/峰 HR</th><th>功率</th><th>步频/步幅</th><th>爬升</th><th>负荷</th><th>AE/AN</th><th>Z3+</th><th>配速 CV</th><th>天气</th></tr></thead>
+        <tbody>
+          <tr><td>7/01 周三</td><td>阈值/渐进</td><td>9.60 km</td><td>54:04</td><td>5'38"</td><td>154 / 178</td><td>181 W</td><td>187 / 95 cm</td><td>4 m</td><td>145</td><td>3.2 / 1.4</td><td>17.0%</td><td>6.0%</td><td>29°C / 65%</td></tr>
+          <tr><td>7/03 周五</td><td>轻松稳态</td><td>10.06 km</td><td>59:14</td><td>5'53"</td><td>146 / 158</td><td>172 W</td><td>189 / 90 cm</td><td>8 m</td><td>119</td><td>3.1 / 0.0</td><td>0.0%</td><td>2.1%</td><td>25°C / 91%</td></tr>
+          <tr><td>7/05 周日</td><td>渐进长跑</td><td>16.41 km</td><td>1:30:09</td><td>5'30"</td><td>152 / 176</td><td>186 W</td><td>193 / 94 cm</td><td>32 m</td><td>233</td><td>3.9 / 2.1</td><td>24.4%</td><td>4.9%</td><td>25°C / 74%</td></tr>
+          <tr><td>7/06 周一</td><td>轻松稳态</td><td>10.40 km</td><td>1:04:09</td><td>6'10"</td><td>140 / 150</td><td>163 W</td><td>182 / 89 cm</td><td>7 m</td><td>103</td><td>2.9 / 0.0</td><td>0.0%</td><td>1.8%</td><td>22°C / 94%</td></tr>
+          <tr><td>7/08 周三</td><td>渐进有氧</td><td>9.59 km</td><td>56:22</td><td>5'53"</td><td>146 / 160</td><td>173 W</td><td>185 / 92 cm</td><td>7 m</td><td>115</td><td>3.0 / 0.1</td><td>0.0%</td><td>5.4%</td><td>31°C / 58%</td></tr>
+          <tr><td>7/09 周四</td><td>渐进有氧</td><td>10.73 km</td><td>1:04:32</td><td>6'01"</td><td>147 / 171</td><td>169 W</td><td>189 / 88 cm</td><td>11 m</td><td>138</td><td>3.2 / 0.3</td><td>8.7%</td><td>4.7%</td><td>32°C / 55%</td></tr>
+          <tr><td>7/13 周一</td><td>渐进有氧</td><td>11.34 km</td><td>1:03:52</td><td>5'38"</td><td>147 / 164</td><td>180 W</td><td>188 / 94 cm</td><td>15 m</td><td>134</td><td>3.2 / 0.8</td><td>3.5%</td><td>3.5%</td><td>26°C / 93%</td></tr>
+          <tr><td>7/14 周二</td><td>末段加速</td><td>10.01 km</td><td>57:26</td><td>5'44"</td><td>146 / 172</td><td>178 W</td><td>183 / 95 cm</td><td>9 m</td><td>119</td><td>3.0 / 1.2</td><td>18.1%</td><td>6.6%</td><td>34°C / 47%</td></tr>
+          <tr><td>7/17 周五</td><td>阈值持续</td><td>12.02 km</td><td>1:03:57</td><td>5'19"</td><td>155 / 172</td><td>191 W</td><td>183 / 103 cm</td><td>7 m</td><td>186</td><td>3.5 / 2.4</td><td>56.9%</td><td>5.6%</td><td>32°C / 48%</td></tr>
+          <tr><td>7/19 周日</td><td>渐进长跑</td><td>17.26 km</td><td>1:33:42</td><td>5'26"</td><td>150 / 179</td><td>187 W</td><td>189 / 97 cm</td><td>4 m</td><td>260</td><td>4.0 / 3.4</td><td>22.8%</td><td>8.3%</td><td>23°C / 86%</td></tr>
+          <tr><td>7/21 周二</td><td>轻松稳态</td><td>10.43 km</td><td>1:03:24</td><td>6'05"</td><td>140 / 158</td><td>168 W</td><td>188 / 88 cm</td><td>12 m</td><td>105</td><td>2.9 / 0.3</td><td>0.0%</td><td>3.6%</td><td>21°C / 99%</td></tr>
+          <tr><td>7/23 周四</td><td>5 × 800 m</td><td>12.15 km</td><td>1:07:59</td><td>5'36"</td><td>156 / 183</td><td>182 W</td><td>183 / 98 cm</td><td>15 m</td><td>230</td><td>3.7 / 3.4</td><td>36.5%</td><td>3.7%*</td><td>28°C / 77%</td></tr>
+          <tr><td>7/26 周日</td><td>强渐进跑</td><td>15.23 km</td><td>1:22:44</td><td>5'26"</td><td>160 / 197†</td><td>189 W</td><td>195 / 94 cm</td><td>74 m</td><td>270</td><td>4.2 / 2.3</td><td>54.5%</td><td>5.0%</td><td>26°C / 91%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="method" style="margin-top:10px">* 7/23 表中 CV 为整公里配速 CV；5 × 800 m 重复段配速 CV 为 3.9%，最快/最慢相差 27 秒/km。† 7/26 的 197 bpm 为详情瞬时峰值，未取得原始连续采样验证，不用于推导个人最大心率或重设心率区间。</p>
+  </section>
+
+  <section id="recovery">
+    <div class="section-head"><h2>恢复反应与因果边界</h2><div class="section-note">RHR 覆盖至 7/27；7/27 HRV 尚未生成；睡眠分期不足，不做四周趋势</div></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>自然周</th><th>HRV 有效日</th><th>HRV 均值</th><th>HRV 波动 SD</th><th>低于基线天数</th><th>RHR 均值</th><th>周末 ATI/CTI</th></tr></thead>
+        <tbody>
+          <tr><td>6/29–7/05</td><td>6/7</td><td>69.2 ms</td><td>3.5</td><td>0</td><td>45.4 bpm</td><td>94 / 69</td></tr>
+          <tr><td>7/06–12</td><td>7/7</td><td>64.0 ms</td><td>9.1</td><td>4</td><td>46.9 bpm</td><td>59 / 66</td></tr>
+          <tr><td>7/13–19</td><td>6/7</td><td>65.5 ms</td><td>4.5</td><td>2</td><td>43.3 bpm</td><td>92 / 72</td></tr>
+          <tr><td>7/20–26</td><td>7/7</td><td>67.6 ms</td><td>4.0</td><td>2</td><td>46.9 bpm</td><td>98 / 74</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid-2" style="margin-top:24px">
+      <article class="analysis-block"><h3>真正的恢复低谷在减量周中段</h3><p>7/10–11 HRV 为 51、52 ms，分别低于当时基线约 14、13 ms；此前 7/08–09 连续训练。7/12 回到 76 ms。这个序列支持“短暂压力后恢复”，但单次回升不应命名为确定的超量恢复。</p></article>
+      <article class="analysis-block"><h3>7/26 前后恢复信号偏弱</h3><p>此前 21 天 RHR 中位数为 45 bpm、MAD 为 2。7/26 晨间 HRV 61 ms（基线 66）、RHR 56（+11）；完成负荷 270 的渐进跑后，7/27 RHR 为 58（+13）。这是显著个体偏离，但不作医学诊断。</p></article>
+    </div>
+    <div class="alert"><strong>相关性仍然很弱：</strong>此前 10 个可配对训练日中，当日详情负荷与次晨 HRV 相对基线的相关约为 -0.19。7/26 尚无次晨 HRV，不能用单次事件推翻或强化这个结论。</div>
+  </section>
+
+  <section id="actions">
+    <div class="section-head"><h2>下一周期实验</h2><div class="section-note">当前周从 2026-07-27（周一）开始，与以上四个完整周分开</div></div>
+    <div class="decision"><strong>7/27 恢复优先</strong><span>今日不安排质量跑。优先休息、步行或非常轻松的短恢复跑；RHR 58 bpm 已明显高于近期范围，待 RHR 回落且主观腿部状态正常后再恢复训练。</span></div>
+    <div class="decision"><strong>质量课上限</strong><span>接下来 7 天最多 2 次质量刺激，并至少间隔 48 小时。渐进长跑若后段进入稳态/阈值，应计作其中一次，而不是“普通长跑”。</span></div>
+    <div class="decision"><strong>间歇优化</strong><span>下一次 5 × 800 m 先追求组间均匀：最快与最慢组差控制在约 10–12 秒/公里量级；第 1 组避免跟着兴奋度过快。</span></div>
+    <div class="decision"><strong>效率复测</strong><span>选择同一路线、相似时段完成 45–60 分钟轻松跑，以 HR 140–145 bpm 为约束；比较有效配速、后半程心率漂移与主观用力，连续 3 次再判断趋势。</span></div>
+    <div class="decision"><strong>恢复开关</strong><span>连续观察未来 1–2 个早晨。若 RHR 仍高于滚动中位数 45 bpm 超过约 3×MAD（即偏高 &gt;6 bpm）、HRV 低于个人基线或腿部疲劳超过 3/10，继续取消质量课。</span></div>
+    <h3 style="margin-top:28px">假设、证据与验证</h3>
+    <div class="hypothesis"><b>有氧效率正在改善</b><p><strong>当前证据：</strong>W3 混合样本 HR 效率较高，设备阈值与耐力模型轻微上调；但训练类型和天气不一致。</p><p><strong>下一次验证：</strong>同路线、HR 140–145、45–60 分钟，连续 3 次记录有效配速、功率与稳态解耦。</p></div>
+    <div class="hypothesis"><b>恢复压力来自质量密度</b><p><strong>当前证据：</strong>10 天 4 次质量刺激，W4 Z3+ 32.6%，7/26–27 RHR 分别偏离基线 +11、+13 bpm。</p><p><strong>下一次验证：</strong>执行 5–7 天低强度周期，观察 RHR、HRV 与相同轻松跑效率是否同步归位。</p></div>
+    <div class="hypothesis"><b>间歇掉速来自开局偏快</b><p><strong>当前证据：</strong>5 × 800 m 重复配速 CV 3.9%，最快/最慢差 27 秒/km，第 4 组最低、第 5 组恢复。</p><p><strong>下一次验证：</strong>前两组慢 3–5 秒，记录五组 CV、末组相对首组差和恢复段心率回落。</p></div>
+  </section>
+
+  <section id="methods">
+    <div class="section-head"><h2>数据口径与限制</h2><div class="section-note">生成日：2026-07-27（周一）</div></div>
+    <div class="grid-2">
+      <article class="analysis-block"><h3>活动口径</h3><p class="method">窗口为四个自然周：6/29–7/05、7/06–12、7/13–19、7/20–26。13 次活动的时长均来自活动详情 workoutTime；摘要 totalTime 从未代入。配速按总 workoutTime ÷ 总距离，心率/功率按 workoutTime 加权。训练负荷取对应活动详情。</p></article>
+      <article class="analysis-block"><h3>完整性</h3><p class="method">Web 活动列表已验证 7/20–26 共 3 次训练，最后活动为 7/26。每日训练与恢复指标已更新至 7/27，但当天 HRV 尚为空。睡眠分期覆盖不足且质量评分全空，因此不生成四周睡眠均值或相关结论。</p></article>
+      <article class="analysis-block"><h3>统计边界</h3><p class="method">周单调度 = 7 天每日训练负荷均值 ÷ 总体标准差。相关系数、HR/功率效率、配速 CV 和前后半程变化均为描述性指标。短窗口、训练类型、路线、气温和生活压力均可能混杂，不用于医学诊断或伤病概率预测。</p></article>
+      <article class="analysis-block"><h3>强度与机械指标</h3><p class="method">强度秒数来自 detail.zoneList，13 次合计 52,894 秒，与 workoutTime 合计一致。低强度定义为低于 Z1 + Z1，中强度为 Z2，高强度为 Z3–Z5。功率、步幅和训练效果均为设备模型输出，不等同实验室代谢测试。</p></article>
+      <article class="analysis-block"><h3>环境与分段</h3><p class="method">天气是活动详情的单点快照，不代表整场连续气象。公里 CV 仅使用完整自动公里圈；间歇重复段单独计算。渐进跑的前后半程变化是主动配速策略，不解释为纯有氧解耦。</p></article>
+      <article class="analysis-block"><h3>来源</h3><p class="method">COROS 本地 SQLite 缓存、历史报告保存的详情值，以及 2026-07-27 经用户明确授权执行的 Web-only 登录与活动详情请求。Mobile 登录及 Mobile API 均未调用，原有 Mobile token 被保留。</p></article>
+    </div>
+  </section>
+</main>
+<footer>训练建议用于日常决策支持，不替代医疗诊断 · 7 月 26 日活动详情已补齐</footer>
+</body>
+</html>

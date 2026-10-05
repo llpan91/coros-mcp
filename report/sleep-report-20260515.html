@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>睡眠质量分析 - 2026年5月15日</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f0f23; color: #e0e0e0; min-height: 100vh; padding: 2rem; }
+.container { max-width: 900px; margin: 0 auto; }
+h1 { text-align: center; font-size: 1.8rem; margin-bottom: 0.5rem; color: #fff; }
+.subtitle { text-align: center; color: #888; margin-bottom: 2rem; font-size: 0.95rem; }
+.card { background: #1a1a2e; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; border: 1px solid #2a2a4a; }
+.card-title { font-size: 1.1rem; color: #a0a0ff; margin-bottom: 1rem; font-weight: 600; }
+.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; }
+.metric { text-align: center; padding: 1rem; background: #12122a; border-radius: 12px; }
+.metric-value { font-size: 1.8rem; font-weight: 700; color: #fff; }
+.metric-label { font-size: 0.8rem; color: #888; margin-top: 0.3rem; }
+.metric-unit { font-size: 0.9rem; color: #666; }
+.score-ring { display: flex; justify-content: center; align-items: center; margin: 1.5rem 0; }
+.score-circle { width: 160px; height: 160px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: conic-gradient(#4ade80 0deg 280deg, #2a2a4a 280deg 360deg); position: relative; }
+.score-circle::before { content: ''; position: absolute; width: 130px; height: 130px; border-radius: 50%; background: #1a1a2e; }
+.score-number { position: relative; z-index: 1; font-size: 2.5rem; font-weight: 800; color: #4ade80; }
+.score-text { position: relative; z-index: 1; font-size: 0.8rem; color: #888; }
+.sleep-bar { height: 40px; border-radius: 8px; display: flex; overflow: hidden; margin: 1rem 0; }
+.bar-deep { background: #3b82f6; }
+.bar-light { background: #60a5fa; }
+.bar-rem { background: #a78bfa; }
+.bar-awake { background: #f97316; }
+.legend { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 0.8rem; }
+.legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; }
+.legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+.timeline { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0; font-size: 0.85rem; color: #aaa; }
+.hr-chart { display: flex; align-items: end; gap: 2px; height: 60px; margin: 1rem 0; justify-content: center; }
+.hr-bar { width: 20px; border-radius: 3px 3px 0 0; transition: height 0.3s; }
+.compare-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+.compare-table th, .compare-table td { padding: 0.6rem 0.8rem; text-align: center; border-bottom: 1px solid #2a2a4a; font-size: 0.85rem; }
+.compare-table th { color: #888; font-weight: 500; }
+.compare-table td { color: #ddd; }
+.highlight { color: #4ade80; font-weight: 600; }
+.warning { color: #f97316; font-weight: 600; }
+.analysis { line-height: 1.8; font-size: 0.95rem; color: #ccc; }
+.analysis li { margin-bottom: 0.5rem; padding-left: 0.5rem; }
+.tag { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+.tag-good { background: #0f3d1f; color: #4ade80; }
+.tag-warn { background: #3d2a0f; color: #f97316; }
+.tag-info { background: #1a1a3d; color: #a78bfa; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>睡眠质量分析报告</h1>
+<p class="subtitle">2026年5月14日晚 ~ 5月15日晨 | 数据来源: COROS</p>
+
+<div class="card">
+  <div class="card-title">综合评分</div>
+  <div class="score-ring">
+    <div class="score-circle">
+      <div class="score-number">78</div>
+      <div class="score-text">良好</div>
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:0.5rem;">
+    <span class="tag tag-good">深睡充足</span>
+    <span class="tag tag-warn">轻度碎片化</span>
+    <span class="tag tag-info">入睡偏晚</span>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">核心指标</div>
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-value">6<span class="metric-unit">h</span>31<span class="metric-unit">m</span></div>
+      <div class="metric-label">总睡眠时长</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value">23:32</div>
+      <div class="metric-label">入睡时间</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value">06:28</div>
+      <div class="metric-label">醒来时间</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value" style="color:#4ade80">118<span class="metric-unit">min</span></div>
+      <div class="metric-label">深度睡眠</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value">59<span class="metric-unit">min</span></div>
+      <div class="metric-label">REM睡眠</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value" style="color:#f97316">25<span class="metric-unit">min</span></div>
+      <div class="metric-label">清醒时间</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">睡眠阶段分布</div>
+  <div class="sleep-bar">
+    <div class="bar-deep" style="width:30.2%"></div>
+    <div class="bar-light" style="width:54.7%"></div>
+    <div class="bar-rem" style="width:15.1%"></div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>深睡 118min (30.2%)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div>浅睡 214min (54.7%)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div>REM 59min (15.1%)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div>清醒 25min</div>
+  </div>
+  <div class="timeline">
+    <span>23:32 入睡</span>
+    <span>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+    <span>06:28 醒来</span>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">睡眠心率</div>
+  <div class="metrics" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="metric">
+      <div class="metric-value" style="color:#60a5fa">49<span class="metric-unit">bpm</span></div>
+      <div class="metric-label">平均心率</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value" style="color:#4ade80">42<span class="metric-unit">bpm</span></div>
+      <div class="metric-label">最低心率</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value">70<span class="metric-unit">bpm</span></div>
+      <div class="metric-label">最高心率</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">近7日趋势对比</div>
+  <table class="compare-table">
+    <thead>
+      <tr><th>日期</th><th>时长</th><th>深睡</th><th>REM</th><th>清醒</th><th>最低HR</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>5/8</td><td>7h00m</td><td>67min</td><td>97min</td><td>37min</td><td>46</td></tr>
+      <tr><td>5/9</td><td>7h31m</td><td>100min</td><td>92min</td><td>29min</td><td>43</td></tr>
+      <tr><td>5/10</td><td>7h14m</td><td class="highlight">108min</td><td>50min</td><td class="highlight">9min</td><td>45</td></tr>
+      <tr><td>5/11</td><td class="warning">5h38m</td><td>63min</td><td class="warning">16min</td><td class="warning">80min</td><td>43</td></tr>
+      <tr><td>5/12</td><td>6h37m</td><td>89min</td><td>59min</td><td>12min</td><td>44</td></tr>
+      <tr><td>5/13</td><td class="warning">4h31m</td><td>58min</td><td>43min</td><td>9min</td><td>42</td></tr>
+      <tr><td>5/14</td><td>5h44m</td><td>61min</td><td>83min</td><td>38min</td><td>42</td></tr>
+      <tr style="background:#1a2a1a;"><td><strong>5/15</strong></td><td><strong>6h31m</strong></td><td class="highlight"><strong>118min</strong></td><td>59min</td><td>25min</td><td>42</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <div class="card-title">分析与建议</div>
+  <ul class="analysis">
+    <li><strong>深度睡眠表现优秀:</strong> 118分钟的深睡占比达30.2%，是本周最高值，远超推荐标准(15-20%)。身体恢复效率很高。</li>
+    <li><strong>REM睡眠略有不足:</strong> 59分钟(15.1%)处于正常下限。REM对记忆巩固和情绪调节很重要，建议避免睡前饮酒和过度兴奋。</li>
+    <li><strong>睡眠时长回升:</strong> 相比前两天(4h31m/5h44m)明显改善，但仍低于7-9小时的推荐范围。建议争取在23:00前入睡。</li>
+    <li><strong>心率数据理想:</strong> 最低心率42bpm，平均49bpm，反映良好的心血管健康和副交感神经活跃度。</li>
+    <li><strong>清醒时间可控:</strong> 25分钟清醒属于正常范围，相比5/11(80min)大幅改善，说明睡眠连续性恢复较好。</li>
+    <li><strong>本周整体趋势:</strong> 前半周睡眠质量较好，5/11和5/13出现明显睡眠不足，昨晚有所恢复但仍需注意作息规律。</li>
+  </ul>
+</div>
+
+<div style="text-align:center; color:#555; font-size:0.8rem; margin-top:2rem;">
+  Generated by Claude Code &times; COROS MCP | 2026-05-15
+</div>
+</div>
+</body>
+</html>

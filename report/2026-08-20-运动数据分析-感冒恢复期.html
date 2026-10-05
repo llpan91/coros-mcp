@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <title>2026-08-20 运动数据分析 · 感冒恢复期</title>
+  <style>
+    :root {
+      --ink: #17212b;
+      --muted: #687582;
+      --paper: #ffffff;
+      --canvas: #f4f6f7;
+      --line: #dce2e6;
+      --teal: #138f83;
+      --teal-soft: #e6f5f2;
+      --orange: #c76b20;
+      --orange-soft: #fff1df;
+      --red: #c7473d;
+      --red-soft: #fdeceb;
+      --blue: #3b6d9b;
+      --blue-soft: #eaf2f8;
+      --green: #237948;
+      --green-soft: #e8f5ed;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--canvas); }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--canvas);
+      font: 15px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      letter-spacing: 0;
+    }
+    .page { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 30px 0 58px; }
+    .masthead { display: flex; justify-content: space-between; gap: 24px; align-items: flex-end; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+    .eyebrow { margin: 0 0 6px; color: var(--teal); font-size: 12px; font-weight: 800; text-transform: uppercase; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 8px; font-size: clamp(26px, 4vw, 40px); line-height: 1.2; letter-spacing: 0; }
+    h2 { margin-bottom: 5px; font-size: 20px; line-height: 1.3; }
+    h3 { margin-bottom: 6px; font-size: 15px; }
+    .subtitle { max-width: 730px; margin-bottom: 0; color: var(--muted); }
+    .meta { color: var(--muted); font-size: 12px; text-align: right; white-space: nowrap; }
+    section { margin-top: 28px; }
+    .section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 12px; }
+    .section-note { margin: 0; color: var(--muted); font-size: 12px; text-align: right; }
+    .grid { display: grid; gap: 14px; }
+    .metrics { grid-template-columns: repeat(5, minmax(0, 1fr)); margin-top: 22px; }
+    .metric, .panel { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; }
+    .metric { padding: 15px 16px; }
+    .metric-label { display: block; color: var(--muted); font-size: 12px; }
+    .metric-value { display: block; margin: 2px 0; font-size: 24px; line-height: 1.25; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .metric-note { display: block; color: var(--muted); font-size: 11px; line-height: 1.4; }
+    .alert { display: grid; grid-template-columns: 110px 1fr; gap: 16px; margin-top: 16px; padding: 15px 18px; background: var(--red-soft); border: 1px solid #efc8c4; border-left: 5px solid var(--red); border-radius: 7px; }
+    .alert-label { color: var(--red); font-size: 13px; font-weight: 800; }
+    .alert p { margin-bottom: 0; }
+    .two-col { grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr); }
+    .panel { padding: 18px; }
+    .panel.callout { border-top: 4px solid var(--orange); }
+    .panel.good { border-top: 4px solid var(--green); }
+    .panel p:last-child { margin-bottom: 0; }
+    .interval-chart { display: grid; gap: 11px; margin-top: 16px; }
+    .interval-row { display: grid; grid-template-columns: 42px minmax(0, 1fr) 74px; gap: 10px; align-items: center; }
+    .rep-label { color: var(--muted); font-size: 12px; font-weight: 750; }
+    .bar-track { height: 18px; overflow: hidden; background: #edf1f3; border-radius: 4px; }
+    .bar { height: 100%; min-width: 8px; background: var(--teal); border-radius: 4px; }
+    .interval-row.late .bar { background: var(--orange); }
+    .rep-value { color: var(--ink); font-size: 12px; font-variant-numeric: tabular-nums; text-align: right; }
+    .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 14px; color: var(--muted); font-size: 12px; }
+    .legend span::before { content: ""; display: inline-block; width: 9px; height: 9px; margin-right: 5px; border-radius: 2px; background: var(--teal); }
+    .legend .late::before { background: var(--orange); }
+    .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 14px 0 0; }
+    .fact { padding: 11px 12px; background: #f7f9fa; border-radius: 6px; }
+    .fact b { display: block; font-size: 18px; font-variant-numeric: tabular-nums; }
+    .fact span { color: var(--muted); font-size: 11px; }
+    table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    th, td { padding: 11px 10px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+    th { color: var(--muted); background: #f7f9fa; font-size: 12px; font-weight: 750; }
+    tr:last-child td { border-bottom: 0; }
+    .tag { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 750; white-space: nowrap; }
+    .tag.warn { color: var(--orange); background: var(--orange-soft); }
+    .tag.good { color: var(--green); background: var(--green-soft); }
+    .tag.info { color: var(--blue); background: var(--blue-soft); }
+    .decision-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+    .decision-list li { display: grid; grid-template-columns: 100px 1fr; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+    .decision-list li:last-child { border-bottom: 0; }
+    .decision-label { color: var(--teal); font-size: 12px; font-weight: 800; }
+    .decision-copy { font-size: 13px; }
+    .footnote { margin-bottom: 0; color: var(--muted); font-size: 12px; }
+    footer { margin-top: 30px; padding-top: 15px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+
+    @media (max-width: 900px) {
+      .metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .two-col { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 620px) {
+      .page { width: min(100% - 24px, 1180px); padding-top: 20px; }
+      .masthead { display: block; }
+      .meta { margin-top: 10px; text-align: left; white-space: normal; }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metric:last-child { grid-column: 1 / -1; }
+      .alert { grid-template-columns: 1fr; gap: 3px; }
+      .section-head { display: block; }
+      .section-note { margin-top: 4px; text-align: left; }
+      .facts { grid-template-columns: 1fr 1fr; }
+      th, td { padding: 9px 7px; font-size: 12px; }
+      .decision-list li { grid-template-columns: 82px 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="masthead">
+      <div>
+        <p class="eyebrow">COROS · Recovery-aware training review</p>
+        <h1>8 月 20 日运动数据分析</h1>
+        <p class="subtitle">间歇课完成了 6 组 800 m，但你反馈感冒尚未完全康复、跑中不舒服且出汗明显增多。本报告把客观训练数据与主观症状分开判断。</p>
+      </div>
+      <div class="meta">活动日期：2026-08-20（周四）<br>分析时区：Asia/Shanghai<br>活动：间歇课-w4-420*6</div>
+    </header>
+
+    <div class="grid metrics" aria-label="本次活动关键指标">
+      <div class="metric"><span class="metric-label">有效运动时间</span><span class="metric-value">43:40</span><span class="metric-note">详情 summary.workoutTime</span></div>
+      <div class="metric"><span class="metric-label">距离 / 有效配速</span><span class="metric-value">7.61 km</span><span class="metric-note">5:44/km · 仅按有效时间计算</span></div>
+      <div class="metric"><span class="metric-label">训练负荷</span><span class="metric-value" style="color:var(--orange)">169</span><span class="metric-note">负荷密度约 232 / 有效小时</span></div>
+      <div class="metric"><span class="metric-label">平均 / 最高心率</span><span class="metric-value">152 / 177</span><span class="metric-note">bpm · 最高心率来自活动详情</span></div>
+      <div class="metric"><span class="metric-label">环境</span><span class="metric-value">23°C</span><span class="metric-note">体感 26°C · 湿度 96%</span></div>
+    </div>
+
+    <aside class="alert" aria-label="主要结论">
+      <div class="alert-label">主要结论</div>
+        <p><strong>这不应按普通完成的质量课处理。</strong>第 3 组后出现约 2 分 53 秒额外暂停；后两组比前两组慢约 5.6 秒/km，同时心率上升、功率下降。今天高湿度叠加感冒尚未完全恢复，很可能放大了体温调节和主观不适；当前优先级是恢复，不是补课。</p>
+    </aside>
+
+    <section aria-labelledby="quality-title">
+      <div class="section-head"><div><h2 id="quality-title">6 × 800 m 工作段</h2></div><p class="section-note">工作段配速越高，条形越长；橙色表示后半程</p></div>
+      <div class="grid two-col">
+        <article class="panel">
+          <h3>配速走势</h3>
+          <div class="interval-chart" aria-label="六组800米配速">
+            <div class="interval-row"><span class="rep-label">第 1 组</span><span class="bar-track"><span class="bar" style="width:98%"></span></span><span class="rep-value">4:19.1</span></div>
+            <div class="interval-row"><span class="rep-label">第 2 组</span><span class="bar-track"><span class="bar" style="width:100%"></span></span><span class="rep-value">4:18.7</span></div>
+            <div class="interval-row"><span class="rep-label">第 3 组</span><span class="bar-track"><span class="bar" style="width:97%"></span></span><span class="rep-value">4:20.3</span></div>
+            <div class="interval-row late"><span class="rep-label">第 4 组</span><span class="bar-track"><span class="bar" style="width:88%"></span></span><span class="rep-value">4:24.0</span></div>
+            <div class="interval-row late"><span class="rep-label">第 5 组</span><span class="bar-track"><span class="bar" style="width:89%"></span></span><span class="rep-value">4:23.6</span></div>
+            <div class="interval-row late"><span class="rep-label">第 6 组</span><span class="bar-track"><span class="bar" style="width:86%"></span></span><span class="rep-value">4:25.4</span></div>
+          </div>
+          <div class="legend"><span>前半程</span><span class="late">后半程</span><span>工作段均配 4:21.9/km</span></div>
+        </article>
+        <article class="panel callout">
+          <h3>内部负荷变化</h3>
+          <div class="facts">
+            <div class="fact"><b>+6 bpm</b><span>前两组 → 后两组平均心率</span></div>
+            <div class="fact"><b>-9 W</b><span>前两组 → 后两组平均功率</span></div>
+            <div class="fact"><b>192–196</b><span>工作段步频，基本稳定</span></div>
+            <div class="fact"><b>2:53</b><span>第 3 组后额外暂停</span></div>
+          </div>
+          <p style="margin-top:14px">步频没有明显崩掉，但速度变慢、心率抬升、功率下降，比较符合恢复不足或体温调节压力，而不是单纯动作失控。</p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="comparison-title">
+      <div class="section-head"><h2 id="comparison-title">与前两次间歇对比</h2><p class="section-note">三次均使用详情 workoutTime；不使用 totalTime 计算配速</p></div>
+      <div class="panel">
+        <table>
+          <thead><tr><th>日期</th><th>训练</th><th>有效时间</th><th>工作段均配</th><th>工作段均 HR</th><th>工作段均功率</th><th>负荷</th><th>判断</th></tr></thead>
+          <tbody>
+            <tr><td>08-05</td><td>6 × 800 m</td><td>69:58</td><td>4:19.9/km</td><td>171.0</td><td>232.7 W</td><td>236</td><td><span class="tag info">完成度高</span></td></tr>
+            <tr><td>08-12</td><td>6 × 800 m + 稳态段</td><td>61:25</td><td>4:16.3/km</td><td>170.1</td><td>235.5 W</td><td>237</td><td><span class="tag info">后程加速</span></td></tr>
+            <tr><td><strong>08-20</strong></td><td><strong>6 × 800 m</strong></td><td><strong>43:40</strong></td><td><strong>4:21.9/km</strong></td><td><strong>164.5</strong></td><td><strong>232.6 W</strong></td><td><strong>169</strong></td><td><span class="tag warn">症状下不宜复刻</span></td></tr>
+          </tbody>
+        </table>
+        <p class="footnote" style="margin-top:12px">8/20 总负荷较低主要因为总量和有效时间缩短；单位有效小时负荷约 232，与 8/5、8/12 接近，因此不能把本次看作低压力训练。</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="recovery-title">
+      <div class="section-head"><h2 id="recovery-title">恢复与环境背景</h2><p class="section-note">设备信号良好，不代表感染已经恢复</p></div>
+      <div class="grid two-col">
+        <article class="panel good">
+          <h3>8/14–8/20 日指标</h3>
+          <table>
+            <thead><tr><th>日期</th><th>HRV / 基线</th><th>静息心率</th><th>训练负荷</th><th>疲劳率</th></tr></thead>
+            <tbody>
+              <tr><td>08-16</td><td>55 / 65</td><td>51</td><td>0</td><td>-1</td></tr>
+              <tr><td>08-18</td><td>62 / 65</td><td>49</td><td>130</td><td>-3</td></tr>
+              <tr><td>08-19</td><td>62 / 65</td><td>45</td><td>0</td><td>-12</td></tr>
+              <tr><td><strong>08-20</strong></td><td><strong>80 / 65</strong></td><td><strong>42</strong></td><td><strong>169</strong></td><td><strong>1</strong></td></tr>
+            </tbody>
+          </table>
+          <p style="margin-top:12px">今晨 HRV 和静息心率没有显示出明显恶化，但 HRV/RHR 不能可靠判断呼吸道感染是否已完全恢复；主观不适应优先于“绿灯”设备指标。</p>
+        </article>
+        <article class="panel callout">
+          <h3>异常出汗：环境 × 恢复期</h3>
+          <p><strong>今天湿度 96%</strong>，汗液蒸发效率会明显下降；同时你正处于感冒恢复不久的阶段，体温调节和运动耐受可能比平时更差。两者叠加足以解释“出汗异常多”，也足以把同样配速变成更高的生理压力。</p>
+          <p>本次详情的 <code>sweatLoss</code> 为无效占位值，不能推算实际汗液损失，也不能据此给出精确补水量。训练后应逐步补水并补充电解质，避免短时间大量饮用纯水。</p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="plan-title">
+      <div class="section-head"><h2 id="plan-title">未来 48–72 小时</h2><p class="section-note">以症状恢复为闸门，不按原课表补课</p></div>
+      <div class="panel">
+        <ol class="decision-list">
+          <li><span class="decision-label">现在–48 小时</span><span class="decision-copy">不安排间歇、阈值、长距离或力量力竭；症状仍在时只休息，必要时做很轻松的日常活动。</span></li>
+          <li><span class="decision-label">重新开始</span><span class="decision-copy">连续 24–48 小时无发热、日常活动无明显不适后，先做 20–40 分钟低强度恢复跑；比平时轻松跑再低一级。</span></li>
+          <li><span class="decision-label">恢复质量课</span><span class="decision-copy">至少两次轻松跑均无症状、次日无反弹后，再恢复质量课；第一堂只做原计划约 50%–60%。</span></li>
+          <li><span class="decision-label">停止并就医</span><span class="decision-copy">若有胸痛、胸闷、异常气短、心悸、头晕、接近晕厥、静息时大量出汗或发热，停止运动并及时就医。</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <section aria-labelledby="method-title">
+      <div class="section-head"><h2 id="method-title">计算口径</h2></div>
+      <p class="footnote">日期按 2026 年 Asia/Shanghai 校验，2026-08-20 为周四。全课时长、有效配速、负荷密度和工作段比较均来自 COROS 活动详情；有效时间使用 <code>summary.workoutTime</code>，暂停和摘要 <code>totalTime</code> 未参与相关计算。报告仅作训练风险提示，不能替代医疗诊断。</p>
+    </section>
+
+    <footer>生成日期：2026-08-20 · 活动 ID：479742824040923136 · 数据读取使用现有 COROS 有效令牌，未重新登录或修改会话</footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>跑步训练高阶分析 | 2026.07.03-07.17</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --ink: #17201d; --muted: #65716c; --line: #dce3df; --paper: #f4f6f4;
+      --panel: #fff; --green: #087f5b; --green-soft: #e3f3ed; --lime: #b7d63f;
+      --orange: #e87722; --orange-soft: #fff0e3; --red: #c2413b; --blue: #337ea9;
+      --shadow: 0 8px 28px rgba(22, 42, 34, .06); --radius: 7px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+    body { margin: 0; overflow-x: hidden; background: var(--paper); color: var(--ink); font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; line-height: 1.55; }
+    p, .plan-detail, .section-note { overflow-wrap: anywhere; }
+    .topbar { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.94); border-bottom: 1px solid var(--line); backdrop-filter: blur(12px); }
+    .topbar-inner { width: calc(100% - 32px); max-width: 1220px; height: 58px; margin: auto; display: flex; align-items: center; gap: 24px; }
+    .brand { font-size: 14px; font-weight: 800; color: var(--green); white-space: nowrap; }
+    .nav { min-width: 0; display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+    .nav a { color: var(--muted); text-decoration: none; font-size: 12px; padding: 8px 10px; white-space: nowrap; }
+    .nav a:hover { color: var(--ink); background: var(--green-soft); border-radius: 4px; }
+    main { width: calc(100% - 32px); max-width: 1220px; margin: 0 auto 64px; }
+    .hero { min-height: 360px; padding: 58px 0 34px; display: grid; grid-template-columns: 1.3fr .7fr; gap: 48px; align-items: end; border-bottom: 1px solid var(--line); }
+    .eyebrow { color: var(--green); font-weight: 800; font-size: 12px; text-transform: uppercase; }
+    h1 { margin: 10px 0 16px; max-width: 780px; font-size: clamp(36px, 5vw, 66px); line-height: 1.05; letter-spacing: 0; }
+    .hero-copy { color: var(--muted); font-size: 17px; max-width: 720px; }
+    .hero-meta { border-left: 3px solid var(--lime); padding-left: 18px; }
+    .hero-meta strong { display: block; font-size: 27px; margin-bottom: 3px; }
+    .hero-meta span { color: var(--muted); font-size: 13px; }
+    .status { margin-top: 15px; display: flex; align-items: center; gap: 9px; color: var(--green); font-weight: 700; font-size: 13px; }
+    .status::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px var(--green-soft); }
+    section { padding: 40px 0 4px; }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 18px; }
+    .section-kicker { color: var(--green); font-size: 11px; font-weight: 800; text-transform: uppercase; }
+    h2 { margin: 3px 0 0; font-size: 25px; letter-spacing: 0; }
+    .section-note { color: var(--muted); font-size: 12px; text-align: right; max-width: 500px; }
+    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .kpis { display: grid; grid-template-columns: repeat(6, 1fr); overflow: hidden; }
+    .kpi { padding: 22px 18px; min-width: 0; border-right: 1px solid var(--line); }
+    .kpi:last-child { border-right: 0; }
+    .kpi-label { color: var(--muted); font-size: 12px; }
+    .kpi-value { margin: 4px 0 2px; font-size: 27px; font-weight: 800; white-space: nowrap; }
+    .kpi-delta { font-size: 11px; font-weight: 700; color: var(--green); }
+    .kpi-delta.down { color: var(--orange); }
+    .executive { margin-top: 18px; display: grid; grid-template-columns: 1.4fr .6fr; }
+    .verdict { padding: 26px; border-right: 1px solid var(--line); }
+    .verdict h3, .callout h3 { margin: 0 0 8px; font-size: 16px; }
+    .verdict p { margin: 0; font-size: 15px; }
+    .callout { padding: 26px; background: var(--green-soft); }
+    .callout strong { font-size: 29px; color: var(--green); }
+    .callout p { margin: 5px 0 0; color: #376052; font-size: 12px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .chart-panel { padding: 20px; min-width: 0; }
+    .panel-title { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 16px; }
+    .panel-title h3 { margin: 0; font-size: 15px; }
+    .panel-title span { color: var(--muted); font-size: 11px; }
+    .chart-wrap { height: 300px; position: relative; }
+    .chart-wrap.short { height: 245px; }
+    .metric-strip { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); margin: 18px -20px -20px; }
+    .metric-strip div { padding: 14px 16px; border-right: 1px solid var(--line); }
+    .metric-strip div:last-child { border-right: 0; }
+    .metric-strip small { display: block; color: var(--muted); }
+    .metric-strip b { font-size: 17px; }
+    .zone-list { display: grid; gap: 12px; margin-top: 12px; }
+    .zone-row { display: grid; grid-template-columns: 76px 1fr 48px; gap: 10px; align-items: center; font-size: 12px; }
+    .bar { height: 9px; background: #edf0ee; overflow: hidden; border-radius: 3px; }
+    .bar i { display: block; height: 100%; }
+    .analysis-note { margin-top: 16px; padding: 15px 16px; border-left: 3px solid var(--orange); background: var(--orange-soft); font-size: 13px; }
+    .analysis-note b { color: #9a4810; }
+    .signal { padding: 21px; }
+    .signal .signal-top { display: flex; justify-content: space-between; gap: 10px; }
+    .signal h3 { margin: 0; font-size: 15px; }
+    .signal .mark { font-weight: 800; font-size: 12px; color: var(--green); }
+    .signal p { color: var(--muted); font-size: 13px; margin: 10px 0 0; }
+    .signal.warn .mark { color: var(--orange); }
+    .signal.risk .mark { color: var(--red); }
+    .quality { padding: 22px; }
+    .quality h3 { margin: 0 0 4px; font-size: 17px; }
+    .quality .meta { color: var(--muted); font-size: 12px; margin-bottom: 16px; }
+    .quality-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 14px 0; }
+    .quality-stats div { background: var(--paper); border-radius: 4px; padding: 10px; }
+    .quality-stats small { display: block; color: var(--muted); font-size: 10px; }
+    .quality-stats b { font-size: 15px; }
+    .quality p { margin: 12px 0 0; color: #45514c; font-size: 13px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 940px; }
+    th { color: var(--muted); font-size: 11px; text-align: right; font-weight: 700; background: #f8f9f8; }
+    th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
+    th, td { padding: 12px 13px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+    td { font-size: 12px; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: #f7faf8; }
+    .tag { display: inline-block; padding: 2px 7px; border-radius: 3px; font-size: 10px; font-weight: 800; background: var(--green-soft); color: var(--green); }
+    .tag.quality-tag { background: var(--orange-soft); color: #a44f13; }
+    .plan { overflow: hidden; }
+    .plan-row { display: grid; grid-template-columns: 82px 140px 1fr 120px; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--line); }
+    .plan-row:last-child { border-bottom: 0; }
+    .plan-day { font-weight: 800; font-size: 12px; color: var(--green); }
+    .plan-type { font-weight: 800; font-size: 13px; }
+    .plan-detail { color: #46524d; font-size: 13px; }
+    .plan-gate { color: var(--muted); font-size: 11px; text-align: right; }
+    .footnotes { color: var(--muted); font-size: 11px; padding: 20px; }
+    .footnotes p { margin: 5px 0; }
+    footer { width: calc(100% - 32px); max-width: 1220px; margin: 30px auto; color: var(--muted); font-size: 11px; display: flex; justify-content: space-between; gap: 20px; }
+    .no-chart { display: none; height: 100%; place-items: center; color: var(--muted); font-size: 12px; border: 1px dashed var(--line); }
+    @media (max-width: 950px) {
+      .hero { grid-template-columns: 1fr; min-height: 0; gap: 24px; }
+      .kpis { grid-template-columns: repeat(3, 1fr); }
+      .kpi:nth-child(3) { border-right: 0; }
+      .kpi:nth-child(-n+3) { border-bottom: 1px solid var(--line); }
+      .grid-3 { grid-template-columns: 1fr; }
+      .grid-2, .executive { grid-template-columns: 1fr; }
+      .verdict { border-right: 0; border-bottom: 1px solid var(--line); }
+    }
+    @media (max-width: 620px) {
+      main { width: calc(100% - 22px); }
+      .topbar-inner { width: calc(100% - 22px); }
+      .brand { display: none; }
+      .hero { padding-top: 38px; }
+      h1 { font-size: 38px; }
+      .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .kpi:nth-child(3) { border-right: 1px solid var(--line); }
+      .kpi:nth-child(even) { border-right: 0; }
+      .kpi:nth-child(-n+4) { border-bottom: 1px solid var(--line); }
+      .section-head { align-items: start; flex-direction: column; }
+      .section-note { text-align: left; }
+      .quality-stats { grid-template-columns: repeat(2, 1fr); }
+      .metric-strip { grid-template-columns: repeat(2, 1fr); }
+      .metric-strip div:nth-child(2) { border-right: 0; }
+      .metric-strip div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .plan-row { grid-template-columns: 70px 1fr; }
+      .plan-detail, .plan-gate { grid-column: 2; text-align: left; }
+      footer { flex-direction: column; }
+    }
+    @media print {
+      @page { size: A4; margin: 12mm; }
+      body { background: white; }
+      .topbar { display: none; }
+      main { width: 100%; margin: 0; }
+      .hero { min-height: 0; padding-top: 10px; }
+      section { break-inside: avoid; padding-top: 22px; }
+      .panel { box-shadow: none; }
+      .chart-wrap { height: 235px; }
+      footer { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">RUN / 15D REVIEW</div>
+      <nav class="nav" aria-label="报告章节">
+        <a href="#summary">总览</a><a href="#load">负荷</a><a href="#intensity">强度</a><a href="#quality">关键训练</a><a href="#recovery">恢复</a><a href="#log">明细</a><a href="#plan">计划</a><a href="#methods">方法</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <header class="hero">
+      <div>
+        <div class="eyebrow">Advanced running analysis / Beijing</div>
+        <h1>跑步训练<br>高阶分析报告</h1>
+        <p class="hero-copy">跑量维持，内在负荷下降，质量课更集中。当前处于“有效刺激后、恢复尚待确认”的窗口，下一步重点不是继续加量，而是把高温下的阈值刺激转化为稳定适应。</p>
+      </div>
+      <div class="hero-meta">
+        <strong>2026.07.03-07.17</strong>
+        <span>15 个自然日 · 8 次跑步 · 数据更新至 07.17 训练后</span>
+        <div class="status">训练状态：负荷平衡，短期恢复优先</div>
+      </div>
+    </header>
+
+    <section id="summary">
+      <div class="section-head">
+        <div><div class="section-kicker">01 / Executive summary</div><h2>先看结论</h2></div>
+        <div class="section-note">对照期：2026.06.18-07.02，同为 15 个自然日</div>
+      </div>
+      <div class="panel kpis">
+        <div class="kpi"><div class="kpi-label">总跑量</div><div class="kpi-value">90.57 <small>km</small></div><div class="kpi-delta">+3.2% 环比</div></div>
+        <div class="kpi"><div class="kpi-label">跑步次数</div><div class="kpi-value">8 <small>次</small></div><div class="kpi-delta">+1 次</div></div>
+        <div class="kpi"><div class="kpi-label">有效跑动时长</div><div class="kpi-value">8:40</div><div class="kpi-delta">+5.8% 环比</div></div>
+        <div class="kpi"><div class="kpi-label">移动平均配速</div><div class="kpi-value">5'44"</div><div class="kpi-delta down">慢 9 秒/km</div></div>
+        <div class="kpi"><div class="kpi-label">训练负荷</div><div class="kpi-value">1,147</div><div class="kpi-delta">-8.0% 环比</div></div>
+        <div class="kpi"><div class="kpi-label">加权平均心率</div><div class="kpi-value">147.6</div><div class="kpi-delta">-4.5 bpm</div></div>
+      </div>
+      <div class="panel executive">
+        <div class="verdict">
+          <h3>周期判读：有效，但完成度取决于接下来 48 小时</h3>
+          <p>跑量小幅上升，但剔除暂停后的均配比对照期慢 9 秒/km，同时平均心率低 4.5 bpm、负荷低 8.0%，说明本周期总体刺激更轻，而非效率突然提升；两次主要质量刺激集中在 07.05 渐进长跑与 07.17 阈值跑。风险点是 07.17 训练前 HRV 已低于基线 13.6%，随后又完成 TL 186 的训练，因此报告时点只能确认“刺激已完成”，不能确认“恢复已完成”。</p>
+        </div>
+        <div class="callout">
+          <h3>综合训练判读</h3><strong>绿灯偏黄</strong>
+          <p>ACWR 1.08、疲劳率 6%、RHR 43 bpm 均不报警；HRV 57 ms 是唯一显著逆风信号。建议用次日晨间数据决定是否恢复跑。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="load">
+      <div class="section-head">
+        <div><div class="section-kicker">02 / Load architecture</div><h2>训练负荷与节奏</h2></div>
+        <div class="section-note">柱：单次负荷；线：急慢性负荷比（ATI / CTI）</div>
+      </div>
+      <div class="panel chart-panel">
+        <div class="panel-title"><h3>15 天负荷序列</h3><span>峰值 1.36 → 当前 1.08</span></div>
+        <div class="chart-wrap"><canvas id="loadChart" aria-label="训练负荷序列图"></canvas><div class="no-chart">图表库未加载，数据仍可在下方明细查看。</div></div>
+        <div class="metric-strip">
+          <div><small>负荷峰值</small><b>233</b></div><div><small>周期单调度</small><b>0.99</b></div><div><small>周期 Strain</small><b>1,130</b></div><div><small>CTI 变化</small><b>67 → 69</b></div>
+        </div>
+      </div>
+      <div class="analysis-note"><b>判读：</b>单调度低于 1，休息日分布有效；07.05-07.09 五天内累积 TL 589，是本周期最密集区块，随后 3 天无跑使 ACWR 从 1.32 回落至 0.89。07.17 的质量课建立在较低急性负荷上，安排逻辑合理。</div>
+    </section>
+
+    <section id="intensity">
+      <div class="section-head">
+        <div><div class="section-kicker">03 / Intensity distribution</div><h2>强度结构与有氧效率</h2></div>
+        <div class="section-note">按 8 次训练逐秒心率区间汇总；不使用“按整次训练归类”的粗略 80/20</div>
+      </div>
+      <div class="grid-2">
+        <div class="panel chart-panel">
+          <div class="panel-title"><h3>心率区间时间</h3><span>有效区间数据 8:39:41</span></div>
+          <div class="zone-list">
+            <div class="zone-row"><b>恢复区</b><div class="bar"><i style="width:6.5%;background:#8db5a7"></i></div><span>6.5%</span></div>
+            <div class="zone-row"><b>有氧耐力</b><div class="bar"><i style="width:59.8%;background:#2d9b72"></i></div><span>59.8%</span></div>
+            <div class="zone-row"><b>有氧动力</b><div class="bar"><i style="width:19%;background:#b7d63f"></i></div><span>19.0%</span></div>
+            <div class="zone-row"><b>阈值区</b><div class="bar"><i style="width:14.1%;background:#e87722"></i></div><span>14.1%</span></div>
+            <div class="zone-row"><b>无氧区</b><div class="bar"><i style="width:.7%;background:#c2413b"></i></div><span>0.7%</span></div>
+            <div class="zone-row"><b>无氧耐力</b><div class="bar"><i style="width:0%;background:#7f1d1d"></i></div><span>0.0%</span></div>
+          </div>
+          <div class="analysis-note"><b>结构：</b>低强度 66.2%、中强度 19.0%、高强度 14.7%，呈温和金字塔型。阈值剂量主要来自 07.05、07.14 与 07.17，而不是每天“灰区慢跑”。</div>
+        </div>
+        <div class="panel chart-panel">
+          <div class="panel-title"><h3>配速 / 心率散点</h3><span>圆点越右配速越快；大小代表距离</span></div>
+          <div class="chart-wrap short"><canvas id="efficiencyChart" aria-label="配速心率散点图"></canvas><div class="no-chart">图表库未加载。</div></div>
+          <div class="metric-strip">
+            <div><small>VO2max</small><b>56</b></div><div><small>阈值配速</small><b>4'34"</b></div><div><small>阈值心率</small><b>168</b></div><div><small>基础体能</small><b>84.1</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="quality">
+      <div class="section-head">
+        <div><div class="section-kicker">04 / Key sessions</div><h2>两次关键训练拆解</h2></div>
+        <div class="section-note">逐公里数据用于识别训练意图；因后半程主动提速，不把心率上升误称为“漂移”</div>
+      </div>
+      <div class="grid-2">
+        <article class="panel quality">
+          <h3>07.05 · 渐进长跑</h3><div class="meta">16.41 km · 5'30"/km · TL 233 · 25℃ / 74% RH</div>
+          <div class="quality-stats"><div><small>有氧效果</small><b>3.9</b></div><div><small>无氧效果</small><b>2.1</b></div><div><small>最快公里</small><b>4'37"</b></div><div><small>最大心率</small><b>176</b></div></div>
+          <div class="chart-wrap short"><canvas id="longRunChart" aria-label="渐进长跑逐公里图"></canvas><div class="no-chart">图表库未加载。</div></div>
+          <p>前 12 km 稳定在 5'35"-5'42"，第 13-16 km 提至 4'44"-5'14"，负分段意图清晰。末段接近/进入阈值区，是“长跑 + 稳态收尾”，不是纯 LSD；恢复成本也因此成为全周期最高。</p>
+        </article>
+        <article class="panel quality">
+          <h3>07.17 · 持续阈值跑</h3><div class="meta">12.02 km · 5'19"/km · TL 186 · 32℃ / 48% RH</div>
+          <div class="quality-stats"><div><small>有氧效果</small><b>3.5</b></div><div><small>无氧效果</small><b>2.4</b></div><div><small>阈值区时间</small><b>36'06"</b></div><div><small>平均功率</small><b>191 W</b></div></div>
+          <div class="chart-wrap short"><canvas id="thresholdChart" aria-label="阈值跑逐公里图"></canvas><div class="no-chart">图表库未加载。</div></div>
+          <p>第 5-10 km 连续 6 km 跑在 4'59"-5'12"，心率 161-167 bpm，接近 168 bpm 阈值；高温下仍维持 195-206 W，刺激有效。最后 2 km 主动回落，说明训练有收束而非力竭。</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="recovery">
+      <div class="section-head">
+        <div><div class="section-kicker">05 / Readiness</div><h2>恢复与适应信号</h2></div>
+        <div class="section-note">HRV 为睡眠期 RMSSD；睡眠分期数据本周期缺失，不纳入结论</div>
+      </div>
+      <div class="panel chart-panel">
+        <div class="panel-title"><h3>HRV、基线与静息心率</h3><span>HRV 均值 66.0 ms · RHR 均值 46.2 bpm</span></div>
+        <div class="chart-wrap"><canvas id="recoveryChart" aria-label="恢复趋势图"></canvas><div class="no-chart">图表库未加载。</div></div>
+      </div>
+      <div class="grid-3" style="margin-top:16px">
+        <div class="panel signal"><div class="signal-top"><h3>长期适应</h3><span class="mark">正向</span></div><p>HRV 基线 64 → 66 ms，CTI 67 → 69，阈值配速 4'35" → 4'34"。变化幅度小但方向一致。</p></div>
+        <div class="panel signal warn"><div class="signal-top"><h3>短期波动</h3><span class="mark">关注</span></div><p>07.10-11 HRV 连续降至 51/52 ms，与前两日连续跑相邻；休息两天后 07.12 回升至 76 ms，恢复响应完整。</p></div>
+        <div class="panel signal risk"><div class="signal-top"><h3>报告时点</h3><span class="mark">待确认</span></div><p>07.17 晨间 HRV 57 ms，低于当日基线 66 ms；同日晚间完成 TL 186。训练后的次日数据尚不存在。</p></div>
+      </div>
+    </section>
+
+    <section id="log">
+      <div class="section-head">
+        <div><div class="section-kicker">06 / Session log</div><h2>训练明细</h2></div>
+        <div class="section-note">配速按活动详情 workoutTime / 距离，已剔除红绿灯暂停；天气来自活动详情快照</div>
+      </div>
+      <div class="panel table-wrap">
+        <table>
+          <thead><tr><th>日期时间</th><th>类型</th><th>距离 km</th><th>配速 /km</th><th>平均/最大 HR</th><th>功率 W</th><th>步频 spm</th><th>负荷</th><th>AE / AnE</th><th>天气</th></tr></thead>
+          <tbody>
+            <tr><td>07-03 06:27</td><td><span class="tag">有氧渐进</span></td><td>10.06</td><td>5'53"</td><td>146 / 158</td><td>172</td><td>189</td><td>119</td><td>3.1 / 0.0</td><td>25℃ · 91%</td></tr>
+            <tr><td>07-05 07:17</td><td><span class="tag quality-tag">渐进长跑</span></td><td>16.41</td><td>5'30"</td><td>152 / 176</td><td>186</td><td>193</td><td>233</td><td>3.9 / 2.1</td><td>25℃ · 74%</td></tr>
+            <tr><td>07-06 19:41</td><td><span class="tag">恢复跑</span></td><td>10.40</td><td>6'10"</td><td>140 / 150</td><td>163</td><td>182</td><td>103</td><td>2.9 / 0.0</td><td>22℃ · 94%</td></tr>
+            <tr><td>07-08 17:40</td><td><span class="tag">有氧渐进</span></td><td>9.59</td><td>5'52"</td><td>146 / 160</td><td>173</td><td>185</td><td>115</td><td>3.0 / 0.1</td><td>31℃ · 58%</td></tr>
+            <tr><td>07-09 18:03</td><td><span class="tag">有氧渐进</span></td><td>10.73</td><td>6'01"</td><td>147 / 171</td><td>169</td><td>189</td><td>138</td><td>3.2 / 0.3</td><td>32℃ · 55%</td></tr>
+            <tr><td>07-13 06:20</td><td><span class="tag">稳态渐进</span></td><td>11.34</td><td>5'38"</td><td>147 / 164</td><td>180</td><td>188</td><td>134</td><td>3.2 / 0.8</td><td>26℃ · 93%</td></tr>
+            <tr><td>07-14 17:58</td><td><span class="tag quality-tag">末段加速</span></td><td>10.01</td><td>5'44"</td><td>146 / 172</td><td>178</td><td>183</td><td>119</td><td>3.0 / 1.2</td><td>34℃ · 47%</td></tr>
+            <tr><td>07-17 18:15</td><td><span class="tag quality-tag">阈值持续</span></td><td>12.02</td><td>5'19"</td><td>155 / 172</td><td>191</td><td>183</td><td>186</td><td>3.5 / 2.4</td><td>32℃ · 48%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="plan">
+      <div class="section-head">
+        <div><div class="section-kicker">07 / Next microcycle</div><h2>未来 7 天执行方案</h2></div>
+        <div class="section-note">目标：吸收 07.17 刺激，维持 40-48 km 周量，不连续安排质量日</div>
+      </div>
+      <div class="panel plan">
+        <div class="plan-row"><div class="plan-day">D+1</div><div class="plan-type">休息 / 走路</div><div class="plan-detail">30-45 分钟轻松活动 + 补液；不追补里程。</div><div class="plan-gate">HRV &lt; 59 或 RHR ≥ 49：必须休息</div></div>
+        <div class="plan-row"><div class="plan-day">D+2</div><div class="plan-type">恢复跑</div><div class="plan-detail">7-9 km，HR ≤ 145 bpm，以体感 RPE 2-3 为上限。</div><div class="plan-gate">炎热时只控心率，不控配速</div></div>
+        <div class="plan-row"><div class="plan-day">D+3</div><div class="plan-type">休息 / 力量</div><div class="plan-detail">20-30 分钟髋、腘绳肌、小腿力量；避免力竭组。</div><div class="plan-gate">腿部酸痛 &gt; 3/10：取消力量</div></div>
+        <div class="plan-row"><div class="plan-day">D+4</div><div class="plan-type">有氧 + 加速跑</div><div class="plan-detail">10-12 km 轻松跑，结束做 6 × 20 秒放松加速，组间慢跑 70 秒。</div><div class="plan-gate">晨间信号正常才执行加速</div></div>
+        <div class="plan-row"><div class="plan-day">D+5</div><div class="plan-type">休息</div><div class="plan-detail">完全休息或低强度交叉训练 30 分钟。</div><div class="plan-gate">确保质量课间隔 ≥ 72 小时</div></div>
+        <div class="plan-row"><div class="plan-day">D+6</div><div class="plan-type">阈值间歇</div><div class="plan-detail">热身 3 km；3 × 8 分钟 @ HR 160-168 / 约 4'50"-5'05"，慢跑 3 分钟；冷身 2 km。</div><div class="plan-gate">≥ 30℃ 时按心率执行</div></div>
+        <div class="plan-row"><div class="plan-day">D+7</div><div class="plan-type">轻松跑</div><div class="plan-detail">8-10 km，全天低强度；若前日 AnE &gt; 2.0 则改休息。</div><div class="plan-gate">周量上限 48 km</div></div>
+      </div>
+    </section>
+
+    <section id="methods">
+      <div class="section-head"><div><div class="section-kicker">08 / Methods</div><h2>数据质量与口径</h2></div></div>
+      <div class="panel footnotes">
+        <p><b>覆盖：</b>活动摘要、逐圈、心率区间、天气：8/8 完整；每日 HRV/RHR/ATI/CTI：15/15 完整；睡眠分期：0/15（本地仅至 06.29），故未分析睡眠时长或分期。</p>
+        <p><b>计算：</b>所有配速均使用活动详情中的 workoutTime / 距离，已剔除红绿灯等暂停；本周期有效跑动 8:39:40，另有暂停 16:38。心率、功率按有效活动时长加权；周期单调度 = 15 日每日负荷均值 / 总体标准差 = 0.99；Strain = 周期总负荷 × 单调度 = 1,130。</p>
+        <p><b>强度：</b>心率区间沿用 COROS 当前乳酸阈模型：有氧耐力约 134-151、有氧动力 152-160、阈值 161-171、无氧 172-178 bpm；区间有效时长与活动总时长差 16 分 36 秒，主要来自暂停/未归类片段。</p>
+        <p><b>限制：</b>天气为活动记录快照；不同温湿度下不直接比较“相同配速的效率”。本报告提供训练决策支持，不替代医学诊断；出现胸痛、眩晕或异常心率时应停止训练并就医。</p>
+      </div>
+    </section>
+  </main>
+  <footer><span>Generated 2026-07-17 · Source: COROS Web API & local cache</span><span>Analysis window: 15 calendar days, inclusive</span></footer>
+
+  <script>
+    const labels = ['07/03','07/04','07/05','07/06','07/07','07/08','07/09','07/10','07/11','07/12','07/13','07/14','07/15','07/16','07/17'];
+    const colors = { ink:'#17201d', muted:'#65716c', line:'#dce3df', green:'#087f5b', lime:'#b7d63f', orange:'#e87722', red:'#c2413b', blue:'#337ea9' };
+    const fmtPace = v => `${Math.floor(v/60)}'${String(Math.round(v%60)).padStart(2,'0')}"`;
+    function baseScales() { return { x:{grid:{display:false},ticks:{color:colors.muted,font:{size:10}}}, y:{grid:{color:'#edf0ee'},ticks:{color:colors.muted,font:{size:10}}} }; }
+    function lineDataset(label,data,color,axis='y') { return {type:'line',label,data,borderColor:color,backgroundColor:color,borderWidth:2,pointRadius:3,pointHoverRadius:5,tension:.28,yAxisID:axis}; }
+    if (!window.Chart) {
+      document.querySelectorAll('canvas').forEach(c => c.style.display='none');
+      document.querySelectorAll('.no-chart').forEach(n => n.style.display='grid');
+    } else {
+      Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+      Chart.defaults.color = colors.muted;
+      new Chart(document.getElementById('loadChart'), {type:'bar',data:{labels,datasets:[{label:'训练负荷',data:[119,0,233,103,0,115,138,0,0,0,134,119,0,0,186],backgroundColor:labels.map((_,i)=>[2,14].includes(i)?colors.orange:'#87b7a5'),borderRadius:3,yAxisID:'y'},lineDataset('负荷比',[1.22,1.07,1.36,1.35,1.18,1.22,1.32,1.14,1.01,.89,1.02,1.11,.97,.84,1.08],colors.ink,'y1')]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{boxWidth:10,usePointStyle:true}}},scales:{...baseScales(),y:{beginAtZero:true,suggestedMax:250,grid:{color:'#edf0ee'},title:{display:true,text:'训练负荷'}},y1:{position:'right',min:.6,max:1.5,grid:{display:false},title:{display:true,text:'负荷比'}}}}});
+      const sessions=[{x:353.2,y:146,r:9,d:'07/03'},{x:329.5,y:152,r:14,d:'07/05'},{x:370.2,y:140,r:9,d:'07/06'},{x:352.5,y:146,r:9,d:'07/08'},{x:361.0,y:147,r:10,d:'07/09'},{x:338.0,y:147,r:10,d:'07/13'},{x:344.1,y:146,r:9,d:'07/14'},{x:319.2,y:155,r:11,d:'07/17'}];
+      new Chart(document.getElementById('efficiencyChart'),{type:'bubble',data:{datasets:[{label:'单次训练',data:sessions,backgroundColor:sessions.map(x=>x.d==='07/17'?'rgba(232,119,34,.72)':'rgba(8,127,91,.62)'),borderColor:sessions.map(x=>x.d==='07/17'?colors.orange:colors.green)}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw.d} · ${fmtPace(c.raw.x)}/km · ${c.raw.y} bpm`}}},scales:{x:{reverse:true,min:315,max:400,title:{display:true,text:'配速（右侧更快）'},ticks:{callback:fmtPace},grid:{color:'#edf0ee'}},y:{min:136,max:160,title:{display:true,text:'平均心率 bpm'},grid:{color:'#edf0ee'}}}}});
+      function lapChart(id,paces,hrs){new Chart(document.getElementById(id),{type:'line',data:{labels:paces.map((_,i)=>i+1),datasets:[lineDataset('配速',paces,colors.green,'y'),lineDataset('心率',hrs,colors.orange,'y1')]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{boxWidth:10,usePointStyle:true}},tooltip:{callbacks:{label:c=>c.dataset.yAxisID==='y'?` 配速 ${fmtPace(c.raw)}/km`:` 心率 ${c.raw} bpm`}}},scales:{x:{grid:{display:false},title:{display:true,text:'公里'}},y:{reverse:true,min:270,max:380,ticks:{callback:fmtPace},grid:{color:'#edf0ee'}},y1:{position:'right',min:120,max:180,grid:{display:false}}}}});}
+      lapChart('longRunChart',[334.6,338.3,342.4,335.5,338.9,335.9,335.3,338.5,337.9,335.1,338.7,339,284.4,300,313.5,314.1],[131,141,142,147,146,147,149,149,149,151,152,155,167,169,168,167]);
+      lapChart('thresholdChart',[353,343.3,341.1,318.6,299.1,298.6,308.3,307.6,311.6,300.9,319,328.9],[126,142,142,152,161,164,166,164,167,163,163,159]);
+      new Chart(document.getElementById('recoveryChart'),{type:'line',data:{labels,datasets:[lineDataset('HRV',[72,75,70,62,70,73,64,51,52,76,68,69,62,69,57],colors.green,'y'),{...lineDataset('HRV 基线',[64,64,64,64,64,64,65,65,65,64,65,65,65,66,66],colors.lime,'y'),borderDash:[5,4],pointRadius:0},lineDataset('静息心率',[51,43,50,45,46,44,50,50,46,47,43,44,44,47,43],colors.orange,'y1')]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{boxWidth:10,usePointStyle:true}}},scales:{x:{grid:{display:false}},y:{min:45,max:80,title:{display:true,text:'HRV ms'},grid:{color:'#edf0ee'}},y1:{position:'right',min:40,max:55,title:{display:true,text:'RHR bpm'},grid:{display:false}}}}});
+    }
+  </script>
+</body>
+</html>

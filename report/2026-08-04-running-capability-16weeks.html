@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>过去16周跑步能力趋势分析</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f1923; color: #e0e6ed; line-height: 1.6; }
+.container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; background: linear-gradient(135deg, #00d4aa, #00a8ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.subtitle { color: #7a8b9a; font-size: 14px; margin-bottom: 32px; }
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 32px; }
+.summary-card { background: #1a2836; border-radius: 12px; padding: 20px; border: 1px solid #2a3a4a; }
+.summary-card .label { font-size: 12px; color: #7a8b9a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.summary-card .value { font-size: 28px; font-weight: 700; }
+.summary-card .change { font-size: 13px; margin-top: 4px; }
+.change.positive { color: #00d4aa; }
+.change.negative { color: #ff6b6b; }
+.card { background: #1a2836; border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid #2a3a4a; }
+.card h2 { font-size: 18px; margin-bottom: 16px; color: #fff; }
+.card h3 { font-size: 15px; margin-bottom: 12px; color: #b0bec5; }
+.chart-container { position: relative; height: 320px; margin-bottom: 16px; }
+.chart-container.tall { height: 400px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 10px 12px; text-align: center; border-bottom: 1px solid #2a3a4a; }
+th { color: #7a8b9a; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+td { color: #e0e6ed; }
+.pace-cell { font-family: 'SF Mono', 'Fira Code', monospace; font-weight: 600; }
+.zone-aerobic { color: #4fc3f7; }
+.zone-lt { color: #66bb6a; }
+.zone-speed { color: #ffa726; }
+.zone-sprint { color: #ef5350; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.badge-up { background: rgba(0,212,170,0.15); color: #00d4aa; }
+.legend-row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+.legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+.insight-box { background: #1e3040; border-left: 3px solid #00d4aa; padding: 16px; border-radius: 0 8px 8px 0; margin-top: 16px; font-size: 14px; }
+.insight-box strong { color: #00d4aa; }
+.progress-bar { height: 6px; background: #2a3a4a; border-radius: 3px; margin-top: 8px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>跑步能力 16 周趋势分析</h1>
+<p class="subtitle">2026年4月14日 — 2026年8月4日 | COROS PACE Pro | Paul</p>
+
+<div class="summary-grid">
+  <div class="summary-card">
+    <div class="label">乳酸阈配速 (LTSP)</div>
+    <div class="value" style="color:#66bb6a">4'32"</div>
+    <div class="change positive">↑ 从 4'37" 提升 5秒/km</div>
+  </div>
+  <div class="summary-card">
+    <div class="label">耐力值 (Stamina Level)</div>
+    <div class="value" style="color:#4fc3f7">84.7</div>
+    <div class="change positive">↑ 从 83.0 提升 1.7</div>
+  </div>
+  <div class="summary-card">
+    <div class="label">VO2max</div>
+    <div class="value" style="color:#ffa726">56</div>
+    <div class="change">稳定保持</div>
+  </div>
+  <div class="summary-card">
+    <div class="label">跑步活动</div>
+    <div class="value" style="color:#ce93d8">48次</div>
+    <div class="change">16周 · 平均3次/周</div>
+  </div>
+</div>
+
+<!-- Main Pace Zones Trend Chart -->
+<div class="card">
+  <h2>配速能力区间趋势</h2>
+  <div class="legend-row">
+    <div class="legend-item"><div class="legend-dot" style="background:#4fc3f7"></div>有氧耐力</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#66bb6a"></div>乳酸阈</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ffa726"></div>速度耐力</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ef5350"></div>冲刺能力</div>
+  </div>
+  <div class="chart-container tall">
+    <canvas id="paceZonesChart"></canvas>
+  </div>
+  <div class="insight-box">
+    <strong>趋势洞察：</strong>16周内各项能力均有稳步提升。有氧耐力配速上限从5'28"提升至5'18"，乳酸阈配速从5'00"提升至4'54"。7月中旬后提速明显加快，与系统性间歇训练的引入时间吻合。
+  </div>
+</div>
+
+<!-- LTSP Trend -->
+<div class="card">
+  <h2>乳酸阈配速 (LTSP) 趋势</h2>
+  <div class="chart-container">
+    <canvas id="ltspChart"></canvas>
+  </div>
+</div>
+
+<!-- Stamina Level Trend -->
+<div class="card">
+  <h2>耐力值 (Stamina Level) 趋势</h2>
+  <div class="chart-container">
+    <canvas id="staminaChart"></canvas>
+  </div>
+</div>
+
+<!-- Detailed Zone Table -->
+<div class="card">
+  <h2>配速能力区间详细数据</h2>
+  <h3>基于活动配速区间边界 (毫秒/km → 分'秒"/km)</h3>
+  <div style="overflow-x:auto">
+  <table>
+    <thead>
+      <tr>
+        <th>日期</th>
+        <th>有氧耐力</th>
+        <th>乳酸阈</th>
+        <th>速度耐力</th>
+        <th>冲刺能力</th>
+        <th>耐力值</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>4月14日</td>
+        <td class="pace-cell zone-aerobic">6'32" - 5'28"</td>
+        <td class="pace-cell zone-lt">5'28" - 5'00"</td>
+        <td class="pace-cell zone-speed">5'00" - 4'06"</td>
+        <td class="pace-cell zone-sprint">&lt; 4'06"</td>
+        <td>83.0</td>
+      </tr>
+      <tr>
+        <td>5月1日</td>
+        <td class="pace-cell zone-aerobic">6'33" - 5'29"</td>
+        <td class="pace-cell zone-lt">5'29" - 5'00"</td>
+        <td class="pace-cell zone-speed">5'00" - 4'07"</td>
+        <td class="pace-cell zone-sprint">&lt; 4'07"</td>
+        <td>83.0</td>
+      </tr>
+      <tr>
+        <td>5月24日</td>
+        <td class="pace-cell zone-aerobic">6'32" - 5'26"</td>
+        <td class="pace-cell zone-lt">5'26" - 5'00"</td>
+        <td class="pace-cell zone-speed">5'00" - 4'08"</td>
+        <td class="pace-cell zone-sprint">&lt; 4'08"</td>
+        <td>83.3</td>
+      </tr>
+      <tr>
+        <td>6月7日</td>
+        <td class="pace-cell zone-aerobic">6'32" - 5'26"</td>
+        <td class="pace-cell zone-lt">5'26" - 5'00"</td>
+        <td class="pace-cell zone-speed">5'00" - 4'08"</td>
+        <td class="pace-cell zone-sprint">&lt; 4'08"</td>
+        <td>83.2</td>
+      </tr>
+      <tr>
+        <td>6月21日</td>
+        <td class="pace-cell zone-aerobic">6'30" - 5'24"</td>
+        <td class="pace-cell zone-lt">5'24" - 4'58"</td>
+        <td class="pace-cell zone-speed">4'58" - 4'07"</td>
+        <td class="pace-cell zone-sprint">&lt; 4'07"</td>
+        <td>83.5</td>
+      </tr>
+      <tr>
+        <td>7月5日</td>
+        <td class="pace-cell zone-aerobic">6'32" - 5'26"</td>
+        <td class="pace-cell zone-lt">5'26" - 5'00"</td>
+        <td class="pace-cell zone-speed">5'00" - 4'08"</td>
+        <td class="pace-cell zone-sprint">&lt; 4'08"</td>
+        <td>83.8</td>
+      </tr>
+      <tr>
+        <td>7月17日</td>
+        <td class="pace-cell zone-aerobic">6'27" - 5'21"</td>
+        <td class="pace-cell zone-lt">5'21" - 4'56"</td>
+        <td class="pace-cell zone-speed">4'56" - 4'06"</td>
+        <td class="pace-cell zone-sprint">&lt; 4'06"</td>
+        <td>84.1</td>
+      </tr>
+      <tr>
+        <td>7月19日</td>
+        <td class="pace-cell zone-aerobic">6'27" - 5'21"</td>
+        <td class="pace-cell zone-lt">5'21" - 4'56"</td>
+        <td class="pace-cell zone-speed">4'56" - 4'06"</td>
+        <td class="pace-cell zone-sprint">&lt; 4'06"</td>
+        <td>84.1</td>
+      </tr>
+      <tr>
+        <td>7月26日</td>
+        <td class="pace-cell zone-aerobic">6'26" - 5'19"</td>
+        <td class="pace-cell zone-lt">5'19" - 4'55"</td>
+        <td class="pace-cell zone-speed">4'55" - 4'05"</td>
+        <td class="pace-cell zone-sprint">&lt; 4'05"</td>
+        <td>84.5</td>
+      </tr>
+      <tr>
+        <td>8月3日</td>
+        <td class="pace-cell zone-aerobic">6'25" - 5'18"</td>
+        <td class="pace-cell zone-lt">5'18" - 4'54"</td>
+        <td class="pace-cell zone-speed">4'54" - 4'05"</td>
+        <td class="pace-cell zone-sprint">&lt; 4'05"</td>
+        <td>84.7</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- Improvement Summary -->
+<div class="card">
+  <h2>16周能力提升总结</h2>
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+    <div style="padding:16px; background:#0f1923; border-radius:8px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span class="zone-aerobic" style="font-weight:600;">有氧耐力</span>
+        <span class="badge badge-up">+10"/km</span>
+      </div>
+      <div style="font-size:13px; color:#7a8b9a;">上限配速 5'28" → 5'18"</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:70%; background:#4fc3f7;"></div></div>
+    </div>
+    <div style="padding:16px; background:#0f1923; border-radius:8px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span class="zone-lt" style="font-weight:600;">乳酸阈</span>
+        <span class="badge badge-up">+6"/km</span>
+      </div>
+      <div style="font-size:13px; color:#7a8b9a;">上限配速 5'00" → 4'54"</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:60%; background:#66bb6a;"></div></div>
+    </div>
+    <div style="padding:16px; background:#0f1923; border-radius:8px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span class="zone-speed" style="font-weight:600;">速度耐力</span>
+        <span class="badge badge-up">+3"/km</span>
+      </div>
+      <div style="font-size:13px; color:#7a8b9a;">上限配速 4'06" → 4'05" (区间变窄更精准)</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:40%; background:#ffa726;"></div></div>
+    </div>
+    <div style="padding:16px; background:#0f1923; border-radius:8px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span class="zone-sprint" style="font-weight:600;">冲刺能力</span>
+        <span class="badge badge-up">+1"/km</span>
+      </div>
+      <div style="font-size:13px; color:#7a8b9a;">上限 4'06" → 4'05" (主要靠间歇提升)</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:30%; background:#ef5350;"></div></div>
+    </div>
+  </div>
+  <div class="insight-box" style="margin-top:20px;">
+    <strong>分析总结：</strong>过去16周跑步能力呈现良好的上升趋势。乳酸阈配速从4'37"提升至4'32"（LTSP指标），耐力值从83.0升至84.7。有氧耐力提升最为显著（10秒/km），这与稳定的每周跑量和渐进式训练强度密切相关。7月23日引入间歇课后，乳酸阈和速度耐力区间出现加速提升。建议继续保持当前训练节奏，关注恢复质量。
+  </div>
+</div>
+
+</div>
+
+<script>
+// Helper: convert ms/km to min'sec" string
+function msToMinSec(ms) {
+  const totalSec = Math.round(ms / 1000);
+  const min = Math.floor(totalSec / 60);
+  const sec = totalSec % 60;
+  return `${min}'${sec.toString().padStart(2,'0')}"`;
+}
+
+// Helper: convert seconds to pace for chart (inverted, lower = faster)
+function secToPaceValue(sec) { return sec; }
+
+// Pace Zones Trend Chart
+const zoneData = [
+  { date: '4/14', aerobicHigh: 328, ltHigh: 300, speedHigh: 246, aerobicLow: 392, ltLow: 328, speedLow: 300, sprintLow: 246 },
+  { date: '5/1', aerobicHigh: 329, ltHigh: 300, speedHigh: 247, aerobicLow: 393, ltLow: 329, speedLow: 300, sprintLow: 247 },
+  { date: '5/24', aerobicHigh: 326, ltHigh: 300, speedHigh: 248, aerobicLow: 392, ltLow: 326, speedLow: 300, sprintLow: 248 },
+  { date: '6/7', aerobicHigh: 326, ltHigh: 300, speedHigh: 248, aerobicLow: 392, ltLow: 326, speedLow: 300, sprintLow: 248 },
+  { date: '6/21', aerobicHigh: 324, ltHigh: 298, speedHigh: 247, aerobicLow: 390, ltLow: 324, speedLow: 298, sprintLow: 247 },
+  { date: '7/5', aerobicHigh: 326, ltHigh: 300, speedHigh: 248, aerobicLow: 392, ltLow: 326, speedLow: 300, sprintLow: 248 },
+  { date: '7/17', aerobicHigh: 321, ltHigh: 296, speedHigh: 246, aerobicLow: 387, ltLow: 321, speedLow: 296, sprintLow: 246 },
+  { date: '7/19', aerobicHigh: 321, ltHigh: 296, speedHigh: 246, aerobicLow: 387, ltLow: 321, speedLow: 296, sprintLow: 246 },
+  { date: '7/26', aerobicHigh: 319, ltHigh: 295, speedHigh: 245, aerobicLow: 386, ltLow: 319, speedLow: 295, sprintLow: 245 },
+  { date: '8/3', aerobicHigh: 318, ltHigh: 294, speedHigh: 245, aerobicLow: 385, ltLow: 318, speedLow: 294, sprintLow: 245 },
+];
+
+const ctx1 = document.getElementById('paceZonesChart').getContext('2d');
+new Chart(ctx1, {
+  type: 'line',
+  data: {
+    labels: zoneData.map(d => d.date),
+    datasets: [
+      {
+        label: '有氧耐力 (慢端)',
+        data: zoneData.map(d => d.aerobicLow),
+        borderColor: '#4fc3f780',
+        backgroundColor: '#4fc3f710',
+        borderWidth: 1,
+        borderDash: [4,4],
+        pointRadius: 2,
+        fill: false,
+      },
+      {
+        label: '有氧耐力 (快端)',
+        data: zoneData.map(d => d.aerobicHigh),
+        borderColor: '#4fc3f7',
+        backgroundColor: '#4fc3f720',
+        borderWidth: 2.5,
+        pointRadius: 4,
+        fill: '-1',
+      },
+      {
+        label: '乳酸阈 (快端)',
+        data: zoneData.map(d => d.ltHigh),
+        borderColor: '#66bb6a',
+        backgroundColor: '#66bb6a20',
+        borderWidth: 2.5,
+        pointRadius: 4,
+        fill: '-1',
+      },
+      {
+        label: '速度耐力 (快端)',
+        data: zoneData.map(d => d.speedHigh),
+        borderColor: '#ffa726',
+        backgroundColor: '#ffa72620',
+        borderWidth: 2.5,
+        pointRadius: 4,
+        fill: '-1',
+      },
+      {
+        label: '冲刺能力 (快端)',
+        data: zoneData.map(d => d.sprintLow - 100),
+        borderColor: '#ef5350',
+        backgroundColor: '#ef535020',
+        borderWidth: 2.5,
+        pointRadius: 4,
+        fill: false,
+      },
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: function(ctx) {
+            const sec = ctx.raw;
+            const min = Math.floor(sec / 60);
+            const s = sec % 60;
+            return `${ctx.dataset.label}: ${min}'${s.toString().padStart(2,'0')}"/km`;
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        reverse: true,
+        title: { display: true, text: '配速 (秒/km)', color: '#7a8b9a' },
+        ticks: {
+          color: '#7a8b9a',
+          callback: function(value) {
+            const min = Math.floor(value / 60);
+            const s = value % 60;
+            return `${min}'${s.toString().padStart(2,'0')}"`;
+          }
+        },
+        grid: { color: '#2a3a4a' },
+        min: 220,
+        max: 400,
+      },
+      x: {
+        ticks: { color: '#7a8b9a' },
+        grid: { color: '#2a3a4a30' },
+      }
+    }
+  }
+});
+
+// LTSP Chart
+const ltspData = [
+  {date:'4/14', ltsp:277}, {date:'4/20', ltsp:276}, {date:'4/22', ltsp:276},
+  {date:'5/1', ltsp:277}, {date:'5/5', ltsp:277}, {date:'5/12', ltsp:276},
+  {date:'5/14', ltsp:276}, {date:'5/24', ltsp:276}, {date:'5/27', ltsp:276},
+  {date:'6/3', ltsp:277}, {date:'6/5', ltsp:277}, {date:'6/7', ltsp:277},
+  {date:'6/11', ltsp:276}, {date:'6/13', ltsp:276}, {date:'6/17', ltsp:276},
+  {date:'6/19', ltsp:276}, {date:'6/21', ltsp:276}, {date:'6/25', ltsp:276},
+  {date:'6/28', ltsp:275}, {date:'7/1', ltsp:275}, {date:'7/3', ltsp:275},
+  {date:'7/5', ltsp:275}, {date:'7/8', ltsp:275}, {date:'7/9', ltsp:275},
+  {date:'7/13', ltsp:274}, {date:'7/14', ltsp:274}, {date:'7/17', ltsp:274},
+  {date:'7/19', ltsp:274}, {date:'7/21', ltsp:274}, {date:'7/23', ltsp:273},
+  {date:'7/26', ltsp:273}, {date:'7/28', ltsp:273}, {date:'7/30', ltsp:273},
+  {date:'8/1', ltsp:273}, {date:'8/2', ltsp:272}, {date:'8/3', ltsp:272},
+];
+
+const ctx2 = document.getElementById('ltspChart').getContext('2d');
+new Chart(ctx2, {
+  type: 'line',
+  data: {
+    labels: ltspData.map(d => d.date),
+    datasets: [{
+      label: 'LTSP (秒/km)',
+      data: ltspData.map(d => d.ltsp),
+      borderColor: '#66bb6a',
+      backgroundColor: '#66bb6a20',
+      borderWidth: 2.5,
+      pointRadius: 3,
+      pointBackgroundColor: '#66bb6a',
+      fill: true,
+      tension: 0.3,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: function(ctx) {
+            const sec = ctx.raw;
+            const min = Math.floor(sec / 60);
+            const s = sec % 60;
+            return `乳酸阈配速: ${min}'${s.toString().padStart(2,'0')}"/km`;
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        reverse: true,
+        title: { display: true, text: '配速 (秒/km) ↑更快', color: '#7a8b9a' },
+        ticks: {
+          color: '#7a8b9a',
+          callback: function(value) {
+            const min = Math.floor(value / 60);
+            const s = value % 60;
+            return `${min}'${s.toString().padStart(2,'0')}"`;
+          }
+        },
+        grid: { color: '#2a3a4a' },
+        min: 270,
+        max: 280,
+      },
+      x: {
+        ticks: { color: '#7a8b9a', maxRotation: 45, font: { size: 10 } },
+        grid: { display: false },
+      }
+    }
+  }
+});
+
+// Stamina Level Chart
+const staminaData = [
+  {date:'4/14', val:83.0}, {date:'4/20', val:83.1}, {date:'4/25', val:83.0},
+  {date:'5/1', val:83.0}, {date:'5/5', val:83.1}, {date:'5/8', val:83.1},
+  {date:'5/12', val:83.2}, {date:'5/14', val:83.3}, {date:'5/16', val:83.3},
+  {date:'5/24', val:83.3}, {date:'5/27', val:83.2}, {date:'6/3', val:83.0},
+  {date:'6/5', val:83.1}, {date:'6/7', val:83.2}, {date:'6/11', val:83.3},
+  {date:'6/13', val:83.4}, {date:'6/16', val:83.5}, {date:'6/17', val:83.5},
+  {date:'6/19', val:83.5}, {date:'6/21', val:83.5}, {date:'6/25', val:83.5},
+  {date:'6/28', val:83.7}, {date:'7/1', val:83.7}, {date:'7/3', val:83.8},
+  {date:'7/5', val:83.8}, {date:'7/6', val:83.8}, {date:'7/8', val:83.9},
+  {date:'7/9', val:83.9}, {date:'7/13', val:83.9}, {date:'7/14', val:83.9},
+  {date:'7/17', val:84.1}, {date:'7/19', val:84.1}, {date:'7/21', val:84.1},
+  {date:'7/23', val:84.3}, {date:'7/26', val:84.5}, {date:'7/28', val:84.5},
+  {date:'7/30', val:84.5}, {date:'8/1', val:84.5}, {date:'8/2', val:84.6},
+  {date:'8/3', val:84.7},
+];
+
+const ctx3 = document.getElementById('staminaChart').getContext('2d');
+new Chart(ctx3, {
+  type: 'line',
+  data: {
+    labels: staminaData.map(d => d.date),
+    datasets: [{
+      label: 'Stamina Level',
+      data: staminaData.map(d => d.val),
+      borderColor: '#4fc3f7',
+      backgroundColor: '#4fc3f720',
+      borderWidth: 2.5,
+      pointRadius: 2,
+      pointBackgroundColor: '#4fc3f7',
+      fill: true,
+      tension: 0.3,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: {
+        title: { display: true, text: '耐力值', color: '#7a8b9a' },
+        ticks: { color: '#7a8b9a' },
+        grid: { color: '#2a3a4a' },
+        min: 82.5,
+        max: 85.0,
+      },
+      x: {
+        ticks: { color: '#7a8b9a', maxRotation: 45, font: { size: 10 } },
+        grid: { display: false },
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>

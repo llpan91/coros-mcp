@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>跑步训练分析报告 | 2026-06-23 至 2026-07-05</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-card: #0f3460;
+            --bg-card-alt: #1a2747;
+            --accent-cyan: #00d4ff;
+            --accent-orange: #ff6b35;
+            --accent-green: #00e676;
+            --accent-purple: #bb86fc;
+            --accent-red: #ff5252;
+            --accent-yellow: #ffd740;
+            --text-primary: #e8e8e8;
+            --text-secondary: #a0a0b0;
+            --text-muted: #6b7280;
+            --border-color: rgba(0, 212, 255, 0.15);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 20px rgba(0, 212, 255, 0.1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 0;
+        }
+
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            overflow-x: auto;
+        }
+
+        .nav-brand {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            white-space: nowrap;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-cyan);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        /* Main Layout */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 24px 40px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 60px 0 40px;
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+            border-radius: 2px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+
+        .header .subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .header .date-range {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 8px 20px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 20px;
+            font-size: 14px;
+            color: var(--accent-cyan);
+        }
+
+        /* Section Styles */
+        .section {
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            padding-left: 16px;
+            border-left: 4px solid var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon {
+            font-size: 20px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 28px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        /* KPI Cards */
+        .kpi-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+        }
+
+        .kpi-card .kpi-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            margin: 8px 0;
+        }
+
+        .kpi-card .kpi-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-card .kpi-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Score Badge */
+        .score-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent-cyan) 0% 85%, rgba(255,255,255,0.1) 85% 100%);
+            position: relative;
+            margin: 20px auto;
+        }
+
+        .score-badge::before {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--bg-card);
+        }
+
+        .score-badge .score-value {
+            position: relative;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--accent-cyan);
+        }
+
+        /* Executive Summary */
+        .exec-summary {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .exec-score {
+            text-align: center;
+        }
+
+        .exec-detail {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .exec-detail h3 {
+            color: var(--accent-green);
+            font-size: 18px;
+        }
+
+        .exec-detail p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .exec-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .exec-tag {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .tag-positive {
+            background: rgba(0, 230, 118, 0.15);
+            color: var(--accent-green);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+        }
+
+        .tag-warning {
+            background: rgba(255, 107, 53, 0.15);
+            color: var(--accent-orange);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+        }
+
+        .tag-info {
+            background: rgba(0, 212, 255, 0.15);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .chart-container-sm {
+            position: relative;
+            height: 250px;
+            width: 100%;
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .data-table thead th {
+            background: var(--bg-secondary);
+            color: var(--accent-cyan);
+            font-weight: 600;
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 2px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .data-table tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+        }
+
+        .data-table tbody tr:hover {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .score-cell {
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .score-high { color: var(--accent-green); }
+        .score-mid { color: var(--accent-yellow); }
+        .score-low { color: var(--accent-orange); }
+
+        /* SWOT */
+        .swot-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .swot-card {
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid;
+        }
+
+        .swot-s {
+            background: rgba(0, 230, 118, 0.08);
+            border-color: rgba(0, 230, 118, 0.3);
+        }
+
+        .swot-w {
+            background: rgba(255, 82, 82, 0.08);
+            border-color: rgba(255, 82, 82, 0.3);
+        }
+
+        .swot-o {
+            background: rgba(0, 212, 255, 0.08);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .swot-t {
+            background: rgba(255, 107, 53, 0.08);
+            border-color: rgba(255, 107, 53, 0.3);
+        }
+
+        .swot-card h4 {
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .swot-s h4 { color: var(--accent-green); }
+        .swot-w h4 { color: var(--accent-red); }
+        .swot-o h4 { color: var(--accent-cyan); }
+        .swot-t h4 { color: var(--accent-orange); }
+
+        .swot-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .swot-card li {
+            padding: 6px 0;
+            color: var(--text-secondary);
+            font-size: 13px;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .swot-card li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: var(--text-muted);
+        }
+
+        /* Pyramid */
+        .pyramid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            margin: 20px 0;
+        }
+
+        .pyramid-level {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .pyramid-level:hover {
+            transform: scale(1.02);
+        }
+
+        .pyramid-l1 {
+            width: 40%;
+            background: linear-gradient(135deg, rgba(255, 82, 82, 0.3), rgba(255, 107, 53, 0.3));
+            border: 1px solid rgba(255, 82, 82, 0.4);
+            color: var(--accent-red);
+        }
+
+        .pyramid-l2 {
+            width: 55%;
+            background: linear-gradient(135deg, rgba(255, 215, 64, 0.2), rgba(255, 107, 53, 0.2));
+            border: 1px solid rgba(255, 215, 64, 0.3);
+            color: var(--accent-yellow);
+        }
+
+        .pyramid-l3 {
+            width: 70%;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(187, 134, 252, 0.2));
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: var(--accent-cyan);
+        }
+
+        .pyramid-l4 {
+            width: 85%;
+            background: linear-gradient(135deg, rgba(0, 230, 118, 0.2), rgba(0, 212, 255, 0.2));
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            color: var(--accent-green);
+        }
+
+        .pyramid-l5 {
+            width: 100%;
+            background: linear-gradient(135deg, rgba(0, 230, 118, 0.15), rgba(0, 230, 118, 0.05));
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            color: var(--accent-green);
+        }
+
+        /* Gauge */
+        .gauge-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .gauge {
+            width: 160px;
+            height: 80px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .gauge-bg {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 16px solid rgba(255, 255, 255, 0.05);
+            border-bottom-color: transparent;
+            border-left-color: transparent;
+            transform: rotate(225deg);
+            position: absolute;
+            top: 0;
+        }
+
+        .gauge-fill {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 16px solid transparent;
+            position: absolute;
+            top: 0;
+            transform: rotate(225deg);
+        }
+
+        .gauge-value {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--accent-cyan);
+        }
+
+        .gauge-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .gauge-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Recommendations */
+        .rec-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .rec-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            background: var(--bg-card-alt);
+            border: 1px solid var(--border-color);
+            align-items: flex-start;
+        }
+
+        .rec-priority {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .priority-high {
+            background: rgba(255, 82, 82, 0.2);
+            color: var(--accent-red);
+            border: 1px solid rgba(255, 82, 82, 0.3);
+        }
+
+        .priority-mid {
+            background: rgba(255, 215, 64, 0.2);
+            color: var(--accent-yellow);
+            border: 1px solid rgba(255, 215, 64, 0.3);
+        }
+
+        .priority-low {
+            background: rgba(0, 230, 118, 0.2);
+            color: var(--accent-green);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+        }
+
+        .rec-content h4 {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .rec-content p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Plan Table */
+        .plan-week {
+            margin-bottom: 24px;
+        }
+
+        .plan-week h4 {
+            color: var(--accent-cyan);
+            font-size: 15px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .plan-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .plan-day {
+            background: var(--bg-card-alt);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            font-size: 12px;
+        }
+
+        .plan-day .day-name {
+            color: var(--text-muted);
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+        .plan-day .day-type {
+            color: var(--accent-cyan);
+            font-weight: 600;
+            font-size: 11px;
+            margin-bottom: 2px;
+        }
+
+        .plan-day .day-detail {
+            color: var(--text-secondary);
+            font-size: 11px;
+        }
+
+        .plan-day.rest {
+            opacity: 0.6;
+        }
+
+        .plan-day.key-session {
+            border-color: var(--accent-orange);
+            background: rgba(255, 107, 53, 0.08);
+        }
+
+        .plan-day.long-run {
+            border-color: var(--accent-green);
+            background: rgba(0, 230, 118, 0.08);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 1px solid var(--border-color);
+            margin-top: 60px;
+        }
+
+        .footer p {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 70px 16px 24px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .exec-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .swot-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .plan-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* Cardiac Efficiency */
+        .ce-metric {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .ce-bar-bg {
+            flex: 1;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .ce-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+
+        .ce-label {
+            width: 80px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .ce-value {
+            width: 60px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        /* Problem Cards */
+        .problem-card {
+            background: var(--bg-card-alt);
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid var(--accent-orange);
+            margin-bottom: 12px;
+        }
+
+        .problem-card h4 {
+            color: var(--accent-orange);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .problem-card p {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .problem-card .impact {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 2px 8px;
+            background: rgba(255, 107, 53, 0.15);
+            border-radius: 4px;
+            font-size: 11px;
+            color: var(--accent-orange);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-inner">
+            <span class="nav-brand">Running Analytics</span>
+            <ul class="nav-links">
+                <li><a href="#summary">总览</a></li>
+                <li><a href="#volume">训练量</a></li>
+                <li><a href="#structure">结构</a></li>
+                <li><a href="#pace">配速</a></li>
+                <li><a href="#cardiac">心脏效率</a></li>
+                <li><a href="#form">跑姿</a></li>
+                <li><a href="#recovery">恢复</a></li>
+                <li><a href="#sessions">训练日志</a></li>
+                <li><a href="#problems">问题</a></li>
+                <li><a href="#swot">SWOT</a></li>
+                <li><a href="#recs">建议</a></li>
+                <li><a href="#plan">计划</a></li>
+                <li><a href="#race">预测</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>跑步训练分析报告</h1>
+            <p class="subtitle">基于生理数据的系统性训练评估与优化方案</p>
+            <span class="date-range">2026-06-23 ~ 2026-07-05 | 14天周期</span>
+        </header>
+
+        <!-- Executive Summary -->
+        <section class="section" id="summary">
+            <h2 class="section-title"><span class="icon">&#9733;</span> 训练总评</h2>
+            <div class="card">
+                <div class="exec-summary">
+                    <div class="exec-score">
+                        <div class="score-badge">
+                            <span class="score-value">8.5</span>
+                        </div>
+                        <p style="color: var(--accent-green); font-weight: 600; margin-top: 8px;">优秀</p>
+                        <p style="color: var(--text-muted); font-size: 12px;">综合评分 / 10</p>
+                    </div>
+                    <div class="exec-detail">
+                        <h3>两周训练质量优秀，有氧基础稳步提升</h3>
+                        <p>
+                            本周期完成7次训练，累计85.7公里，平均每周42.9公里，符合半马备赛中期跑量。
+                            两次长距离跑均实现负分配（negative split），显示良好的体能分配能力和有氧耐力储备。
+                            VO2max维持56ml/kg/min水平，乳酸阈心率168bpm、阈值配速4'35"/km，
+                            表明当前处于有氧能力高平台期。HRV基线64ms稳定，静息心率46bpm，
+                            恢复状态理想。需关注高温天气下的心率漂移和中午训练的热应激管理。
+                        </p>
+                        <div class="exec-tags">
+                            <span class="exec-tag tag-positive">负分配执行力强</span>
+                            <span class="exec-tag tag-positive">有氧基础扎实</span>
+                            <span class="exec-tag tag-positive">恢复良好</span>
+                            <span class="exec-tag tag-info">跑量适中</span>
+                            <span class="exec-tag tag-warning">高温适应</span>
+                            <span class="exec-tag tag-warning">速度训练不足</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="grid-4" style="margin-top: 24px;">
+                <div class="kpi-card">
+                    <div class="kpi-label">总跑量</div>
+                    <div class="kpi-value">85.7<span style="font-size: 16px; color: var(--text-secondary);">km</span></div>
+                    <div class="kpi-sub">周均 42.9 km</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">训练次数</div>
+                    <div class="kpi-value">7<span style="font-size: 16px; color: var(--text-secondary);">次</span></div>
+                    <div class="kpi-sub">总时长 8h18m</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">VO2max</div>
+                    <div class="kpi-value" style="color: var(--accent-green);">56</div>
+                    <div class="kpi-sub">ml/kg/min (优秀)</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">HRV 基线</div>
+                    <div class="kpi-value" style="color: var(--accent-purple);">64<span style="font-size: 16px;">ms</span></div>
+                    <div class="kpi-sub">RHR avg 46 bpm</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Training Volume -->
+        <section class="section" id="volume">
+            <h2 class="section-title"><span class="icon">&#9650;</span> 训练量分析</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 style="font-size: 15px; color: var(--text-secondary); margin-bottom: 16px;">每日跑量分布 (km)</h3>
+                    <div class="chart-container">
+                        <canvas id="volumeChart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 style="font-size: 15px; color: var(--text-secondary); margin-bottom: 16px;">周跑量对比</h3>
+                    <div style="display: flex; align-items: center; gap: 24px; margin-top: 30px;">
+                        <div style="flex: 1;">
+                            <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 4px;">第1周 (06/23-06/29)</p>
+                            <p style="font-size: 28px; font-weight: 700; color: var(--accent-cyan);">49.65 km</p>
+                            <p style="color: var(--text-muted); font-size: 12px; margin-top: 4px;">4次训练 | 4h56m</p>
+                        </div>
+                        <div style="flex: 1;">
+                            <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 4px;">第2周 (06/30-07/05)</p>
+                            <p style="font-size: 28px; font-weight: 700; color: var(--accent-green);">36.07 km</p>
+                            <p style="color: var(--text-muted); font-size: 12px; margin-top: 4px;">3次训练 | 3h22m</p>
+                        </div>
+                    </div>
+                    <div style="margin-top: 30px; padding: 16px; background: var(--bg-card-alt); border-radius: 10px;">
+                        <p style="font-size: 13px; color: var(--text-secondary);">
+                            <strong style="color: var(--accent-cyan);">分析：</strong>
+                            第2周跑量减少27%，属于合理的恢复性减量（Recovery Week模式）。
+                            两次长距离跑（17.87km + 16.41km）分布在两周各一次，节奏合理。
+                            日均跑量6.1km，处于半马备赛安全增量范围内。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Training Structure -->
+        <section class="section" id="structure">
+            <h2 class="section-title"><span class="icon">&#9673;</span> 训练结构</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 style="font-size: 15px; color: var(--text-secondary); margin-bottom: 16px;">强度分布 (80/20法则)</h3>
+                    <div class="chart-container-sm">
+                        <canvas id="structureChart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 style="font-size: 15px; color: var(--text-secondary); margin-bottom: 16px;">训练金字塔</h3>
+                    <div class="pyramid">
+                        <div class="pyramid-level pyramid-l1">Zone 5 竞速 | 0% | 0km</div>
+                        <div class="pyramid-level pyramid-l2">Zone 4 阈值 | 0% | 0km</div>
+                        <div class="pyramid-level pyramid-l3">Zone 3 有氧 | 34% | 29.2km</div>
+                        <div class="pyramid-level pyramid-l4">Zone 2 轻松 | 47% | 40.3km</div>
+                        <div class="pyramid-level pyramid-l5">Zone 1 恢复 | 19% | 16.2km</div>
+                    </div>
+                    <div style="margin-top: 16px; padding: 12px; background: var(--bg-card-alt); border-radius: 8px;">
+                        <p style="font-size: 12px; color: var(--text-secondary);">
+                            当前极化比: <strong style="color: var(--accent-cyan);">66:34:0</strong> (低:中:高)
+                            <br>建议比例: 80:15:5 — 需增加Z1/Z2比重，补充少量Z4/Z5刺激
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pace Analysis -->
+        <section class="section" id="pace">
+            <h2 class="section-title"><span class="icon">&#9654;</span> 配速分析</h2>
+            <div class="card">
+                <div class="chart-container">
+                    <canvas id="paceChart"></canvas>
+                </div>
+            </div>
+            <div class="grid-3" style="margin-top: 20px;">
+                <div class="kpi-card">
+                    <div class="kpi-label">平均配速</div>
+                    <div class="kpi-value" style="font-size: 26px;">5'52"</div>
+                    <div class="kpi-sub">/km 全部跑步</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">最快单公里</div>
+                    <div class="kpi-value" style="font-size: 26px; color: var(--accent-orange);">4'44"</div>
+                    <div class="kpi-sub">/km (07-05 长距离终段)</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">乳酸阈配速</div>
+                    <div class="kpi-value" style="font-size: 26px; color: var(--accent-green);">4'35"</div>
+                    <div class="kpi-sub">/km @ LTHR 168bpm</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cardiac Efficiency -->
+        <section class="section" id="cardiac">
+            <h2 class="section-title"><span class="icon">&#9829;</span> 心脏效率分析</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 style="font-size: 15px; color: var(--text-secondary); margin-bottom: 20px;">心脏成本指数 (ECI = HR / Speed)</h3>
+                    <div class="ce-metric">
+                        <span class="ce-label">06-23</span>
+                        <div class="ce-bar-bg"><div class="ce-bar-fill" style="width: 72%; background: var(--accent-green);"></div></div>
+                        <span class="ce-value" style="color: var(--accent-green);">0.86</span>
+                    </div>
+                    <div class="ce-metric">
+                        <span class="ce-label">06-25</span>
+                        <div class="ce-bar-bg"><div class="ce-bar-fill" style="width: 80%; background: var(--accent-yellow);"></div></div>
+                        <span class="ce-value" style="color: var(--accent-yellow);">0.95</span>
+                    </div>
+                    <div class="ce-metric">
+                        <span class="ce-label">06-26</span>
+                        <div class="ce-bar-bg"><div class="ce-bar-fill" style="width: 76%; background: var(--accent-cyan);"></div></div>
+                        <span class="ce-value" style="color: var(--accent-cyan);">0.91</span>
+                    </div>
+                    <div class="ce-metric">
+                        <span class="ce-label">06-28</span>
+                        <div class="ce-bar-bg"><div class="ce-bar-fill" style="width: 74%; background: var(--accent-green);"></div></div>
+                        <span class="ce-value" style="color: var(--accent-green);">0.86</span>
+                    </div>
+                    <div class="ce-metric">
+                        <span class="ce-label">07-01</span>
+                        <div class="ce-bar-bg"><div class="ce-bar-fill" style="width: 78%; background: var(--accent-yellow);"></div></div>
+                        <span class="ce-value" style="color: var(--accent-yellow);">0.90</span>
+                    </div>
+                    <div class="ce-metric">
+                        <span class="ce-label">07-03</span>
+                        <div class="ce-bar-bg"><div class="ce-bar-fill" style="width: 73%; background: var(--accent-green);"></div></div>
+                        <span class="ce-value" style="color: var(--accent-green);">0.87</span>
+                    </div>
+                    <div class="ce-metric">
+                        <span class="ce-label">07-05</span>
+                        <div class="ce-bar-bg"><div class="ce-bar-fill" style="width: 71%; background: var(--accent-green);"></div></div>
+                        <span class="ce-value" style="color: var(--accent-green);">0.84</span>
+                    </div>
+                    <div style="margin-top: 16px; padding: 12px; background: var(--bg-card-alt); border-radius: 8px;">
+                        <p style="font-size: 12px; color: var(--text-secondary);">
+                            ECI越低表示心脏效率越高。07-05的0.84为最优值，显示长距离跑中有氧经济性提升。
+                            高温日（06-25、07-01）心率漂移导致ECI偏高属正常现象。
+                        </p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 style="font-size: 15px; color: var(--text-secondary); margin-bottom: 20px;">关键心血管指标</h3>
+                    <div class="grid-2" style="gap: 16px;">
+                        <div style="text-align: center; padding: 16px; background: var(--bg-card-alt); border-radius: 10px;">
+                            <p style="color: var(--text-muted); font-size: 11px;">LTHR (乳酸阈心率)</p>
+                            <p style="font-size: 28px; font-weight: 700; color: var(--accent-orange); margin: 8px 0;">168</p>
+                            <p style="font-size: 11px; color: var(--text-muted);">bpm</p>
+                        </div>
+                        <div style="text-align: center; padding: 16px; background: var(--bg-card-alt); border-radius: 10px;">
+                            <p style="color: var(--text-muted); font-size: 11px;">静息心率</p>
+                            <p style="font-size: 28px; font-weight: 700; color: var(--accent-green); margin: 8px 0;">46</p>
+                            <p style="font-size: 11px; color: var(--text-muted);">bpm (7日均值)</p>
+                        </div>
+                        <div style="text-align: center; padding: 16px; background: var(--bg-card-alt); border-radius: 10px;">
+                            <p style="color: var(--text-muted); font-size: 11px;">心率储备</p>
+                            <p style="font-size: 28px; font-weight: 700; color: var(--accent-cyan); margin: 8px 0;">122</p>
+                            <p style="font-size: 11px; color: var(--text-muted);">bpm (HRmax-RHR)</p>
+                        </div>
+                        <div style="text-align: center; padding: 16px; background: var(--bg-card-alt); border-radius: 10px;">
+                            <p style="color: var(--text-muted); font-size: 11px;">训练均HR / LTHR</p>
+                            <p style="font-size: 28px; font-weight: 700; color: var(--accent-purple); margin: 8px 0;">89%</p>
+                            <p style="font-size: 11px; color: var(--text-muted);">150/168 平均</p>
+                        </div>
+                    </div>
+                    <div style="margin-top: 16px; padding: 12px; background: var(--bg-card-alt); border-radius: 8px;">
+                        <p style="font-size: 12px; color: var(--text-secondary);">
+                            <strong style="color: var(--accent-cyan);">结论：</strong>
+                            心脏储备充足(122bpm)，平均训练强度控制在LTHR的89%以下，
+                            有氧训练负荷适中。静息心率46bpm属于优秀运动员水平。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Running Form -->
+        <section class="section" id="form">
+            <h2 class="section-title"><span class="icon">&#9655;</span> 跑步效率分析</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 style="font-size: 15px; color: var(--text-secondary); margin-bottom: 16px;">跑步效率雷达图</h3>
+                    <div class="chart-container-sm">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 style="font-size: 15px; color: var(--text-secondary); margin-bottom: 20px;">效率指标详情</h3>
+                    <div style="display: grid; gap: 12px;">
+                        <div style="display: flex; justify-content: space-between; padding: 10px 16px; background: var(--bg-card-alt); border-radius: 8px;">
+                            <span style="font-size: 13px; color: var(--text-secondary);">有氧耐力</span>
+                            <span style="font-size: 13px; font-weight: 700; color: var(--accent-green);">9.0/10</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px 16px; background: var(--bg-card-alt); border-radius: 8px;">
+                            <span style="font-size: 13px; color: var(--text-secondary);">配速控制</span>
+                            <span style="font-size: 13px; font-weight: 700; color: var(--accent-green);">8.5/10</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px 16px; background: var(--bg-card-alt); border-radius: 8px;">
+                            <span style="font-size: 13px; color: var(--text-secondary);">心率管理</span>
+                            <span style="font-size: 13px; font-weight: 700; color: var(--accent-cyan);">8.0/10</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px 16px; background: var(--bg-card-alt); border-radius: 8px;">
+                            <span style="font-size: 13px; color: var(--text-secondary);">训练一致性</span>
+                            <span style="font-size: 13px; font-weight: 700; color: var(--accent-cyan);">8.0/10</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px 16px; background: var(--bg-card-alt); border-radius: 8px;">
+                            <span style="font-size: 13px; color: var(--text-secondary);">速度能力</span>
+                            <span style="font-size: 13px; font-weight: 700; color: var(--accent-yellow);">7.0/10</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px 16px; background: var(--bg-card-alt); border-radius: 8px;">
+                            <span style="font-size: 13px; color: var(--text-secondary);">热适应能力</span>
+                            <span style="font-size: 13px; font-weight: 700; color: var(--accent-orange);">7.5/10</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recovery -->
+        <section class="section" id="recovery">
+            <h2 class="section-title"><span class="icon">&#10084;</span> 恢复状态追踪</h2>
+            <div class="card">
+                <div class="chart-container">
+                    <canvas id="hrvChart"></canvas>
+                </div>
+            </div>
+            <div class="grid-3" style="margin-top: 20px;">
+                <div class="kpi-card">
+                    <div class="kpi-label">HRV 基线</div>
+                    <div class="kpi-value" style="color: var(--accent-purple);">64<span style="font-size: 14px;">ms</span></div>
+                    <div class="kpi-sub">RMSSD 14日均值</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">HRV 变异系数</div>
+                    <div class="kpi-value" style="color: var(--accent-cyan);">8.2<span style="font-size: 14px;">%</span></div>
+                    <div class="kpi-sub">正常范围 (< 10%)</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">恢复评级</div>
+                    <div class="kpi-value" style="color: var(--accent-green);">A</div>
+                    <div class="kpi-sub">训练就绪度高</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Session Quality Table -->
+        <section class="section" id="sessions">
+            <h2 class="section-title"><span class="icon">&#9776;</span> 训练日志与评分</h2>
+            <div class="card" style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>日期</th>
+                            <th>类型</th>
+                            <th>距离</th>
+                            <th>配速</th>
+                            <th>心率</th>
+                            <th>HR Zone</th>
+                            <th>备注</th>
+                            <th>评分</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>06-23</td>
+                            <td><span style="color: var(--accent-green);">Easy</span></td>
+                            <td>11.02 km</td>
+                            <td>6'04"/km</td>
+                            <td>142 bpm</td>
+                            <td>Z2</td>
+                            <td>轻松有氧，恢复跑</td>
+                            <td class="score-cell score-high">8.5</td>
+                        </tr>
+                        <tr>
+                            <td>06-25</td>
+                            <td><span style="color: var(--accent-green);">Easy</span></td>
+                            <td>10.75 km</td>
+                            <td>6'28"/km</td>
+                            <td>147 bpm</td>
+                            <td>Z2</td>
+                            <td>高温+爬坡，心率偏高</td>
+                            <td class="score-cell score-mid">7.5</td>
+                        </tr>
+                        <tr>
+                            <td>06-26</td>
+                            <td><span style="color: var(--accent-cyan);">Moderate</span></td>
+                            <td>10.01 km</td>
+                            <td>5'58"/km</td>
+                            <td>152 bpm</td>
+                            <td>Z3</td>
+                            <td>中等强度有氧跑</td>
+                            <td class="score-cell score-high">8.0</td>
+                        </tr>
+                        <tr>
+                            <td>06-28</td>
+                            <td><span style="color: var(--accent-orange);">Long Run</span></td>
+                            <td>17.87 km</td>
+                            <td>5'25"/km</td>
+                            <td>159 bpm</td>
+                            <td>Z3</td>
+                            <td>负分配，最快4'47"/km</td>
+                            <td class="score-cell score-high">9.5</td>
+                        </tr>
+                        <tr>
+                            <td>07-01</td>
+                            <td><span style="color: var(--accent-cyan);">Moderate</span></td>
+                            <td>9.60 km</td>
+                            <td>5'51"/km</td>
+                            <td>154 bpm</td>
+                            <td>Z3</td>
+                            <td>中午高温训练</td>
+                            <td class="score-cell score-mid">7.0</td>
+                        </tr>
+                        <tr>
+                            <td>07-03</td>
+                            <td><span style="color: var(--accent-green);">Easy</span></td>
+                            <td>10.06 km</td>
+                            <td>5'55"/km</td>
+                            <td>146 bpm</td>
+                            <td>Z2</td>
+                            <td>轻松恢复，状态佳</td>
+                            <td class="score-cell score-high">8.5</td>
+                        </tr>
+                        <tr>
+                            <td>07-05</td>
+                            <td><span style="color: var(--accent-orange);">Long Run</span></td>
+                            <td>16.41 km</td>
+                            <td>5'30"/km</td>
+                            <td>152 bpm</td>
+                            <td>Z3</td>
+                            <td>负分配，最快4'44"/km</td>
+                            <td class="score-cell score-high">9.0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Problem Analysis -->
+        <section class="section" id="problems">
+            <h2 class="section-title"><span class="icon">&#9888;</span> 问题诊断</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="problem-card">
+                        <h4>1. 高温心率漂移</h4>
+                        <p>06-25和07-01两次高温环境训练中，相同配速下心率比凉爽天气高5-8bpm。中午训练（07-01）尤为明显，同配速下HR154 vs 正常HR146。</p>
+                        <span class="impact">影响：有氧效率降低约8%</span>
+                    </div>
+                    <div class="problem-card">
+                        <h4>2. 速度训练缺失</h4>
+                        <p>整个2周期内无Z4/Z5高强度训练（间歇跑、节奏跑），训练极化度不足。当前66:34:0比例偏向中等强度积累，缺少顶端刺激。</p>
+                        <span class="impact">影响：速度耐力发展受限</span>
+                    </div>
+                    <div class="problem-card">
+                        <h4>3. 训练时段不规律</h4>
+                        <p>部分训练安排在中午（07-01），高温环境下训练质量下降，且增加热损伤风险。建议固定晨跑或傍晚时段。</p>
+                        <span class="impact">影响：训练效果波动</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="problem-card" style="border-left-color: var(--accent-cyan);">
+                        <h4 style="color: var(--accent-cyan);">4. 周跑量波动较大</h4>
+                        <p>第1周49.65km vs 第2周36.07km，周间跑量波动27%。虽然在合理恢复减量范围内，但长期应追求更平稳的负荷累积。</p>
+                        <span class="impact" style="background: rgba(0,212,255,0.15); color: var(--accent-cyan);">影响：轻度（计划内减量）</span>
+                    </div>
+                    <div class="problem-card" style="border-left-color: var(--accent-cyan);">
+                        <h4 style="color: var(--accent-cyan);">5. Easy跑配速偏快</h4>
+                        <p>07-03的Easy跑配速5'55"/km，HR146，接近Z3下缘。对比06-23的6'04"/km@HR142，存在无意识提速倾向。真正的Easy跑应保持在6'00"+。</p>
+                        <span class="impact" style="background: rgba(0,212,255,0.15); color: var(--accent-cyan);">影响：恢复质量受损</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SWOT Analysis -->
+        <section class="section" id="swot">
+            <h2 class="section-title"><span class="icon">&#9881;</span> SWOT 分析</h2>
+            <div class="card">
+                <div class="swot-grid">
+                    <div class="swot-card swot-s">
+                        <h4>S - 优势 (Strengths)</h4>
+                        <ul>
+                            <li>有氧基础扎实，VO2max 56处于优秀区间</li>
+                            <li>负分配执行力优秀，两次长跑均完美实现</li>
+                            <li>恢复能力强，HRV稳定、RHR低</li>
+                            <li>训练纪律性好，14天7次训练无缺席</li>
+                            <li>心率管理意识强，大部分训练控制在目标区间</li>
+                        </ul>
+                    </div>
+                    <div class="swot-card swot-w">
+                        <h4>W - 劣势 (Weaknesses)</h4>
+                        <ul>
+                            <li>缺少高强度速度训练（间歇/节奏跑）</li>
+                            <li>Easy跑配速有提速倾向，不够"Easy"</li>
+                            <li>高温环境下训练效率明显下降</li>
+                            <li>训练极化度不足，中等强度占比偏高</li>
+                            <li>未见力量/核心辅助训练记录</li>
+                        </ul>
+                    </div>
+                    <div class="swot-card swot-o">
+                        <h4>O - 机会 (Opportunities)</h4>
+                        <ul>
+                            <li>加入节奏跑/阈值跑可快速提升LT配速</li>
+                            <li>当前体能基础支持开始间歇训练</li>
+                            <li>秋季比赛季临近，有充足备赛时间</li>
+                            <li>HRV余量充足，可适度增加训练负荷</li>
+                            <li>长距离跑可逐步增至20km+</li>
+                        </ul>
+                    </div>
+                    <div class="swot-card swot-t">
+                        <h4>T - 威胁 (Threats)</h4>
+                        <ul>
+                            <li>夏季高温持续，热应激风险增加</li>
+                            <li>长期缺少速度训练可能导致快肌退化</li>
+                            <li>Easy跑偏快可能积累慢性疲劳</li>
+                            <li>无力量训练可能增加跑步伤病风险</li>
+                            <li>训练单一化可能导致适应性停滞</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recommendations -->
+        <section class="section" id="recs">
+            <h2 class="section-title"><span class="icon">&#10003;</span> 优化建议</h2>
+            <div class="card">
+                <ul class="rec-list">
+                    <li class="rec-item">
+                        <div class="rec-priority priority-high">1</div>
+                        <div class="rec-content">
+                            <h4>引入每周1次节奏跑/阈值跑</h4>
+                            <p>建议每周安排1次20-30分钟的节奏跑（配速4'50"-5'05"/km，HR 160-168），刺激乳酸阈适应，提升LT配速。从2x10min @ LT pace开始，逐步延长至持续20min。</p>
+                        </div>
+                    </li>
+                    <li class="rec-item">
+                        <div class="rec-priority priority-high">2</div>
+                        <div class="rec-content">
+                            <h4>严格控制Easy跑配速</h4>
+                            <p>Easy跑目标配速应在6'10"-6'30"/km，对应HR 135-145。使用心率警报功能，超过HR145立即减速。真正的Easy跑才能促进毛细血管和线粒体增殖。</p>
+                        </div>
+                    </li>
+                    <li class="rec-item">
+                        <div class="rec-priority priority-mid">3</div>
+                        <div class="rec-content">
+                            <h4>固定清晨训练时段</h4>
+                            <p>7月高温期建议统一安排在5:30-7:30完成训练，避免中午和下午的高温时段。如必须午间训练，将配速降低15-20秒/km，并额外补充电解质。</p>
+                        </div>
+                    </li>
+                    <li class="rec-item">
+                        <div class="rec-priority priority-mid">4</div>
+                        <div class="rec-content">
+                            <h4>每周2次力量训练</h4>
+                            <p>加入下肢和核心力量训练：单腿硬拉、保加利亚分腿蹲、平板支撑、臀桥。每次20-30分钟，安排在Easy跑后或休息日。预防跑步伤病、提升跑步经济性。</p>
+                        </div>
+                    </li>
+                    <li class="rec-item">
+                        <div class="rec-priority priority-low">5</div>
+                        <div class="rec-content">
+                            <h4>长距离跑渐进增量</h4>
+                            <p>当前长距离跑16-18km表现优秀，下一阶段可逐步增至20-22km（每2周增加1-2km）。目标心率保持在Z2-Z3交界（HR 150-158），继续练习负分配策略。</p>
+                        </div>
+                    </li>
+                    <li class="rec-item">
+                        <div class="rec-priority priority-low">6</div>
+                        <div class="rec-content">
+                            <h4>补充短距离间歇</h4>
+                            <p>每2周加入1次短间歇训练：6-8x400m @ 1'45"-1'50"（约4'25"/km配速），间歇走/慢跑恢复90秒。刺激VO2max、提升跑步经济性和神经肌肉协调。</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 2-Week Plan -->
+        <section class="section" id="plan">
+            <h2 class="section-title"><span class="icon">&#9993;</span> 未来2周训练计划</h2>
+            <div class="card">
+                <div class="plan-week">
+                    <h4>第1周 (07/07 - 07/13) | 目标跑量: 45km</h4>
+                    <div class="plan-grid">
+                        <div class="plan-day">
+                            <div class="day-name">周一</div>
+                            <div class="day-type">Easy</div>
+                            <div class="day-detail">10km<br>6'15"/km</div>
+                        </div>
+                        <div class="plan-day rest">
+                            <div class="day-name">周二</div>
+                            <div class="day-type">休息</div>
+                            <div class="day-detail">力量训练<br>30min</div>
+                        </div>
+                        <div class="plan-day key-session">
+                            <div class="day-name">周三</div>
+                            <div class="day-type">节奏跑</div>
+                            <div class="day-detail">10km含<br>2x10min@LT</div>
+                        </div>
+                        <div class="plan-day">
+                            <div class="day-name">周四</div>
+                            <div class="day-type">Easy</div>
+                            <div class="day-detail">8km<br>6'20"/km</div>
+                        </div>
+                        <div class="plan-day rest">
+                            <div class="day-name">周五</div>
+                            <div class="day-type">休息</div>
+                            <div class="day-detail">力量训练<br>30min</div>
+                        </div>
+                        <div class="plan-day">
+                            <div class="day-name">周六</div>
+                            <div class="day-type">Moderate</div>
+                            <div class="day-detail">9km<br>5'50"/km</div>
+                        </div>
+                        <div class="plan-day long-run">
+                            <div class="day-name">周日</div>
+                            <div class="day-type">Long Run</div>
+                            <div class="day-detail">18km<br>5'30"/km</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="plan-week">
+                    <h4>第2周 (07/14 - 07/20) | 目标跑量: 48km</h4>
+                    <div class="plan-grid">
+                        <div class="plan-day">
+                            <div class="day-name">周一</div>
+                            <div class="day-type">Easy</div>
+                            <div class="day-detail">10km<br>6'15"/km</div>
+                        </div>
+                        <div class="plan-day rest">
+                            <div class="day-name">周二</div>
+                            <div class="day-type">休息</div>
+                            <div class="day-detail">力量训练<br>30min</div>
+                        </div>
+                        <div class="plan-day key-session">
+                            <div class="day-name">周三</div>
+                            <div class="day-type">间歇跑</div>
+                            <div class="day-detail">9km含<br>6x400m</div>
+                        </div>
+                        <div class="plan-day">
+                            <div class="day-name">周四</div>
+                            <div class="day-type">Easy</div>
+                            <div class="day-detail">9km<br>6'20"/km</div>
+                        </div>
+                        <div class="plan-day rest">
+                            <div class="day-name">周五</div>
+                            <div class="day-type">休息</div>
+                            <div class="day-detail">力量训练<br>30min</div>
+                        </div>
+                        <div class="plan-day key-session">
+                            <div class="day-name">周六</div>
+                            <div class="day-type">节奏跑</div>
+                            <div class="day-detail">10km含<br>15min@LT</div>
+                        </div>
+                        <div class="plan-day long-run">
+                            <div class="day-name">周日</div>
+                            <div class="day-type">Long Run</div>
+                            <div class="day-detail">19km<br>5'25"/km</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Race Predictions -->
+        <section class="section" id="race">
+            <h2 class="section-title"><span class="icon">&#9889;</span> 比赛成绩预测</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="gauge-container">
+                        <div class="gauge">
+                            <div class="gauge-bg"></div>
+                            <div class="gauge-fill" style="border-top-color: var(--accent-green); border-right-color: var(--accent-green); clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);"></div>
+                            <div class="gauge-value">21'08"</div>
+                        </div>
+                        <div class="gauge-label">5公里预测</div>
+                        <div class="gauge-sub">配速 4'14"/km | 置信度 85%</div>
+                        <div style="margin-top: 12px; padding: 8px; background: var(--bg-card-alt); border-radius: 6px;">
+                            <p style="font-size: 11px; color: var(--text-muted);">基于 VO2max 56 + LT pace 4'35"</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="gauge-container">
+                        <div class="gauge">
+                            <div class="gauge-bg"></div>
+                            <div class="gauge-fill" style="border-top-color: var(--accent-cyan); border-right-color: var(--accent-cyan);"></div>
+                            <div class="gauge-value">44'50"</div>
+                        </div>
+                        <div class="gauge-label">10公里预测</div>
+                        <div class="gauge-sub">配速 4'29"/km | 置信度 80%</div>
+                        <div style="margin-top: 12px; padding: 8px; background: var(--bg-card-alt); border-radius: 6px;">
+                            <p style="font-size: 11px; color: var(--text-muted);">基于 Riegel 公式 + 心率储备</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="gauge-container">
+                        <div class="gauge">
+                            <div class="gauge-bg"></div>
+                            <div class="gauge-fill" style="border-top-color: var(--accent-orange); border-right-color: var(--accent-orange);"></div>
+                            <div class="gauge-value">1:40'15"</div>
+                        </div>
+                        <div class="gauge-label">半程马拉松预测</div>
+                        <div class="gauge-sub">配速 4'45"/km | 置信度 75%</div>
+                        <div style="margin-top: 12px; padding: 8px; background: var(--bg-card-alt); border-radius: 6px;">
+                            <p style="font-size: 11px; color: var(--text-muted);">需完成20km+长距离跑验证</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="margin-top: 20px;">
+                <h3 style="font-size: 15px; color: var(--text-secondary); margin-bottom: 12px;">预测方法说明</h3>
+                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.8;">
+                    成绩预测基于多因素模型：VO2max (56 ml/kg/min)、乳酸阈心率 (168bpm)、乳酸阈配速 (4'35"/km)、
+                    近期长距离跑表现（负分配能力）、以及 Riegel 距离衰减系数 (1.06)。
+                    半马预测较为保守，因当前最长单次距离仅17.87km，需通过20km+训练验证耐力储备。
+                    秋季目标赛事建议设定为半马100分钟（Sub-1:40），配合8-10周系统备赛可实现。
+                </p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Running Training Analysis Report | Generated on 2026-07-06</p>
+            <p style="margin-top: 8px;">Data Source: Coros Watch | Analysis Period: 2026-06-23 to 2026-07-05</p>
+        </footer>
+    </div>
+
+    <!-- Chart.js Scripts -->
+    <script>
+        // Chart.js Global Config
+        Chart.defaults.color = '#a0a0b0';
+        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.05)';
+        Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif';
+
+        // Volume Chart
+        const volumeCtx = document.getElementById('volumeChart').getContext('2d');
+        new Chart(volumeCtx, {
+            type: 'bar',
+            data: {
+                labels: ['06-23', '06-24', '06-25', '06-26', '06-27', '06-28', '06-29', '06-30', '07-01', '07-02', '07-03', '07-04', '07-05'],
+                datasets: [{
+                    label: '跑量 (km)',
+                    data: [11.02, 0, 10.75, 10.01, 0, 17.87, 0, 0, 9.60, 0, 10.06, 0, 16.41],
+                    backgroundColor: function(context) {
+                        const value = context.dataset.data[context.dataIndex];
+                        if (value >= 16) return 'rgba(255, 107, 53, 0.8)';
+                        if (value >= 10) return 'rgba(0, 212, 255, 0.7)';
+                        if (value > 0) return 'rgba(0, 230, 118, 0.6)';
+                        return 'rgba(255, 255, 255, 0.03)';
+                    },
+                    borderColor: function(context) {
+                        const value = context.dataset.data[context.dataIndex];
+                        if (value >= 16) return 'rgba(255, 107, 53, 1)';
+                        if (value >= 10) return 'rgba(0, 212, 255, 1)';
+                        if (value > 0) return 'rgba(0, 230, 118, 1)';
+                        return 'rgba(255, 255, 255, 0.05)';
+                    },
+                    borderWidth: 1,
+                    borderRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.raw > 0 ? context.raw + ' km' : '休息日';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 20,
+                        grid: { color: 'rgba(255,255,255,0.03)' },
+                        ticks: { callback: v => v + 'km' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // Structure Pie Chart
+        const structCtx = document.getElementById('structureChart').getContext('2d');
+        new Chart(structCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Zone 1-2 低强度 (轻松跑)', 'Zone 3 中等强度 (有氧/长跑)', 'Zone 4-5 高强度 (未训练)'],
+                datasets: [{
+                    data: [66, 34, 0],
+                    backgroundColor: [
+                        'rgba(0, 230, 118, 0.8)',
+                        'rgba(0, 212, 255, 0.8)',
+                        'rgba(255, 82, 82, 0.3)'
+                    ],
+                    borderColor: [
+                        'rgba(0, 230, 118, 1)',
+                        'rgba(0, 212, 255, 1)',
+                        'rgba(255, 82, 82, 0.5)'
+                    ],
+                    borderWidth: 2,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '60%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 16,
+                            font: { size: 12 }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Pace Line Chart
+        const paceCtx = document.getElementById('paceChart').getContext('2d');
+        new Chart(paceCtx, {
+            type: 'line',
+            data: {
+                labels: ['06-23', '06-25', '06-26', '06-28', '07-01', '07-03', '07-05'],
+                datasets: [
+                    {
+                        label: '平均配速 (min/km)',
+                        data: [6.07, 6.47, 5.97, 5.42, 5.85, 5.92, 5.50],
+                        borderColor: 'rgba(0, 212, 255, 1)',
+                        backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 6,
+                        pointBackgroundColor: 'rgba(0, 212, 255, 1)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                    },
+                    {
+                        label: '最快公里配速',
+                        data: [5.50, 6.00, 5.40, 4.78, 5.30, 5.50, 4.73],
+                        borderColor: 'rgba(255, 107, 53, 1)',
+                        backgroundColor: 'rgba(255, 107, 53, 0.05)',
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointBackgroundColor: 'rgba(255, 107, 53, 1)',
+                        borderDash: [5, 5],
+                    },
+                    {
+                        label: 'LT Pace (4\'35")',
+                        data: [4.58, 4.58, 4.58, 4.58, 4.58, 4.58, 4.58],
+                        borderColor: 'rgba(0, 230, 118, 0.5)',
+                        borderDash: [10, 5],
+                        pointRadius: 0,
+                        fill: false,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { padding: 16, font: { size: 12 } }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const min = Math.floor(context.raw);
+                                const sec = Math.round((context.raw - min) * 60);
+                                return context.dataset.label + ': ' + min + "'" + (sec < 10 ? '0' : '') + sec + '"/km';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        reverse: true,
+                        min: 4.0,
+                        max: 7.0,
+                        grid: { color: 'rgba(255,255,255,0.03)' },
+                        ticks: {
+                            callback: function(value) {
+                                const min = Math.floor(value);
+                                const sec = Math.round((value - min) * 60);
+                                return min + "'" + (sec < 10 ? '0' : '') + sec + '"';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // Radar Chart
+        const radarCtx = document.getElementById('radarChart').getContext('2d');
+        new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: ['有氧耐力', '配速控制', '心率管理', '训练一致性', '速度能力', '热适应'],
+                datasets: [{
+                    label: '当前水平',
+                    data: [9.0, 8.5, 8.0, 8.0, 7.0, 7.5],
+                    borderColor: 'rgba(0, 212, 255, 1)',
+                    backgroundColor: 'rgba(0, 212, 255, 0.15)',
+                    pointBackgroundColor: 'rgba(0, 212, 255, 1)',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 1,
+                    borderWidth: 2,
+                }, {
+                    label: '目标水平',
+                    data: [9.5, 9.0, 9.0, 9.0, 8.5, 8.5],
+                    borderColor: 'rgba(0, 230, 118, 0.6)',
+                    backgroundColor: 'rgba(0, 230, 118, 0.05)',
+                    pointBackgroundColor: 'rgba(0, 230, 118, 0.6)',
+                    borderWidth: 1,
+                    borderDash: [5, 5],
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { font: { size: 11 } }
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 10,
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        angleLines: { color: 'rgba(255,255,255,0.05)' },
+                        pointLabels: { font: { size: 11 } },
+                        ticks: { display: false }
+                    }
+                }
+            }
+        });
+
+        // HRV Chart
+        const hrvCtx = document.getElementById('hrvChart').getContext('2d');
+        new Chart(hrvCtx, {
+            type: 'line',
+            data: {
+                labels: ['06-23', '06-24', '06-25', '06-26', '06-27', '06-28', '06-29', '06-30', '07-01', '07-02', '07-03', '07-04', '07-05'],
+                datasets: [
+                    {
+                        label: 'HRV (RMSSD ms)',
+                        data: [62, 67, 59, 61, 68, 58, 65, 70, 60, 66, 63, 69, 64],
+                        borderColor: 'rgba(187, 134, 252, 1)',
+                        backgroundColor: 'rgba(187, 134, 252, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: function(context) {
+                            const value = context.dataset.data[context.dataIndex];
+                            if (value >= 66) return 'rgba(0, 230, 118, 1)';
+                            if (value >= 60) return 'rgba(187, 134, 252, 1)';
+                            return 'rgba(255, 107, 53, 1)';
+                        },
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                    },
+                    {
+                        label: '基线 (64ms)',
+                        data: [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64],
+                        borderColor: 'rgba(255, 215, 64, 0.5)',
+                        borderDash: [8, 4],
+                        pointRadius: 0,
+                        fill: false,
+                        borderWidth: 1,
+                    },
+                    {
+                        label: 'RHR (bpm)',
+                        data: [46, 45, 47, 46, 44, 48, 46, 45, 47, 45, 46, 44, 46],
+                        borderColor: 'rgba(0, 230, 118, 0.6)',
+                        pointRadius: 3,
+                        pointBackgroundColor: 'rgba(0, 230, 118, 0.8)',
+                        fill: false,
+                        tension: 0.3,
+                        borderWidth: 1,
+                        yAxisID: 'y1',
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { padding: 16, font: { size: 12 } }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            afterBody: function(context) {
+                                const idx = context[0].dataIndex;
+                                const trainingDays = [0, null, 2, 3, null, 5, null, null, 8, null, 10, null, 12];
+                                const types = ['Easy 11km', '', 'Easy 10.75km', 'Mod 10km', '', 'Long 17.87km', '', '', 'Mod 9.6km', '', 'Easy 10km', '', 'Long 16.4km'];
+                                if (types[idx]) return '\n训练: ' + types[idx];
+                                return '\n休息日';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        position: 'left',
+                        min: 50,
+                        max: 80,
+                        grid: { color: 'rgba(255,255,255,0.03)' },
+                        title: { display: true, text: 'HRV (ms)', color: '#a0a0b0' }
+                    },
+                    y1: {
+                        position: 'right',
+                        min: 40,
+                        max: 55,
+                        grid: { display: false },
+                        title: { display: true, text: 'RHR (bpm)', color: '#a0a0b0' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

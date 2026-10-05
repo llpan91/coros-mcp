@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>跑步能力趋势分析 — 24周</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #0f1923;
+  color: #e0e0e0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  padding: 24px;
+  line-height: 1.6;
+}
+.container { max-width: 1200px; margin: 0 auto; }
+h1 {
+  font-size: 28px;
+  background: linear-gradient(135deg, #00d4aa, #00a8ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 6px;
+}
+.subtitle { color: #8899aa; font-size: 14px; margin-bottom: 32px; }
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.card {
+  background: #1a2836;
+  border: 1px solid #2a3a4a;
+  border-radius: 12px;
+  padding: 20px;
+}
+.card-label { font-size: 13px; color: #8899aa; margin-bottom: 4px; }
+.card-value { font-size: 26px; font-weight: 700; color: #ffffff; }
+.card-change {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(0, 212, 170, 0.15);
+  color: #00d4aa;
+}
+.chart-section {
+  background: #1a2836;
+  border: 1px solid #2a3a4a;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.chart-section h2 { font-size: 18px; color: #ffffff; margin-bottom: 16px; }
+.chart-container { position: relative; height: 320px; }
+.chart-container.tall { height: 420px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+th, td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #2a3a4a;
+  text-align: center;
+}
+th { color: #8899aa; font-weight: 600; font-size: 12px; text-transform: uppercase; }
+td { color: #ccd6dd; font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace; font-size: 12px; }
+tr:hover td { background: rgba(0, 168, 255, 0.05); }
+.phase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.phase-card {
+  background: #1a2836;
+  border: 1px solid #2a3a4a;
+  border-radius: 12px;
+  padding: 20px;
+}
+.phase-card h3 { color: #00d4aa; font-size: 15px; margin-bottom: 8px; }
+.phase-card .phase-period { color: #8899aa; font-size: 12px; margin-bottom: 10px; }
+.phase-card p { font-size: 13px; color: #b0bec5; }
+.progress-section { margin-bottom: 24px; }
+.progress-item { margin-bottom: 16px; }
+.progress-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.progress-label { font-size: 14px; color: #ccd6dd; }
+.progress-value { font-size: 13px; color: #00d4aa; font-weight: 600; }
+.progress-bar-bg {
+  height: 8px;
+  background: #2a3a4a;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #00d4aa, #00a8ff);
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+.insight-box {
+  background: linear-gradient(135deg, rgba(0, 212, 170, 0.08), rgba(0, 168, 255, 0.08));
+  border: 1px solid #2a3a4a;
+  border-left: 4px solid #00d4aa;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 24px;
+}
+.insight-box h3 { color: #00d4aa; margin-bottom: 12px; font-size: 16px; }
+.insight-box p { font-size: 14px; color: #b0bec5; line-height: 1.8; }
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(0, 212, 170, 0.15);
+  color: #00d4aa;
+  margin-left: 6px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>跑步能力趋势分析 — 24周</h1>
+  <p class="subtitle">2026年2月17日 — 2026年8月4日 | COROS PACE Pro | Paul</p>
+
+  <!-- Summary Cards -->
+  <div class="summary-grid">
+    <div class="card">
+      <div class="card-label">乳酸阈配速 (LTSP)</div>
+      <div class="card-value">4'43" → 4'32"</div>
+      <span class="card-change">↑ 提升 11"/km</span>
+    </div>
+    <div class="card">
+      <div class="card-label">VO2max</div>
+      <div class="card-value">52 → 56</div>
+      <span class="card-change">↑ +4</span>
+    </div>
+    <div class="card">
+      <div class="card-label">耐力值 (Stamina Level)</div>
+      <div class="card-value">81.0 → 84.7</div>
+      <span class="card-change">↑ +3.7</span>
+    </div>
+    <div class="card">
+      <div class="card-label">总跑步次数</div>
+      <div class="card-value">~65 次</div>
+      <span class="card-change">24 周</span>
+    </div>
+  </div>
+
+  <!-- Main Pace Zone Trend Chart -->
+  <div class="chart-section">
+    <h2>配速区间趋势</h2>
+    <div class="chart-container tall">
+      <canvas id="zoneChart"></canvas>
+    </div>
+  </div>
+
+  <!-- LTSP Trend -->
+  <div class="chart-section">
+    <h2>乳酸阈配速 (LTSP) 趋势</h2>
+    <div class="chart-container">
+      <canvas id="ltspChart"></canvas>
+    </div>
+  </div>
+
+  <!-- VO2max Trend -->
+  <div class="chart-section">
+    <h2>VO2max 趋势</h2>
+    <div class="chart-container">
+      <canvas id="vo2Chart"></canvas>
+    </div>
+  </div>
+
+  <!-- Stamina Level Trend -->
+  <div class="chart-section">
+    <h2>耐力值趋势</h2>
+    <div class="chart-container">
+      <canvas id="staminaChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Detailed Zone Table -->
+  <div class="chart-section">
+    <h2>配速区间详细数据</h2>
+    <div style="overflow-x: auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>日期</th>
+            <th>有氧耐力</th>
+            <th>乳酸阈</th>
+            <th>速度耐力</th>
+            <th>冲刺能力</th>
+            <th>LTSP</th>
+            <th>Stamina</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>02-22</td><td>6'40"-5'35"/km</td><td>5'35"-5'05"/km</td><td>5'05"-4'10"/km</td><td>&lt;4'10"/km</td><td>4'42"</td><td>81.1</td></tr>
+          <tr><td>03-08</td><td>6'38"-5'32"/km</td><td>5'32"-5'02"/km</td><td>5'02"-4'09"/km</td><td>&lt;4'09"/km</td><td>4'39"</td><td>82.1</td></tr>
+          <tr><td>03-20</td><td>6'36"-5'30"/km</td><td>5'30"-5'00"/km</td><td>5'00"-4'08"/km</td><td>&lt;4'08"/km</td><td>4'37"</td><td>82.9</td></tr>
+          <tr><td>04-01</td><td>6'34"-5'29"/km</td><td>5'29"-5'00"/km</td><td>5'00"-4'07"/km</td><td>&lt;4'07"/km</td><td>4'37"</td><td>82.9</td></tr>
+          <tr><td>04-14</td><td>6'32"-5'28"/km</td><td>5'28"-5'00"/km</td><td>5'00"-4'06"/km</td><td>&lt;4'06"/km</td><td>4'37"</td><td>83.0</td></tr>
+          <tr><td>05-01</td><td>6'33"-5'29"/km</td><td>5'29"-5'00"/km</td><td>5'00"-4'07"/km</td><td>&lt;4'07"/km</td><td>4'37"</td><td>83.0</td></tr>
+          <tr><td>05-24</td><td>6'32"-5'26"/km</td><td>5'26"-5'00"/km</td><td>5'00"-4'08"/km</td><td>&lt;4'08"/km</td><td>4'36"</td><td>83.3</td></tr>
+          <tr><td>06-07</td><td>6'32"-5'26"/km</td><td>5'26"-5'00"/km</td><td>5'00"-4'08"/km</td><td>&lt;4'08"/km</td><td>4'37"</td><td>83.2</td></tr>
+          <tr><td>06-21</td><td>6'30"-5'24"/km</td><td>5'24"-4'58"/km</td><td>4'58"-4'07"/km</td><td>&lt;4'07"/km</td><td>4'36"</td><td>83.5</td></tr>
+          <tr><td>07-05</td><td>6'32"-5'26"/km</td><td>5'26"-5'00"/km</td><td>5'00"-4'08"/km</td><td>&lt;4'08"/km</td><td>4'35"</td><td>83.8</td></tr>
+          <tr><td>07-17</td><td>6'27"-5'21"/km</td><td>5'21"-4'56"/km</td><td>4'56"-4'06"/km</td><td>&lt;4'06"/km</td><td>4'34"</td><td>84.1</td></tr>
+          <tr><td>07-26</td><td>6'26"-5'19"/km</td><td>5'19"-4'55"/km</td><td>4'55"-4'05"/km</td><td>&lt;4'05"/km</td><td>4'33"</td><td>84.5</td></tr>
+          <tr><td>08-03</td><td>6'25"-5'18"/km</td><td>5'18"-4'54"/km</td><td>4'54"-4'05"/km</td><td>&lt;4'05"/km</td><td>4'32"</td><td>84.7</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Phase Analysis -->
+  <div class="chart-section">
+    <h2>阶段分析</h2>
+    <div class="phase-grid">
+      <div class="phase-card">
+        <h3>第一阶段：基础构建</h3>
+        <div class="phase-period">2月 — 3月</div>
+        <p>VO2max 52 → 55，LTSP 4'43" → 4'37"，耐力值 81 → 83。重点：有氧量积累，快速提升基础心肺能力。此阶段进步最为显著，配速区间全面下移。</p>
+      </div>
+      <div class="phase-card">
+        <h3>第二阶段：维持平台期</h3>
+        <div class="phase-period">4月 — 5月</div>
+        <p>VO2max 55 → 56，LTSP 4'37" → 4'36"，耐力值 83 → 83.3。5月3日越野赛（训练负荷 412），训练节奏有所波动，配速指标进入平台期但耐力仍缓慢爬升。</p>
+      </div>
+      <div class="phase-card">
+        <h3>第三阶段：突破提升</h3>
+        <div class="phase-period">6月 — 8月</div>
+        <p>LTSP 4'37" → 4'32"，耐力值 83 → 84.7。关键因素：7月23日起引入系统性间歇训练，配速区间再次明显下移，各维度均创新高。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Improvement Summary -->
+  <div class="chart-section">
+    <h2>能力提升汇总</h2>
+    <div class="progress-section">
+      <div class="progress-item">
+        <div class="progress-header">
+          <span class="progress-label">有氧耐力上限</span>
+          <span class="progress-value">5'35" → 5'18"/km <span class="badge">+17"/km</span></span>
+        </div>
+        <div class="progress-bar-bg"><div class="progress-bar" style="width: 85%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-header">
+          <span class="progress-label">乳酸阈配速 (LTSP)</span>
+          <span class="progress-value">4'43" → 4'32"/km <span class="badge">+11"/km</span></span>
+        </div>
+        <div class="progress-bar-bg"><div class="progress-bar" style="width: 78%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-header">
+          <span class="progress-label">速度耐力上限</span>
+          <span class="progress-value">5'05" → 4'54"/km <span class="badge">+11"/km</span></span>
+        </div>
+        <div class="progress-bar-bg"><div class="progress-bar" style="width: 72%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-header">
+          <span class="progress-label">冲刺能力上限</span>
+          <span class="progress-value">4'10" → 4'05"/km <span class="badge">+5"/km</span></span>
+        </div>
+        <div class="progress-bar-bg"><div class="progress-bar" style="width: 45%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-header">
+          <span class="progress-label">VO2max</span>
+          <span class="progress-value">52 → 56 <span class="badge">+7.7%</span></span>
+        </div>
+        <div class="progress-bar-bg"><div class="progress-bar" style="width: 67%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insight Box -->
+  <div class="insight-box">
+    <h3>训练洞察</h3>
+    <p>24周内各维度持续进步。最快的提升出现在两个阶段：初期基础构建期（2-3月），VO2max 从 52 跃升至 55；以及近期间歇训练期（7-8月），LTSP 从 4'34" 降至 4'32"。中期（4-6月）配速指标进入平台但耐力值持续攀升，说明有氧基础在稳步夯实。建议维持当前间歇频率的同时关注恢复质量，避免过度训练。下一目标：LTSP 突破 4'30" 大关，耐力值冲击 85.0。</p>
+  </div>
+</div>
+
+<script>
+// Utility: seconds to M'SS" format
+function secToPace(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.round(s % 60);
+  return m + "'" + (sec < 10 ? '0' : '') + sec + '"';
+}
+
+// Chart.js global defaults for dark theme
+Chart.defaults.color = '#8899aa';
+Chart.defaults.borderColor = '#2a3a4a';
+
+// === Pace Zone Trend Chart ===
+const zoneDates = ['02-22','03-08','03-20','04-01','04-14','05-01','05-24','06-07','06-21','07-05','07-17','07-26','08-03'];
+const aerobicUpper = [400,398,396,394,392,393,392,392,390,392,387,386,385];
+const aerobicLower = [335,332,330,329,328,329,326,326,324,326,321,319,318];
+const ltUpper = [335,332,330,329,328,329,326,326,324,326,321,319,318];
+const ltLower = [305,302,300,300,300,300,300,300,298,300,296,295,294];
+const speedUpper = [305,302,300,300,300,300,300,300,298,300,296,295,294];
+const speedLower = [250,249,248,247,246,247,248,248,247,248,246,245,245];
+const sprintUpper = [250,249,248,247,246,247,248,248,247,248,246,245,245];
+
+new Chart(document.getElementById('zoneChart'), {
+  type: 'line',
+  data: {
+    labels: zoneDates,
+    datasets: [
+      {
+        label: '有氧耐力 上限',
+        data: aerobicUpper,
+        borderColor: '#4fc3f7',
+        backgroundColor: 'transparent',
+        borderWidth: 1.5,
+        pointRadius: 3,
+        fill: false
+      },
+      {
+        label: '有氧耐力 下限 / 乳酸阈 上限',
+        data: aerobicLower,
+        borderColor: '#4fc3f7',
+        backgroundColor: 'rgba(79, 195, 247, 0.12)',
+        borderWidth: 1.5,
+        pointRadius: 3,
+        fill: '-1'
+      },
+      {
+        label: '乳酸阈 下限 / 速度耐力 上限',
+        data: ltLower,
+        borderColor: '#66bb6a',
+        backgroundColor: 'rgba(102, 187, 106, 0.12)',
+        borderWidth: 1.5,
+        pointRadius: 3,
+        fill: '-1'
+      },
+      {
+        label: '速度耐力 下限 / 冲刺 上限',
+        data: speedLower,
+        borderColor: '#ffa726',
+        backgroundColor: 'rgba(255, 167, 38, 0.12)',
+        borderWidth: 1.5,
+        pointRadius: 3,
+        fill: '-1'
+      },
+      {
+        label: '冲刺底线 (参考)',
+        data: [220,220,220,220,220,220,220,220,220,220,220,220,220],
+        borderColor: '#ef5350',
+        backgroundColor: 'rgba(239, 83, 80, 0.08)',
+        borderWidth: 1,
+        pointRadius: 0,
+        borderDash: [4,4],
+        fill: '-1'
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } },
+      tooltip: {
+        callbacks: {
+          label: function(ctx) {
+            return ctx.dataset.label + ': ' + secToPace(ctx.parsed.y) + '/km';
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        reverse: true,
+        min: 210,
+        max: 410,
+        grid: { color: '#2a3a4a' },
+        ticks: {
+          callback: function(val) { return secToPace(val); },
+          stepSize: 30
+        },
+        title: { display: true, text: '配速 (M\'SS"/km)', color: '#8899aa' }
+      },
+      x: {
+        grid: { color: '#2a3a4a' },
+        title: { display: true, text: '日期', color: '#8899aa' }
+      }
+    }
+  }
+});
+
+// === LTSP Trend Chart ===
+const ltspDates = ['02-19','02-22','02-28','03-01','03-08','03-12','03-15','03-16','03-18','03-20','03-22','03-23','03-25','03-27','03-29','04-01','04-03','04-07','04-09','04-12','04-14','04-16','04-20','04-22','05-01','05-05','05-12','05-14','05-24','05-27','06-03','06-07','06-11','06-13','06-17','06-19','06-21','06-28','07-01','07-03','07-05','07-08','07-09','07-13','07-14','07-17','07-19','07-21','07-23','07-26','07-28','08-01','08-02','08-03'];
+const ltspValues = [283,282,282,280,279,279,278,278,278,277,277,276,276,276,276,277,277,277,277,277,277,277,276,276,277,277,276,276,276,276,277,277,276,276,276,276,276,275,275,275,275,275,275,274,274,274,274,274,273,273,273,273,272,272];
+
+new Chart(document.getElementById('ltspChart'), {
+  type: 'line',
+  data: {
+    labels: ltspDates,
+    datasets: [{
+      label: 'LTSP',
+      data: ltspValues,
+      borderColor: '#66bb6a',
+      backgroundColor: 'rgba(102, 187, 106, 0.1)',
+      borderWidth: 2,
+      pointRadius: 2.5,
+      pointBackgroundColor: '#66bb6a',
+      fill: true,
+      tension: 0.3
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: function(ctx) { return 'LTSP: ' + secToPace(ctx.parsed.y) + '/km'; }
+        }
+      }
+    },
+    scales: {
+      y: {
+        reverse: true,
+        min: 270,
+        max: 285,
+        grid: { color: '#2a3a4a' },
+        ticks: {
+          callback: function(val) { return secToPace(val); },
+          stepSize: 3
+        },
+        title: { display: true, text: '配速 (M\'SS"/km)', color: '#8899aa' }
+      },
+      x: {
+        grid: { color: '#2a3a4a' },
+        ticks: { maxTicksLimit: 12 }
+      }
+    }
+  }
+});
+
+// === VO2max Trend Chart ===
+const vo2Dates = ['02-19','02-22','02-28','03-01','03-08','03-12','03-15','03-16','03-20','04-14','05-01','05-24','06-07','06-21','07-05','07-17','07-26','08-03'];
+const vo2Values = [52,52,53,54,54,54,55,55,55,56,56,56,56,56,56,56,56,56];
+
+new Chart(document.getElementById('vo2Chart'), {
+  type: 'line',
+  data: {
+    labels: vo2Dates,
+    datasets: [{
+      label: 'VO2max',
+      data: vo2Values,
+      borderColor: '#ffa726',
+      backgroundColor: 'rgba(255, 167, 38, 0.1)',
+      borderWidth: 2,
+      pointRadius: 3,
+      pointBackgroundColor: '#ffa726',
+      fill: true,
+      tension: 0.3
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: {
+        min: 50,
+        max: 58,
+        grid: { color: '#2a3a4a' },
+        ticks: { stepSize: 1 },
+        title: { display: true, text: 'VO2max (mL/kg/min)', color: '#8899aa' }
+      },
+      x: {
+        grid: { color: '#2a3a4a' },
+        ticks: { maxTicksLimit: 10 }
+      }
+    }
+  }
+});
+
+// === Stamina Level Trend Chart ===
+const staminaDates = ['02-19','02-22','02-28','03-01','03-08','03-12','03-15','03-16','03-18','03-20','03-22','03-23','04-01','04-03','04-14','04-20','05-01','05-12','05-14','05-24','06-03','06-07','06-11','06-16','06-21','06-28','07-03','07-05','07-08','07-13','07-17','07-23','07-26','08-01','08-02','08-03'];
+const staminaValues = [81.0,81.1,81.3,81.9,82.1,82.2,82.4,82.5,82.6,82.9,82.9,83.0,82.9,83.0,83.0,83.1,83.0,83.2,83.3,83.3,83.0,83.2,83.3,83.5,83.5,83.7,83.8,83.8,83.9,83.9,84.1,84.3,84.5,84.5,84.6,84.7];
+
+new Chart(document.getElementById('staminaChart'), {
+  type: 'line',
+  data: {
+    labels: staminaDates,
+    datasets: [{
+      label: '耐力值',
+      data: staminaValues,
+      borderColor: '#4fc3f7',
+      backgroundColor: 'rgba(79, 195, 247, 0.1)',
+      borderWidth: 2,
+      pointRadius: 2.5,
+      pointBackgroundColor: '#4fc3f7',
+      fill: true,
+      tension: 0.3
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: {
+        min: 80.5,
+        max: 85.0,
+        grid: { color: '#2a3a4a' },
+        ticks: { stepSize: 0.5 },
+        title: { display: true, text: '耐力值', color: '#8899aa' }
+      },
+      x: {
+        grid: { color: '#2a3a4a' },
+        ticks: { maxTicksLimit: 10 }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>

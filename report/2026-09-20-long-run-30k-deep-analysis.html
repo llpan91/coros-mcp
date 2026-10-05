@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>长距离深度分析 · 9.19 元大都 30K</title>
+<style>
+:root{
+  --bg:#0d1117;--panel:#161b22;--panel2:#1c232d;--border:#2b333d;
+  --ink:#e6edf3;--muted:#9aa7b4;--accent:#3fb950;--accent2:#58a6ff;
+  --warn:#d29922;--danger:#f85149;--purple:#bc8cff;
+  --z1:#519aba;--z2:#3fb950;--z3:#d29922;--z4:#f0883e;--z5:#f85149;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;line-height:1.6}
+.wrap{max-width:1140px;margin:0 auto;padding:32px 20px 80px}
+header.hero{background:linear-gradient(135deg,#132a1c 0%,#0d1117 60%);border:1px solid var(--border);border-radius:16px;padding:36px 32px;margin-bottom:28px}
+.hero h1{font-size:30px;font-weight:800;letter-spacing:.5px}
+.hero .sub{color:var(--muted);margin-top:8px;font-size:15px}
+.hero .badges{margin-top:18px;display:flex;flex-wrap:wrap;gap:10px}
+.badge{background:var(--panel2);border:1px solid var(--border);border-radius:999px;padding:5px 14px;font-size:13px;color:var(--muted)}
+.badge b{color:var(--accent)}
+h2{font-size:21px;margin:38px 0 16px;padding-bottom:10px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px}
+h2 .n{background:var(--accent);color:#04210f;font-size:14px;width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-weight:800}
+h3{font-size:16px;margin:22px 0 10px;color:var(--accent2)}
+p{margin:10px 0;color:#d7e0e8}
+.grid{display:grid;gap:16px}
+.g5{grid-template-columns:repeat(5,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+@media(max-width:820px){.g5,.g4,.g3,.g2{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.g5,.g4,.g3,.g2{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px}
+.kpi{text-align:center}
+.kpi .v{font-size:26px;font-weight:800;color:var(--accent)}
+.kpi .l{font-size:12px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+.kpi .d{font-size:12px;margin-top:6px}
+.up{color:var(--accent)}.down{color:var(--danger)}.flat{color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--border)}
+th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.4px}
+td:first-child,th:first-child{text-align:left}
+tbody tr:hover{background:var(--panel2)}
+.tbl-wrap{overflow-x:auto;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:6px 14px}
+.hl{color:var(--accent);font-weight:700}
+.hl2{color:var(--accent2);font-weight:700}
+.warnc{color:var(--warn)}
+.callout{border-left:4px solid var(--accent);background:var(--panel2);padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0}
+.callout.warn{border-color:var(--warn)}
+.callout.blue{border-color:var(--accent2)}
+.callout.danger{border-color:var(--danger)}
+.callout.purple{border-color:var(--purple)}
+.bar{height:22px;border-radius:5px;display:flex;overflow:hidden;background:#0a0e13;font-size:10px}
+.bar span{display:flex;align-items:center;justify-content:center;color:#04210f;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:8px 0}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:middle}
+.muted{color:var(--muted)}
+small{color:var(--muted);font-size:12px}
+.foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--muted);font-size:12px}
+svg text{font-family:inherit}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;background:var(--panel2);border:1px solid var(--border);color:var(--muted)}
+.tag.g{color:var(--accent);border-color:#204d2c}
+.tag.w{color:var(--warn);border-color:#5a4718}
+.tag.b{color:var(--accent2);border-color:#1c3a5e}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>长距离深度分析 · 9.19 元大都 30K</h1>
+  <div class="sub">聚焦 2026-09-19（周六）30.37 km 长距离，结合近一个月跑步课程的负荷、配速与心率趋势 · 生成于 2026-09-20 (Asia/Shanghai)</div>
+  <div class="badges">
+    <span class="badge">距离 <b>30.37 km</b></span>
+    <span class="badge">移动时间 <b>2:33:39</b></span>
+    <span class="badge">平均配速 <b>5:04/km</b></span>
+    <span class="badge">平均心率 <b>155</b> · 峰值 <b>177</b></span>
+    <span class="badge">训练负荷 <b>444</b></span>
+    <span class="badge">VO₂max <b>57</b></span>
+  </div>
+  <p style="margin-top:14px;font-size:13px" class="muted">口径说明：配速/时间均取活动详情 <b>workoutTime（移动时间）</b>，已剔除暂停（本次仅暂停约 19 秒）。日期与星期已按公历核验（9-19 = 周六，ISO 2026-W38）。</p>
+</header>
+
+<!-- 1. 结论 -->
+<h2><span class="n">1</span> 核心结论</h2>
+<div class="callout">
+  <p style="margin-top:0"><b class="hl">这是数据集中最长的一次跑步（30.37 km），也是一场教科书式的“渐进负分段”长距离。</b> 从 5:11/km 起步，中段稳定在 5:00–5:08，最后 10 km 逐步压到 4:48–4:52，末 2 km 冲到 <b>4:28–4:30/km</b>；心率从 135 平稳爬升到 173，全程 79% 时间在有氧区（Z1–Z3），未失控。这标志着耐力储备已明显超出半马需求，正向全马目标（sub-3:30 / sub-3:10）过渡。</p>
+</div>
+<div class="grid g3">
+  <div class="card"><p style="margin:0"><span class="tag g">优点</span> 配速纪律极佳，前慢后快、末段主动加速，且心率-配速解耦良好（同心率下配速持续变快）。</p></div>
+  <div class="card"><p style="margin:0"><span class="tag b">进步</span> 单次里程从 8-30 的 23.6 km 提升到 30.37 km（+29%），且平均配速反而更快（5:15→5:04）。</p></div>
+  <div class="card"><p style="margin:0"><span class="tag w">注意</span> 负荷 444 与 9-13 半马（438）持平，为近月最高。本周（W38）为大强度周，需保证后续恢复。</p></div>
+</div>
+
+<!-- 2. 关键指标 -->
+<h2><span class="n">2</span> 9.19 长距离关键指标</h2>
+<div class="grid g5">
+  <div class="card kpi"><div class="v">30.37</div><div class="l">距离 km</div><div class="d up">数据集最长 ▲</div></div>
+  <div class="card kpi"><div class="v">5:04</div><div class="l">移动配速 /km</div><div class="d up">快于 8-30 的 5:15</div></div>
+  <div class="card kpi"><div class="v">155</div><div class="l">平均心率</div><div class="d flat">峰值 177</div></div>
+  <div class="card kpi"><div class="v">200</div><div class="l">平均步频 spm</div><div class="d flat">步幅 99 cm</div></div>
+  <div class="card kpi"><div class="v">201</div><div class="l">平均功率 W</div><div class="d flat">末段升至 225</div></div>
+</div>
+<div class="grid g5" style="margin-top:16px">
+  <div class="card kpi"><div class="v">444</div><div class="l">训练负荷</div><div class="d warnc">近月最高</div></div>
+  <div class="card kpi"><div class="v">4.9 / 4.1</div><div class="l">有氧 / 无氧效果</div><div class="d flat">高强度耐力刺激</div></div>
+  <div class="card kpi"><div class="v">150 m</div><div class="l">累计爬升</div><div class="d flat">下降 153 m</div></div>
+  <div class="card kpi"><div class="v">~1894</div><div class="l">消耗 kcal</div><div class="d flat">补给需关注</div></div>
+  <div class="card kpi"><div class="v">18°C</div><div class="l">气温</div><div class="d warnc">湿度 ~99%</div></div>
+</div>
+<div class="callout blue" style="margin-top:16px">
+  <b>环境注记：</b>体感高湿（湿度接近饱和、体感 ~19°C），在这种闷热条件下仍能保持配速纪律并末段加速，实际生理成本高于配速表面反映的水平——心率漂移被很好地控制住了。
+</div>
+
+<!-- 3. 分段配速 -->
+<h2><span class="n">3</span> 逐公里分段：渐进负分段的形状</h2>
+<p>下图为 31 段（每公里）移动配速与心率。柱越矮=配速越快；折线为心率。可清晰看到三段结构：<b class="hl2">建立期(1–13k)</b> → <b class="hl2">巡航期(14–20k)</b> → <b class="hl">加速收尾(21–30k)</b>。</p>
+<div class="card">
+  <svg viewBox="0 0 980 320" width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="逐公里配速与心率">
+    <!-- axes helpers -->
+    <line x1="40" y1="250" x2="965" y2="250" stroke="#2b333d"/>
+    <text x="6" y="70" fill="#9aa7b4" font-size="10">快</text>
+    <text x="6" y="245" fill="#9aa7b4" font-size="10">慢</text>
+    <!-- pace bars: pace range ~268-327 s -> map. faster(smaller sec)=taller -->
+    <!-- generated below -->
+    <g id="bars"></g>
+    <g id="hr"></g>
+    <text x="500" y="300" fill="#9aa7b4" font-size="11" text-anchor="middle">公里序号（每格 1 km，末段 0.37 km）</text>
+    <text x="40" y="20" fill="#3fb950" font-size="11">■ 配速（柱）</text>
+    <text x="140" y="20" fill="#f0883e" font-size="11">● 心率（折线）</text>
+  </svg>
+</div>
+
+<div class="tbl-wrap" style="margin-top:16px">
+<table>
+<thead><tr><th>阶段</th><th>公里</th><th>配速区间</th><th>平均心率</th><th>平均功率</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>建立期</td><td>1–13 km</td><td>5:04–5:27</td><td>135→153</td><td>186–200 W</td><td class="muted" style="text-align:left">保守起步，心率线性抬升，未提前透支</td></tr>
+<tr><td>巡航期</td><td>14–20 km</td><td>4:42(单峰)→5:09</td><td>153→159</td><td>197–232 W</td><td class="muted" style="text-align:left">第14km一次爬坡/提速峰值(4:42, 232W)，随后回稳</td></tr>
+<tr><td>加速收尾</td><td>21–30 km</td><td>4:48→<span class="hl">4:28</span></td><td>158→173</td><td>202–225 W</td><td class="muted" style="text-align:left">主动逐步加速，末段接近马拉松目标配速</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout">
+  <b>为什么这很关键：</b>在 25+ km、糖原趋于耗尽时仍能<b class="hl">主动加速到 4:28/km</b>，说明疲劳抗性与末程动员能力已达标——这正是全马“撞墙”前最需要的能力。前 30 km 平均心率仅 155（约 82% HRmax），配速对应半马目标区间更快，耐力有效储备充足。
+</div>
+
+<!-- 4. 心率区间 -->
+<h2><span class="n">4</span> 心率区间分布</h2>
+<p>全程有氧占比高，符合长距离“打底 + 末段刺激”的定位。</p>
+<div class="card">
+  <div class="bar" style="height:30px">
+    <span style="width:33%;background:var(--z2)">Z1–2 33%</span>
+    <span style="width:46%;background:var(--z3)">Z3 46%</span>
+    <span style="width:18%;background:var(--z4)">Z4 18%</span>
+    <span style="width:3%;background:var(--z5)">Z5 3%</span>
+  </div>
+  <div class="legend" style="margin-top:10px">
+    <span><i style="background:var(--z2)"></i>Z1–2 轻松/耐力 (134–151) · 51分钟</span>
+    <span><i style="background:var(--z3)"></i>Z3 有氧 (152–160) · 71分钟</span>
+    <span><i style="background:var(--z4)"></i>Z4 阈值 (161–171) · 27分钟</span>
+    <span><i style="background:var(--z5)"></i>Z5 (172–178) · 4分钟</span>
+  </div>
+  <p class="muted" style="font-size:12px;margin-bottom:0">79% 时间处于 Z1–Z3（纯有氧），Z4+ 主要出现在末段主动加速，属健康的长距离刺激分布。</p>
+</div>
+
+<!-- 5. 近一月对照 -->
+<h2><span class="n">5</span> 近一月跑步课程对照</h2>
+<p>下表为近一个月全部含详情的跑步（移动时间口径）。9-19 长距离在里程与负荷上均为顶点，且配速优于历史同类长距离。</p>
+<div class="tbl-wrap">
+<table>
+<thead><tr><th>日期</th><th>星期</th><th>课程</th><th>距离</th><th>移动时间</th><th>配速</th><th>均/峰心率</th><th>负荷</th></tr></thead>
+<tbody>
+<tr><td>08-27</td><td>四</td><td>间歇 415×8</td><td>13.65</td><td>1:14:08</td><td>5:26</td><td>156/184</td><td>278</td></tr>
+<tr style="background:#12251a"><td>08-30</td><td>日</td><td>C组 25K 变速</td><td>23.60</td><td>2:03:56</td><td>5:15</td><td>152/172</td><td>370</td></tr>
+<tr><td>09-02</td><td>三</td><td>节奏 8k@445</td><td>11.32</td><td>57:14</td><td>5:03</td><td>159/173</td><td>188</td></tr>
+<tr><td>09-08</td><td>二</td><td>有氧跑</td><td>14.01</td><td>1:14:31</td><td>5:19</td><td>146/164</td><td>156</td></tr>
+<tr><td>09-10</td><td>四</td><td>快节奏</td><td>17.99</td><td>1:24:28</td><td>4:42</td><td>164/206*</td><td>336</td></tr>
+<tr style="background:#12251a"><td>09-13</td><td>日</td><td class="hl2">奥森 K马半程(比赛)</td><td>21.16</td><td>1:38:23</td><td>4:39</td><td>169/182</td><td>438</td></tr>
+<tr><td>09-15</td><td>二</td><td>轻松跑</td><td>10.29</td><td>56:24</td><td>5:29</td><td>142/154</td><td>98</td></tr>
+<tr><td>09-16</td><td>三</td><td>W08 间歇</td><td>14.62</td><td>1:09:34</td><td>4:46</td><td>161/178</td><td>249</td></tr>
+<tr style="background:#132a1c"><td class="hl">09-19</td><td>六</td><td class="hl">30K 元大都长距离</td><td class="hl">30.37</td><td class="hl">2:33:39</td><td class="hl">5:04</td><td>155/177</td><td class="hl">444</td></tr>
+</tbody>
+</table>
+</div>
+<small>* 09-10 峰值心率 206 疑为设备心率尖峰（腕表接触/瞬时干扰），非生理真实值，仅列出不参与解读。</small>
+
+<!-- 6. 周负荷 -->
+<h2><span class="n">6</span> 周负荷趋势（周一–周日）</h2>
+<p>按 ISO 周（周一至周日）统计含详情跑步。W38 为当前周，截止 2026-09-20（周日）——本周已含比赛后一次高质量间歇与本次 30K 长距离。</p>
+<div class="card">
+  <svg viewBox="0 0 720 220" width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="周里程与负荷">
+    <g id="weeks"></g>
+    <line x1="50" y1="180" x2="700" y2="180" stroke="#2b333d"/>
+  </svg>
+  <div class="legend" style="margin-top:8px">
+    <span><i style="background:var(--accent2)"></i>周里程 km</span>
+    <span><i style="background:var(--warn)"></i>周训练负荷</span>
+  </div>
+</div>
+<div class="grid g4" style="margin-top:16px">
+  <div class="card kpi"><div class="v">55.3</div><div class="l">W38 里程 km</div><div class="d muted">3 次 · 截至周日</div></div>
+  <div class="card kpi"><div class="v">73.4</div><div class="l">W37 里程 km</div><div class="d muted">含半马比赛周</div></div>
+  <div class="card kpi"><div class="v">30.37</div><div class="l">最长单次 km</div><div class="d up">本周达成</div></div>
+  <div class="card kpi"><div class="v">791</div><div class="l">W38 负荷</div><div class="d muted">高质量周</div></div>
+</div>
+<div class="callout warn">
+  <b>负荷提示：</b>W38 在半马比赛（W37）后仅隔一周即安排“间歇 + 30K 长距离”两次大课，单周负荷 791、单日峰值 444。安排本身合理（比赛后转向全马耐力储备），但两次大强度间隔较近，务必保证 9-19 之后 <b>2–3 天低强度/恢复</b>，监控静息心率与 HRV 回升，再进入下一轮质量课。
+</div>
+
+<!-- 7. 目标对照 -->
+<h2><span class="n">7</span> 对照训练目标（GOALS.md）</h2>
+<div class="tbl-wrap">
+<table>
+<thead><tr><th>目标</th><th>目标配速</th><th>本次相关证据</th><th>读数</th></tr></thead>
+<tbody>
+<tr><td>半马 sub-1:35（目标1）</td><td>4:30/km</td><td>长距离末段 4:28–4:30 可持续，9-13 半马 4:39</td><td><span class="tag g">接近</span> 差约 9 s/km，耐力已不是瓶颈</td></tr>
+<tr><td>半马 sub-1:30（目标2）</td><td>4:16/km</td><td>目前阈值/节奏配速 4:26–4:46</td><td><span class="tag w">进行中</span> 需提升阈值速度</td></tr>
+<tr><td>全马 sub-3:30（目标3）</td><td>4:58.6/km</td><td>30K @ 5:04、末段主动加速、心率仅 155</td><td><span class="tag g">高度可行</span> 30K 配速已快于该目标要求区间</td></tr>
+<tr><td>全马 sub-3:10（目标4）</td><td>4:30/km</td><td>需在 35–42 km 维持 4:30，本次仅到 30 km</td><td><span class="tag b">潜力</span> 需延长距离验证</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout">
+  <b>解读：</b>本次 30K 是<b class="hl">全马 sub-3:30 的强力背书</b>——在 30 km 处仍以低于该目标配速的速度轻松奔跑（心率 82% HRmax）。要坐实全马目标，仍需按合规规则由<b>真实全程比赛</b>验证（尤其 30→42 km 的耐力与补给），设备估算不作为达成依据。
+</div>
+
+<!-- 8. 建议 -->
+<h2><span class="n">8</span> 训练建议</h2>
+<div class="grid g2">
+  <div class="card">
+    <h3 style="margin-top:0">即时（未来 3 天）</h3>
+    <p style="margin:0">• 9-20/21 安排轻松慢跑或全休，控制在 Z1–Z2；<br>• 监控静息心率、HRV、睡眠恢复长距离肌肉损伤；<br>• 加强补给复盘：30K 已消耗 ~1900 kcal，全马场景需演练途中糖/水补给策略。</p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">中期（迈向全马耐力）</h3>
+    <p style="margin:0">• 逐步把长距离拉到 32–35 km，其中末 8–10 km 目标配速（4:45–4:58）作“进程跑”；<br>• 保留每周 1 次阈值/节奏课提升 sub-1:35 与 sub-3:10 所需速度；<br>• 关注 10 月密集赛程，避免长距离与比赛叠加造成过载。</p>
+  </div>
+</div>
+
+<div class="foot">
+  数据来源：COROS 高驰 API（本地 SQLite 缓存，同步至 2026-09-20）。所有配速/时间采用活动详情 workoutTime（移动时间），已核验公历日期与星期，周对照采用周一–周日 ISO 周并单独标注未完成的当前周。9-10 峰值心率异常值已标注排除。目标基线取自 GOALS.md。<br>
+  报告生成时间：2026-09-20 (Asia/Shanghai)。
+</div>
+
+</div>
+
+<script>
+// per-km data: [pace(s), hr]
+var km=[[311.5,135],[327.1,143],[317.2,148],[319.4,151],[318.6,148],[314.3,149],[316.3,148],[315.1,149],[316.7,152],[307.1,153],[304.1,154],[310.3,152],[314.7,153],[282.5,167],[300.9,159],[302.3,158],[304.6,154],[308.8,153],[306.3,155],[303.1,154],[291.7,158],[295.7,156],[301.1,158],[301.2,159],[297.1,160],[292.3,160],[291.6,160],[288.5,162],[290.2,164],[268.0,170],[270.2,173]];
+var x0=45,x1=960,y0=40,y1=245,n=km.length;
+var pmin=265,pmax=330; // pace bounds (faster=smaller)
+var hmin=130,hmax=180;
+function px(i){return x0+(x1-x0)*(i/(n-1));}
+var bw=(x1-x0)/n*0.62;
+var bars="",hr="",pts="";
+for(var i=0;i<n;i++){
+  var p=km[i][0], h=km[i][1];
+  // faster (smaller p) -> taller bar. height fraction:
+  var frac=(pmax-p)/(pmax-pmin); if(frac<0)frac=0; if(frac>1)frac=1;
+  var bh=(y1-y0)*frac; var bx=px(i)-bw/2; var by=y1-bh;
+  var col = p<=275?"#f85149": p<=290?"#f0883e": p<=305?"#d29922":"#3fb950";
+  bars+='<rect x="'+bx.toFixed(1)+'" y="'+by.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+bh.toFixed(1)+'" rx="2" fill="'+col+'" opacity="0.9"/>';
+  // hr line point
+  var hy=y0+(y1-y0)*(1-(h-hmin)/(hmax-hmin));
+  pts+=px(i).toFixed(1)+","+hy.toFixed(1)+" ";
+  hr+='<circle cx="'+px(i).toFixed(1)+'" cy="'+hy.toFixed(1)+'" r="2.4" fill="#f0883e"/>';
+  if(i%5==0||i==n-1){bars+='<text x="'+px(i).toFixed(1)+'" y="265" fill="#9aa7b4" font-size="9" text-anchor="middle">'+(i+1)+'</text>';}
+}
+document.getElementById('bars').innerHTML='<polyline points="'+pts+'" fill="none" stroke="#f0883e" stroke-width="1.5" opacity="0.7"/>'+bars;
+document.getElementById('hr').innerHTML=hr;
+
+// weekly chart
+var wk=[["W34",19.4,340],["W35",69.7,1058],["W36",46.0,576],["W37",73.4,1124],["W38*",55.3,791]];
+var wx0=60,wx1=690,wy0=30,wy1=180;
+var kmMax=80, loadMax=1200;
+var gw=(wx1-wx0)/wk.length; var g="";
+for(var j=0;j<wk.length;j++){
+  var cx=wx0+gw*j+gw*0.5;
+  var kh=(wy1-wy0)*(wk[j][1]/kmMax);
+  var lh=(wy1-wy0)*(wk[j][2]/loadMax);
+  var w=gw*0.28;
+  g+='<rect x="'+(cx-w-3).toFixed(1)+'" y="'+(wy1-kh).toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+kh.toFixed(1)+'" rx="2" fill="#58a6ff"/>';
+  g+='<rect x="'+(cx+3).toFixed(1)+'" y="'+(wy1-lh).toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+lh.toFixed(1)+'" rx="2" fill="#d29922"/>';
+  g+='<text x="'+cx+'" y="196" fill="#9aa7b4" font-size="11" text-anchor="middle">'+wk[j][0]+'</text>';
+  g+='<text x="'+(cx-w-3+w/2).toFixed(1)+'" y="'+(wy1-kh-4).toFixed(1)+'" fill="#58a6ff" font-size="9" text-anchor="middle">'+wk[j][1]+'</text>';
+}
+document.getElementById('weeks').innerHTML=g;
+</script>
+</body>
+</html>

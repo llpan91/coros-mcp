@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>睡眠深度分析 - 近4周综合报告</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a1a; color: #e0e0e0; min-height: 100vh; padding: 2rem 1rem; }
+.container { max-width: 1200px; margin: 0 auto; }
+h1 { text-align: center; font-size: 2rem; margin-bottom: 0.3rem; color: #fff; letter-spacing: -0.5px; }
+.subtitle { text-align: center; color: #666; margin-bottom: 2.5rem; font-size: 0.9rem; }
+.section { margin-bottom: 2.5rem; }
+.section-title { font-size: 1.3rem; color: #a0a0ff; margin-bottom: 1.2rem; font-weight: 700; border-left: 4px solid #a0a0ff; padding-left: 0.8rem; }
+.card { background: #12122a; border-radius: 16px; padding: 1.8rem; margin-bottom: 1.5rem; border: 1px solid #1e1e3a; }
+.card-title { font-size: 1rem; color: #888; margin-bottom: 1rem; font-weight: 500; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+@media (max-width: 900px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+.stat { text-align: center; padding: 1.2rem; background: #0a0a1a; border-radius: 12px; }
+.stat-value { font-size: 2rem; font-weight: 800; }
+.stat-label { font-size: 0.78rem; color: #777; margin-top: 0.3rem; }
+.stat-change { font-size: 0.75rem; margin-top: 0.2rem; }
+.up { color: #4ade80; }
+.down { color: #f97316; }
+.neutral { color: #888; }
+
+/* Tags */
+.tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+.tag { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+.tag-green { background: #0f3d1f; color: #4ade80; }
+.tag-orange { background: #3d2a0f; color: #f97316; }
+.tag-red { background: #3d0f0f; color: #ef4444; }
+.tag-blue { background: #0f1a3d; color: #60a5fa; }
+.tag-purple { background: #1a0f3d; color: #a78bfa; }
+
+/* Radar chart */
+.radar-container { display: flex; justify-content: center; align-items: center; padding: 1rem; }
+.radar-svg { width: 280px; height: 280px; }
+
+/* Donut chart */
+.donut-container { display: flex; justify-content: center; align-items: center; flex-direction: column; }
+.donut-svg { width: 200px; height: 200px; transform: rotate(-90deg); }
+.donut-center { margin-top: -140px; margin-bottom: 60px; text-align: center; position: relative; z-index: 1; }
+.donut-center-val { font-size: 1.8rem; font-weight: 800; color: #fff; }
+.donut-center-label { font-size: 0.75rem; color: #888; }
+.donut-legend { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-top: 0.5rem; }
+.donut-legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: #aaa; }
+.donut-legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+/* Line chart */
+.line-chart-container { position: relative; padding: 1rem 0; }
+.line-chart-svg { width: 100%; height: 160px; }
+.chart-x-labels { display: flex; justify-content: space-between; padding: 0.3rem 2rem; }
+.chart-x-labels span { font-size: 0.65rem; color: #555; }
+
+/* Heatmap */
+.heatmap { display: grid; grid-template-columns: 40px repeat(7, 1fr); gap: 3px; margin: 1rem 0; }
+.heatmap-cell { aspect-ratio: 1; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: rgba(255,255,255,0.7); position: relative; cursor: pointer; transition: transform 0.15s; }
+.heatmap-cell:hover { transform: scale(1.15); z-index: 2; }
+.heatmap-cell:hover::after { content: attr(data-tip); position: absolute; bottom: 105%; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 3px 6px; border-radius: 4px; font-size: 0.65rem; white-space: nowrap; z-index: 10; }
+.heatmap-label { display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: #666; }
+.heatmap-header { font-size: 0.7rem; color: #555; text-align: center; padding: 0.3rem; }
+
+/* Bubble chart */
+.bubble-chart { position: relative; height: 200px; margin: 1rem 0; }
+.bubble { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; color: rgba(255,255,255,0.8); font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+.bubble:hover { transform: scale(1.1); box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+
+/* Area chart */
+.area-chart-svg { width: 100%; height: 180px; }
+
+/* Gauge */
+.gauge-container { display: flex; justify-content: center; align-items: center; flex-direction: column; }
+.gauge-svg { width: 180px; height: 100px; }
+.gauge-value { font-size: 1.5rem; font-weight: 800; margin-top: -10px; }
+.gauge-label { font-size: 0.78rem; color: #888; margin-top: 0.2rem; }
+
+/* Scatter plot */
+.scatter-svg { width: 100%; height: 200px; }
+
+/* Phase bar */
+.phase-row { display: flex; align-items: center; margin-bottom: 0.8rem; }
+.phase-label { width: 70px; font-size: 0.82rem; color: #aaa; }
+.phase-bar-bg { flex: 1; height: 24px; background: #0a0a1a; border-radius: 6px; overflow: hidden; }
+.phase-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 8px; font-size: 0.72rem; color: rgba(255,255,255,0.9); font-weight: 600; transition: width 0.5s; }
+.phase-val { width: 60px; text-align: right; font-size: 0.82rem; color: #ccc; margin-left: 0.5rem; }
+
+/* Duration bars */
+.duration-chart { position: relative; height: 140px; margin: 1rem 0; }
+.duration-bars { display: flex; align-items: end; gap: 3px; height: 100%; }
+.d-bar { flex: 1; border-radius: 3px 3px 0 0; position: relative; transition: opacity 0.2s; }
+.d-bar:hover { opacity: 0.8; }
+.d-bar:hover::after { content: attr(data-tip); position: absolute; top: -22px; left: 50%; transform: translateX(-50%); font-size: 0.62rem; color: #fff; background: #333; padding: 2px 6px; border-radius: 3px; white-space: nowrap; z-index: 10; }
+.ref-line { position: absolute; width: 100%; border-top: 1.5px dashed rgba(74,222,128,0.4); top: 24%; z-index: 1; }
+.ref-label { position: absolute; right: 0; top: 21%; font-size: 0.65rem; color: #4ade80; opacity: 0.6; z-index: 1; }
+
+/* Stacked bar */
+.stacked-chart { display: flex; align-items: end; gap: 4px; height: 150px; margin: 1rem 0; }
+.stacked-col { flex: 1; display: flex; flex-direction: column-reverse; height: 100%; justify-content: start; }
+.stacked-seg { min-height: 2px; position: relative; }
+.stacked-col:hover .stacked-seg { opacity: 0.85; }
+.stacked-date { font-size: 0.6rem; color: #555; text-align: center; margin-top: 3px; }
+
+/* Polar area */
+.polar-svg { width: 240px; height: 240px; }
+
+/* Week table */
+.week-table { width: 100%; border-collapse: collapse; }
+.week-table th { padding: 0.7rem 0.5rem; text-align: center; color: #666; font-size: 0.75rem; font-weight: 500; border-bottom: 1px solid #1e1e3a; }
+.week-table td { padding: 0.7rem 0.5rem; text-align: center; font-size: 0.85rem; border-bottom: 1px solid #111; }
+.week-label { color: #a0a0ff; font-weight: 600; text-align: left !important; }
+.good { color: #4ade80; }
+.warn { color: #f97316; }
+.bad { color: #ef4444; }
+
+/* Insight */
+.insight-box { background: #0f1a2a; border: 1px solid #1a3050; border-radius: 12px; padding: 1.2rem; margin-bottom: 1rem; }
+.insight-title { font-size: 0.9rem; color: #60a5fa; font-weight: 600; margin-bottom: 0.5rem; }
+.insight-text { font-size: 0.88rem; color: #bbb; line-height: 1.7; }
+.insight-text strong { color: #fff; }
+
+/* Recommendations */
+.rec-list { list-style: none; }
+.rec-list li { padding: 0.8rem 1rem; margin-bottom: 0.5rem; background: #0a0a1a; border-radius: 10px; border-left: 3px solid #a0a0ff; font-size: 0.9rem; line-height: 1.6; }
+.rec-list li strong { color: #fff; }
+.rec-priority { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 0.5rem; }
+.p-high { background: #ef4444; }
+.p-med { background: #f97316; }
+.p-low { background: #4ade80; }
+
+/* Sparkline */
+.sparkline { display: flex; align-items: end; gap: 1px; height: 30px; }
+.spark-bar { flex: 1; border-radius: 1px 1px 0 0; min-width: 3px; }
+
+.footer { text-align: center; color: #333; font-size: 0.75rem; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #1a1a2a; }
+
+/* Tooltip for SVG */
+.chart-tooltip { position: absolute; background: #222; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.72rem; pointer-events: none; opacity: 0; transition: opacity 0.2s; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>睡眠深度分析报告</h1>
+<p class="subtitle">2026年4月17日 ~ 5月15日 (4周·26晚) | 重点: 昨晚 5/14→15 | COROS Data</p>
+
+<!-- ===== 1. Executive Summary ===== -->
+<div class="section">
+<div class="section-title">总览概要</div>
+<div class="grid-4">
+  <div class="stat">
+    <div class="stat-value" style="color:#60a5fa">6h31m</div>
+    <div class="stat-label">昨晚睡眠</div>
+    <div class="stat-change up">+47min vs 前夜</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value" style="color:#4ade80">118min</div>
+    <div class="stat-label">昨晚深睡</div>
+    <div class="stat-change up">4周最高</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value" style="color:#a78bfa">66</div>
+    <div class="stat-label">昨晚HRV</div>
+    <div class="stat-change neutral">= 基线 66</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value" style="color:#f97316">6h22m</div>
+    <div class="stat-label">4周均时长</div>
+    <div class="stat-change down">低于推荐7h</div>
+  </div>
+</div>
+</div>
+
+<!-- ===== 2. Last Night - Radar + Donut ===== -->
+<div class="section">
+<div class="section-title">昨晚焦点 (5月14日 23:32 → 5月15日 06:28)</div>
+<div class="grid-2">
+  <!-- Radar Chart: Multi-dimensional Score -->
+  <div class="card">
+    <div class="card-title">多维度评分 (雷达图)</div>
+    <div class="radar-container">
+      <svg class="radar-svg" viewBox="0 0 300 300">
+        <!-- Grid -->
+        <polygon points="150,30 255,90 255,210 150,270 45,210 45,90" fill="none" stroke="#1e1e3a" stroke-width="1"/>
+        <polygon points="150,60 225,105 225,195 150,240 75,195 75,105" fill="none" stroke="#1e1e3a" stroke-width="1"/>
+        <polygon points="150,90 195,120 195,180 150,210 105,180 105,120" fill="none" stroke="#1e1e3a" stroke-width="1"/>
+        <polygon points="150,120 165,135 165,165 150,180 135,165 135,135" fill="none" stroke="#1e1e3a" stroke-width="1"/>
+        <!-- Axes -->
+        <line x1="150" y1="30" x2="150" y2="270" stroke="#1e1e3a" stroke-width="0.5"/>
+        <line x1="45" y1="90" x2="255" y2="210" stroke="#1e1e3a" stroke-width="0.5"/>
+        <line x1="45" y1="210" x2="255" y2="90" stroke="#1e1e3a" stroke-width="0.5"/>
+        <!-- Data: duration=67%, deep=95%, rem=55%, continuity=75%, hr_recovery=90%, hrv=80% -->
+        <polygon points="150,56 240,99 236,201 150,228 63,177 63,102"
+                 fill="rgba(96,165,250,0.15)" stroke="#60a5fa" stroke-width="2"/>
+        <!-- 4周均值对比 -->
+        <polygon points="150,78 210,114 213,192 150,222 81,186 78,111"
+                 fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="4,3"/>
+        <!-- Labels -->
+        <text x="150" y="20" text-anchor="middle" fill="#aaa" font-size="11">时长</text>
+        <text x="268" y="88" text-anchor="start" fill="#aaa" font-size="11">深睡</text>
+        <text x="268" y="218" text-anchor="start" fill="#aaa" font-size="11">REM</text>
+        <text x="150" y="290" text-anchor="middle" fill="#aaa" font-size="11">连续性</text>
+        <text x="25" y="218" text-anchor="end" fill="#aaa" font-size="11">心率恢复</text>
+        <text x="25" y="88" text-anchor="end" fill="#aaa" font-size="11">HRV</text>
+        <!-- Dots -->
+        <circle cx="150" cy="56" r="4" fill="#60a5fa"/>
+        <circle cx="240" cy="99" r="4" fill="#60a5fa"/>
+        <circle cx="236" cy="201" r="4" fill="#60a5fa"/>
+        <circle cx="150" cy="228" r="4" fill="#60a5fa"/>
+        <circle cx="63" cy="177" r="4" fill="#60a5fa"/>
+        <circle cx="63" cy="102" r="4" fill="#60a5fa"/>
+      </svg>
+    </div>
+    <div style="text-align:center; font-size:0.75rem; color:#555">实线=昨晚 | 虚线=4周均值</div>
+    <div class="tags" style="justify-content:center">
+      <span class="tag tag-green">深睡 95分</span>
+      <span class="tag tag-green">心率恢复 90分</span>
+      <span class="tag tag-blue">HRV 80分</span>
+      <span class="tag tag-orange">REM 55分</span>
+    </div>
+  </div>
+
+  <!-- Donut Chart: Sleep Phases -->
+  <div class="card">
+    <div class="card-title">睡眠阶段占比 (环形图)</div>
+    <div class="donut-container">
+      <svg class="donut-svg" viewBox="0 0 120 120">
+        <!-- Deep: 30.2% = 108.7deg -->
+        <circle cx="60" cy="60" r="45" fill="none" stroke="#1d4ed8" stroke-width="18"
+                stroke-dasharray="85.1 198.4" stroke-dashoffset="0"/>
+        <!-- Light: 54.7% = 197deg -->
+        <circle cx="60" cy="60" r="45" fill="none" stroke="#60a5fa" stroke-width="18"
+                stroke-dasharray="154.6 128.9" stroke-dashoffset="-85.1"/>
+        <!-- REM: 15.1% = 54.4deg -->
+        <circle cx="60" cy="60" r="45" fill="none" stroke="#a78bfa" stroke-width="18"
+                stroke-dasharray="42.7 240.8" stroke-dashoffset="-239.7"/>
+      </svg>
+      <div class="donut-center">
+        <div class="donut-center-val">391min</div>
+        <div class="donut-center-label">有效睡眠</div>
+      </div>
+      <div class="donut-legend">
+        <div class="donut-legend-item"><div class="donut-legend-dot" style="background:#1d4ed8"></div>深睡 118min</div>
+        <div class="donut-legend-item"><div class="donut-legend-dot" style="background:#60a5fa"></div>浅睡 214min</div>
+        <div class="donut-legend-item"><div class="donut-legend-dot" style="background:#a78bfa"></div>REM 59min</div>
+        <div class="donut-legend-item"><div class="donut-legend-dot" style="background:#f97316"></div>清醒 25min</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Heart Rate Gauges -->
+<div class="card">
+  <div class="card-title">睡眠心率仪表盘</div>
+  <div class="grid-3">
+    <div class="gauge-container">
+      <svg class="gauge-svg" viewBox="0 0 200 110">
+        <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#1e1e3a" stroke-width="14" stroke-linecap="round"/>
+        <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#gaugeGrad1)" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="251.3" stroke-dashoffset="105"/>
+        <defs><linearGradient id="gaugeGrad1"><stop offset="0%" stop-color="#4ade80"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient></defs>
+      </svg>
+      <div class="gauge-value" style="color:#4ade80">42 bpm</div>
+      <div class="gauge-label">最低心率</div>
+    </div>
+    <div class="gauge-container">
+      <svg class="gauge-svg" viewBox="0 0 200 110">
+        <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#1e1e3a" stroke-width="14" stroke-linecap="round"/>
+        <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#gaugeGrad2)" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="251.3" stroke-dashoffset="80"/>
+        <defs><linearGradient id="gaugeGrad2"><stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient></defs>
+      </svg>
+      <div class="gauge-value" style="color:#60a5fa">49 bpm</div>
+      <div class="gauge-label">平均心率</div>
+    </div>
+    <div class="gauge-container">
+      <svg class="gauge-svg" viewBox="0 0 200 110">
+        <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#1e1e3a" stroke-width="14" stroke-linecap="round"/>
+        <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#gaugeGrad3)" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="251.3" stroke-dashoffset="55"/>
+        <defs><linearGradient id="gaugeGrad3"><stop offset="0%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#f97316"/></linearGradient></defs>
+      </svg>
+      <div class="gauge-value" style="color:#a78bfa">70 bpm</div>
+      <div class="gauge-label">最高心率</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== 3. Trend Charts ===== -->
+<div class="section">
+<div class="section-title">4周趋势可视化</div>
+
+<!-- Stacked Bar: Sleep Phase Composition -->
+<div class="card">
+  <div class="card-title">每夜睡眠阶段堆叠图 (深睡/浅睡/REM/清醒)</div>
+  <div class="stacked-chart">
+    <!-- Each column: total height proportional to duration, segments by phase -->
+    <div style="display:flex; flex-direction:column; flex:1; align-items:center">
+      <div class="stacked-col">
+        <div class="stacked-seg" style="height:22%; background:#1d4ed8" title="深睡67"></div>
+        <div class="stacked-seg" style="height:59%; background:#60a5fa" title="浅睡256"></div>
+        <div class="stacked-seg" style="height:22%; background:#a78bfa" title="REM97"></div>
+        <div class="stacked-seg" style="height:9%; background:#f97316" title="清醒37"></div>
+      </div>
+      <div class="stacked-date">5/8</div>
+    </div>
+    <div style="display:flex; flex-direction:column; flex:1; align-items:center">
+      <div class="stacked-col">
+        <div class="stacked-seg" style="height:22%; background:#1d4ed8"></div>
+        <div class="stacked-seg" style="height:57%; background:#60a5fa"></div>
+        <div class="stacked-seg" style="height:20%; background:#a78bfa"></div>
+        <div class="stacked-seg" style="height:6%; background:#f97316"></div>
+      </div>
+      <div class="stacked-date">5/9</div>
+    </div>
+    <div style="display:flex; flex-direction:column; flex:1; align-items:center">
+      <div class="stacked-col">
+        <div class="stacked-seg" style="height:25%; background:#1d4ed8"></div>
+        <div class="stacked-seg" style="height:64%; background:#60a5fa"></div>
+        <div class="stacked-seg" style="height:11%; background:#a78bfa"></div>
+        <div class="stacked-seg" style="height:2%; background:#f97316"></div>
+      </div>
+      <div class="stacked-date">5/10</div>
+    </div>
+    <div style="display:flex; flex-direction:column; flex:1; align-items:center">
+      <div class="stacked-col" style="height:72%">
+        <div class="stacked-seg" style="height:19%; background:#1d4ed8"></div>
+        <div class="stacked-seg" style="height:57%; background:#60a5fa"></div>
+        <div class="stacked-seg" style="height:5%; background:#a78bfa"></div>
+        <div class="stacked-seg" style="height:24%; background:#f97316"></div>
+      </div>
+      <div class="stacked-date" style="color:#f97316">5/11</div>
+    </div>
+    <div style="display:flex; flex-direction:column; flex:1; align-items:center">
+      <div class="stacked-col" style="height:85%">
+        <div class="stacked-seg" style="height:22%; background:#1d4ed8"></div>
+        <div class="stacked-seg" style="height:63%; background:#60a5fa"></div>
+        <div class="stacked-seg" style="height:15%; background:#a78bfa"></div>
+        <div class="stacked-seg" style="height:3%; background:#f97316"></div>
+      </div>
+      <div class="stacked-date">5/12</div>
+    </div>
+    <div style="display:flex; flex-direction:column; flex:1; align-items:center">
+      <div class="stacked-col" style="height:58%">
+        <div class="stacked-seg" style="height:21%; background:#1d4ed8"></div>
+        <div class="stacked-seg" style="height:63%; background:#60a5fa"></div>
+        <div class="stacked-seg" style="height:16%; background:#a78bfa"></div>
+        <div class="stacked-seg" style="height:3%; background:#f97316"></div>
+      </div>
+      <div class="stacked-date" style="color:#ef4444">5/13</div>
+    </div>
+    <div style="display:flex; flex-direction:column; flex:1; align-items:center">
+      <div class="stacked-col" style="height:74%">
+        <div class="stacked-seg" style="height:18%; background:#1d4ed8"></div>
+        <div class="stacked-seg" style="height:58%; background:#60a5fa"></div>
+        <div class="stacked-seg" style="height:24%; background:#a78bfa"></div>
+        <div class="stacked-seg" style="height:11%; background:#f97316"></div>
+      </div>
+      <div class="stacked-date">5/14</div>
+    </div>
+    <div style="display:flex; flex-direction:column; flex:1; align-items:center">
+      <div class="stacked-col" style="height:84%; border:2px solid rgba(255,255,255,0.4); border-radius:4px">
+        <div class="stacked-seg" style="height:30%; background:#1d4ed8"></div>
+        <div class="stacked-seg" style="height:55%; background:#60a5fa"></div>
+        <div class="stacked-seg" style="height:15%; background:#a78bfa"></div>
+        <div class="stacked-seg" style="height:6%; background:#f97316"></div>
+      </div>
+      <div class="stacked-date" style="color:#fff; font-weight:700">5/15★</div>
+    </div>
+  </div>
+  <div class="donut-legend" style="margin-top:1rem">
+    <div class="donut-legend-item"><div class="donut-legend-dot" style="background:#1d4ed8"></div>深睡</div>
+    <div class="donut-legend-item"><div class="donut-legend-dot" style="background:#60a5fa"></div>浅睡</div>
+    <div class="donut-legend-item"><div class="donut-legend-dot" style="background:#a78bfa"></div>REM</div>
+    <div class="donut-legend-item"><div class="donut-legend-dot" style="background:#f97316"></div>清醒</div>
+  </div>
+</div>
+
+<!-- Line Chart: HRV Trend with Area -->
+<div class="card">
+  <div class="card-title">HRV趋势面积图 (4周)</div>
+  <div class="line-chart-container">
+    <svg class="area-chart-svg" viewBox="0 0 800 180" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="hrvGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(96,165,250,0.4)"/>
+          <stop offset="100%" stop-color="rgba(96,165,250,0)"/>
+        </linearGradient>
+        <linearGradient id="hrvLine" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#3b82f6"/>
+          <stop offset="50%" stop-color="#a78bfa"/>
+          <stop offset="100%" stop-color="#60a5fa"/>
+        </linearGradient>
+      </defs>
+      <!-- Grid lines -->
+      <line x1="0" y1="36" x2="800" y2="36" stroke="#1e1e3a" stroke-width="1"/>
+      <line x1="0" y1="72" x2="800" y2="72" stroke="#1e1e3a" stroke-width="1"/>
+      <line x1="0" y1="108" x2="800" y2="108" stroke="#1e1e3a" stroke-width="1"/>
+      <line x1="0" y1="144" x2="800" y2="144" stroke="#1e1e3a" stroke-width="1"/>
+      <!-- Y-axis labels -->
+      <text x="5" y="40" fill="#555" font-size="10">75</text>
+      <text x="5" y="76" fill="#555" font-size="10">65</text>
+      <text x="5" y="112" fill="#555" font-size="10">55</text>
+      <text x="5" y="148" fill="#555" font-size="10">45</text>
+      <!-- Baseline -->
+      <line x1="30" y1="68" x2="780" y2="58" stroke="#f97316" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.5"/>
+      <text x="785" y="55" fill="#f97316" font-size="9" opacity="0.6">基线</text>
+      <!-- Area fill -->
+      <path d="M33,58 L66,65 L100,68 L133,108 L166,108 L200,104 L233,140 L266,54 L300,68 L333,61 L366,50 L400,68 L433,108 L466,43 L500,50 L533,68 L566,68 L600,76 L633,97 L666,72 L700,68 L733,50 L766,47 L780,68 L780,180 L33,180 Z"
+            fill="url(#hrvGrad)"/>
+      <!-- Line -->
+      <polyline points="33,58 66,65 100,68 133,108 166,108 200,104 233,140 266,54 300,68 333,61 366,50 400,68 433,108 466,43 500,50 533,68 566,68 600,76 633,97 666,72 700,68 733,50 766,47 780,68"
+                fill="none" stroke="url(#hrvLine)" stroke-width="2.5" stroke-linejoin="round"/>
+      <!-- Last point highlight -->
+      <circle cx="780" cy="68" r="5" fill="#60a5fa" stroke="#fff" stroke-width="2"/>
+      <!-- Low points -->
+      <circle cx="233" cy="140" r="4" fill="#ef4444" opacity="0.8"/>
+      <text x="233" y="155" text-anchor="middle" fill="#ef4444" font-size="9">52 (4/24)</text>
+      <!-- High points -->
+      <circle cx="466" cy="43" r="4" fill="#4ade80" opacity="0.8"/>
+      <text x="466" y="35" text-anchor="middle" fill="#4ade80" font-size="9">75 (5/3)</text>
+    </svg>
+  </div>
+  <div class="chart-x-labels">
+    <span>4/17</span><span>4/20</span><span>4/23</span><span>4/26</span><span>4/29</span><span>5/2</span><span>5/5</span><span>5/8</span><span>5/11</span><span>5/14</span><span>5/15</span>
+  </div>
+</div>
+
+<!-- Sleep Duration Bar Chart -->
+<div class="card">
+  <div class="card-title">每夜总睡眠时长 — 绿线 = 7h推荐</div>
+  <div class="duration-chart">
+    <div class="ref-line"></div>
+    <div class="ref-label">7h</div>
+    <div class="duration-bars">
+      <div class="d-bar" data-tip="4/17 7h17m" style="height:79%; background:linear-gradient(180deg,#4ade80,#16a34a)"></div>
+      <div class="d-bar" data-tip="4/19 5h58m" style="height:65%; background:linear-gradient(180deg,#f97316,#b45309)"></div>
+      <div class="d-bar" data-tip="4/20 5h21m" style="height:58%; background:linear-gradient(180deg,#f97316,#dc2626)"></div>
+      <div class="d-bar" data-tip="4/21 6h53m" style="height:75%; background:linear-gradient(180deg,#60a5fa,#3b82f6)"></div>
+      <div class="d-bar" data-tip="4/22 6h02m" style="height:66%; background:linear-gradient(180deg,#f97316,#b45309)"></div>
+      <div class="d-bar" data-tip="4/23 6h22m" style="height:69%; background:linear-gradient(180deg,#60a5fa,#3b82f6)"></div>
+      <div class="d-bar" data-tip="4/24 7h55m" style="height:86%; background:linear-gradient(180deg,#4ade80,#16a34a)"></div>
+      <div class="d-bar" data-tip="4/25 6h55m" style="height:75%; background:linear-gradient(180deg,#60a5fa,#3b82f6)"></div>
+      <div class="d-bar" data-tip="4/26 6h42m" style="height:73%; background:linear-gradient(180deg,#60a5fa,#3b82f6)"></div>
+      <div class="d-bar" data-tip="4/27 9h10m" style="height:100%; background:linear-gradient(180deg,#4ade80,#059669)"></div>
+      <div class="d-bar" data-tip="4/28 7h44m" style="height:84%; background:linear-gradient(180deg,#4ade80,#16a34a)"></div>
+      <div class="d-bar" data-tip="4/29 6h51m" style="height:75%; background:linear-gradient(180deg,#60a5fa,#3b82f6)"></div>
+      <div class="d-bar" data-tip="5/2 5h48m" style="height:63%; background:linear-gradient(180deg,#f97316,#dc2626)"></div>
+      <div class="d-bar" data-tip="5/3 7h04m" style="height:77%; background:linear-gradient(180deg,#4ade80,#16a34a)"></div>
+      <div class="d-bar" data-tip="5/5 8h23m" style="height:91%; background:linear-gradient(180deg,#4ade80,#059669)"></div>
+      <div class="d-bar" data-tip="5/7 7h56m" style="height:86%; background:linear-gradient(180deg,#4ade80,#16a34a)"></div>
+      <div class="d-bar" data-tip="5/8 7h00m" style="height:76%; background:linear-gradient(180deg,#3b82f6,#1d4ed8)"></div>
+      <div class="d-bar" data-tip="5/9 7h31m" style="height:82%; background:linear-gradient(180deg,#4ade80,#16a34a)"></div>
+      <div class="d-bar" data-tip="5/10 7h14m" style="height:79%; background:linear-gradient(180deg,#4ade80,#16a34a)"></div>
+      <div class="d-bar" data-tip="5/11 5h38m" style="height:61%; background:linear-gradient(180deg,#f97316,#dc2626)"></div>
+      <div class="d-bar" data-tip="5/12 6h37m" style="height:72%; background:linear-gradient(180deg,#60a5fa,#3b82f6)"></div>
+      <div class="d-bar" data-tip="5/13 4h31m" style="height:49%; background:linear-gradient(180deg,#ef4444,#991b1b)"></div>
+      <div class="d-bar" data-tip="5/14 5h44m" style="height:62%; background:linear-gradient(180deg,#f97316,#dc2626)"></div>
+      <div class="d-bar" data-tip="5/15 6h31m ★昨晚" style="height:71%; background:linear-gradient(180deg,#60a5fa,#3b82f6); border:2px solid #fff; border-radius:4px"></div>
+    </div>
+  </div>
+  <p style="font-size:0.72rem; color:#444; text-align:center">悬停查看 | 白框=昨晚 | 绿≥7h | 蓝6-7h | 橙5-6h | 红&lt;5h</p>
+</div>
+
+<!-- Heatmap: Sleep Quality by Day of Week & Time -->
+<div class="card">
+  <div class="card-title">入睡时间 × 睡眠效率 热力图</div>
+  <div class="heatmap">
+    <div class="heatmap-label"></div>
+    <div class="heatmap-header">周一</div>
+    <div class="heatmap-header">周二</div>
+    <div class="heatmap-header">周三</div>
+    <div class="heatmap-header">周四</div>
+    <div class="heatmap-header">周五</div>
+    <div class="heatmap-header">周六</div>
+    <div class="heatmap-header">周日</div>
+
+    <div class="heatmap-label">21-22h</div>
+    <div class="heatmap-cell" style="background:rgba(74,222,128,0.7)" data-tip="4/27 9h10m 深睡107">9h</div>
+    <div class="heatmap-cell" style="background:#1e1e3a"></div>
+    <div class="heatmap-cell" style="background:#1e1e3a"></div>
+    <div class="heatmap-cell" style="background:rgba(74,222,128,0.8)" data-tip="4/24 7h55m 深睡82">8h</div>
+    <div class="heatmap-cell" style="background:#1e1e3a"></div>
+    <div class="heatmap-cell" style="background:#1e1e3a"></div>
+    <div class="heatmap-cell" style="background:#1e1e3a"></div>
+
+    <div class="heatmap-label">22-23h</div>
+    <div class="heatmap-cell" style="background:rgba(74,222,128,0.6)" data-tip="5/5 8h23m">8h</div>
+    <div class="heatmap-cell" style="background:rgba(96,165,250,0.6)" data-tip="5/3 7h04m">7h</div>
+    <div class="heatmap-cell" style="background:rgba(96,165,250,0.5)" data-tip="4/23 6h22m">6h</div>
+    <div class="heatmap-cell" style="background:rgba(74,222,128,0.5)" data-tip="5/8 7h00m">7h</div>
+    <div class="heatmap-cell" style="background:#1e1e3a"></div>
+    <div class="heatmap-cell" style="background:rgba(74,222,128,0.5)" data-tip="5/7 7h56m">8h</div>
+    <div class="heatmap-cell" style="background:#1e1e3a"></div>
+
+    <div class="heatmap-label">23-00h</div>
+    <div class="heatmap-cell" style="background:rgba(96,165,250,0.5)" data-tip="5/12 6h37m">7h</div>
+    <div class="heatmap-cell" style="background:rgba(96,165,250,0.6)" data-tip="4/17 7h17m">7h</div>
+    <div class="heatmap-cell" style="background:rgba(74,222,128,0.6)" data-tip="5/15★ 6h31m 深睡118">6h</div>
+    <div class="heatmap-cell" style="background:rgba(74,222,128,0.5)" data-tip="5/9 7h31m">7h</div>
+    <div class="heatmap-cell" style="background:rgba(96,165,250,0.5)" data-tip="5/10 7h14m">7h</div>
+    <div class="heatmap-cell" style="background:rgba(96,165,250,0.5)" data-tip="4/26 6h42m">7h</div>
+    <div class="heatmap-cell" style="background:rgba(96,165,250,0.6)" data-tip="4/28 7h44m">8h</div>
+
+    <div class="heatmap-label">00-01h</div>
+    <div class="heatmap-cell" style="background:rgba(249,115,22,0.6)" data-tip="5/11 5h38m 清醒80min">6h</div>
+    <div class="heatmap-cell" style="background:rgba(249,115,22,0.5)" data-tip="5/14 5h44m">6h</div>
+    <div class="heatmap-cell" style="background:#1e1e3a"></div>
+    <div class="heatmap-cell" style="background:#1e1e3a"></div>
+    <div class="heatmap-cell" style="background:rgba(249,115,22,0.5)" data-tip="4/22 6h02m">6h</div>
+    <div class="heatmap-cell" style="background:rgba(249,115,22,0.5)" data-tip="4/20 5h21m">5h</div>
+    <div class="heatmap-cell" style="background:rgba(96,165,250,0.5)" data-tip="4/21 6h53m">7h</div>
+
+    <div class="heatmap-label">>01h</div>
+    <div class="heatmap-cell" style="background:#1e1e3a"></div>
+    <div class="heatmap-cell" style="background:rgba(239,68,68,0.7)" data-tip="5/13 4h31m 02:06入睡">4h</div>
+    <div class="heatmap-cell" style="background:#1e1e3a"></div>
+    <div class="heatmap-cell" style="background:#1e1e3a"></div>
+    <div class="heatmap-cell" style="background:#1e1e3a"></div>
+    <div class="heatmap-cell" style="background:#1e1e3a"></div>
+    <div class="heatmap-cell" style="background:#1e1e3a"></div>
+  </div>
+  <p style="font-size:0.72rem; color:#444; text-align:center; margin-top:0.5rem">绿=高质量(深睡多/时长足) | 蓝=正常 | 橙=欠佳 | 红=差 | 悬停查看详情</p>
+</div>
+
+<!-- Scatter: Bedtime vs Deep Sleep -->
+<div class="card">
+  <div class="card-title">入睡时间 vs 深睡时长 散点图</div>
+  <svg class="scatter-svg" viewBox="0 0 800 220">
+    <!-- Axes -->
+    <line x1="60" y1="190" x2="760" y2="190" stroke="#2a2a4a" stroke-width="1"/>
+    <line x1="60" y1="10" x2="60" y2="190" stroke="#2a2a4a" stroke-width="1"/>
+    <!-- Y axis labels -->
+    <text x="50" y="190" text-anchor="end" fill="#555" font-size="10">20</text>
+    <text x="50" y="148" text-anchor="end" fill="#555" font-size="10">50</text>
+    <text x="50" y="105" text-anchor="end" fill="#555" font-size="10">80</text>
+    <text x="50" y="62" text-anchor="end" fill="#555" font-size="10">110</text>
+    <text x="50" y="25" text-anchor="end" fill="#555" font-size="10">150</text>
+    <text x="30" y="100" text-anchor="middle" fill="#666" font-size="10" transform="rotate(-90,30,100)">深睡(min)</text>
+    <!-- X axis labels -->
+    <text x="120" y="208" text-anchor="middle" fill="#555" font-size="10">21:30</text>
+    <text x="270" y="208" text-anchor="middle" fill="#555" font-size="10">22:30</text>
+    <text x="420" y="208" text-anchor="middle" fill="#555" font-size="10">23:30</text>
+    <text x="570" y="208" text-anchor="middle" fill="#555" font-size="10">00:30</text>
+    <text x="720" y="208" text-anchor="middle" fill="#555" font-size="10">01:30</text>
+    <text x="420" y="220" text-anchor="middle" fill="#666" font-size="10">入睡时间</text>
+    <!-- Grid -->
+    <line x1="60" y1="148" x2="760" y2="148" stroke="#1e1e3a" stroke-width="0.5" stroke-dasharray="3,3"/>
+    <line x1="60" y1="105" x2="760" y2="105" stroke="#1e1e3a" stroke-width="0.5" stroke-dasharray="3,3"/>
+    <line x1="60" y1="62" x2="760" y2="62" stroke="#1e1e3a" stroke-width="0.5" stroke-dasharray="3,3"/>
+    <!-- Trend line -->
+    <line x1="100" y1="55" x2="700" y2="148" stroke="rgba(249,115,22,0.4)" stroke-width="2" stroke-dasharray="6,3"/>
+    <!-- Points (x: time mapped 21:30=80 to 02:00=740, y: deep mapped 20=190 to 150=20) -->
+    <!-- 4/17 23:03 deep96 --> <circle cx="360" cy="94" r="7" fill="rgba(96,165,250,0.7)" stroke="#60a5fa" stroke-width="1.5"/>
+    <!-- 4/19 23:18 deep27 --> <circle cx="380" cy="180" r="7" fill="rgba(249,115,22,0.7)" stroke="#f97316" stroke-width="1.5"/>
+    <!-- 4/20 00:42 deep89 --> <circle cx="575" cy="103" r="7" fill="rgba(96,165,250,0.7)" stroke="#60a5fa" stroke-width="1.5"/>
+    <!-- 4/21 00:43 deep79 --> <circle cx="576" cy="116" r="7" fill="rgba(96,165,250,0.7)" stroke="#60a5fa" stroke-width="1.5"/>
+    <!-- 4/22 23:39 deep93 --> <circle cx="415" cy="98" r="7" fill="rgba(96,165,250,0.7)" stroke="#60a5fa" stroke-width="1.5"/>
+    <!-- 4/23 23:01 deep37 --> <circle cx="358" cy="168" r="7" fill="rgba(249,115,22,0.7)" stroke="#f97316" stroke-width="1.5"/>
+    <!-- 4/24 21:42 deep82 --> <circle cx="110" cy="113" r="7" fill="rgba(74,222,128,0.7)" stroke="#4ade80" stroke-width="1.5"/>
+    <!-- 4/25 23:07 deep120 --> <circle cx="363" cy="51" r="7" fill="rgba(74,222,128,0.7)" stroke="#4ade80" stroke-width="1.5"/>
+    <!-- 4/26 23:36 deep58 --> <circle cx="412" cy="144" r="7" fill="rgba(96,165,250,0.7)" stroke="#60a5fa" stroke-width="1.5"/>
+    <!-- 4/27 21:51 deep107 --> <circle cx="118" cy="67" r="7" fill="rgba(74,222,128,0.7)" stroke="#4ade80" stroke-width="1.5"/>
+    <!-- 4/28 23:05 deep107 --> <circle cx="361" cy="67" r="7" fill="rgba(74,222,128,0.7)" stroke="#4ade80" stroke-width="1.5"/>
+    <!-- 4/29 23:03 deep83 --> <circle cx="360" cy="111" r="7" fill="rgba(96,165,250,0.7)" stroke="#60a5fa" stroke-width="1.5"/>
+    <!-- 5/2 23:45 deep92 --> <circle cx="424" cy="100" r="7" fill="rgba(96,165,250,0.7)" stroke="#60a5fa" stroke-width="1.5"/>
+    <!-- 5/3 22:38 deep149 --> <circle cx="283" cy="22" r="8" fill="rgba(74,222,128,0.8)" stroke="#4ade80" stroke-width="2"/>
+    <!-- 5/5 22:35 deep103 --> <circle cx="280" cy="72" r="7" fill="rgba(74,222,128,0.7)" stroke="#4ade80" stroke-width="1.5"/>
+    <!-- 5/7 22:14 deep72 --> <circle cx="252" cy="125" r="7" fill="rgba(96,165,250,0.7)" stroke="#60a5fa" stroke-width="1.5"/>
+    <!-- 5/8 22:37 deep67 --> <circle cx="282" cy="131" r="7" fill="rgba(96,165,250,0.7)" stroke="#60a5fa" stroke-width="1.5"/>
+    <!-- 5/9 23:25 deep100 --> <circle cx="390" cy="76" r="7" fill="rgba(74,222,128,0.7)" stroke="#4ade80" stroke-width="1.5"/>
+    <!-- 5/10 23:31 deep108 --> <circle cx="398" cy="65" r="7" fill="rgba(74,222,128,0.7)" stroke="#4ade80" stroke-width="1.5"/>
+    <!-- 5/11 23:51 deep63 --> <circle cx="425" cy="137" r="7" fill="rgba(96,165,250,0.7)" stroke="#60a5fa" stroke-width="1.5"/>
+    <!-- 5/12 23:38 deep89 --> <circle cx="415" cy="103" r="7" fill="rgba(96,165,250,0.7)" stroke="#60a5fa" stroke-width="1.5"/>
+    <!-- 5/13 02:06 deep58 --> <circle cx="740" cy="144" r="7" fill="rgba(239,68,68,0.7)" stroke="#ef4444" stroke-width="1.5"/>
+    <!-- 5/14 00:02 deep61 --> <circle cx="520" cy="140" r="7" fill="rgba(249,115,22,0.7)" stroke="#f97316" stroke-width="1.5"/>
+    <!-- 5/15 23:32 deep118 ★ --> <circle cx="400" cy="53" r="10" fill="rgba(74,222,128,0.9)" stroke="#fff" stroke-width="2.5"/>
+    <text x="400" y="42" text-anchor="middle" fill="#fff" font-size="9" font-weight="bold">昨晚★</text>
+    <!-- Annotation -->
+    <text x="700" y="165" text-anchor="middle" fill="rgba(249,115,22,0.6)" font-size="9">趋势线: 越晚入睡 → 深睡越少</text>
+  </svg>
+</div>
+
+<!-- Bubble Chart: Training Load vs Next Day Sleep -->
+<div class="card">
+  <div class="card-title">训练负荷 × 次日睡眠质量 气泡图 (气泡大小=深睡时长)</div>
+  <div class="bubble-chart">
+    <!-- X: training load position, Y: sleep quality, Size: deep sleep -->
+    <!-- Load 0 → left, Load 400 → right; Quality high → top -->
+    <div class="bubble" style="left:5%; top:35%; width:50px; height:50px; background:rgba(96,165,250,0.4); border:2px solid #60a5fa" title="休息日→7h17m深67">67</div>
+    <div class="bubble" style="left:15%; top:25%; width:55px; height:55px; background:rgba(74,222,128,0.4); border:2px solid #4ade80" title="负荷36→7h31m深100">100</div>
+    <div class="bubble" style="left:30%; top:15%; width:60px; height:60px; background:rgba(74,222,128,0.5); border:2px solid #4ade80" title="负荷107→7h14m深108">108</div>
+    <div class="bubble" style="left:10%; top:65%; width:38px; height:38px; background:rgba(249,115,22,0.4); border:2px solid #f97316" title="休息日→5h38m深63">63</div>
+    <div class="bubble" style="left:35%; top:40%; width:48px; height:48px; background:rgba(96,165,250,0.4); border:2px solid #60a5fa" title="负荷130→6h37m深89">89</div>
+    <div class="bubble" style="left:8%; top:80%; width:35px; height:35px; background:rgba(239,68,68,0.4); border:2px solid #ef4444" title="休息日→4h31m深58">58</div>
+    <div class="bubble" style="left:43%; top:55%; width:37px; height:37px; background:rgba(249,115,22,0.4); border:2px solid #f97316" title="负荷164→5h44m深61">61</div>
+    <div class="bubble" style="left:44%; top:22%; width:65px; height:65px; background:rgba(74,222,128,0.6); border:3px solid #fff" title="负荷164→6h31m深118★昨晚">118★</div>
+    <div class="bubble" style="left:90%; top:10%; width:72px; height:72px; background:rgba(74,222,128,0.5); border:2px solid #4ade80" title="负荷412→7h04m深149">149</div>
+    <div class="bubble" style="left:60%; top:30%; width:58px; height:58px; background:rgba(74,222,128,0.4); border:2px solid #4ade80" title="负荷158→8h23m深103">103</div>
+    <div class="bubble" style="left:25%; top:50%; width:40px; height:40px; background:rgba(96,165,250,0.4); border:2px solid #60a5fa" title="负荷54→6h42m深58">58</div>
+    <!-- Axis labels -->
+    <div style="position:absolute; bottom:-5px; left:5%; font-size:0.7rem; color:#555">低负荷</div>
+    <div style="position:absolute; bottom:-5px; right:5%; font-size:0.7rem; color:#555">高负荷</div>
+    <div style="position:absolute; top:5px; left:-2px; font-size:0.7rem; color:#555; writing-mode:vertical-rl">优</div>
+    <div style="position:absolute; bottom:5px; left:-2px; font-size:0.7rem; color:#555; writing-mode:vertical-rl">差</div>
+  </div>
+  <p style="font-size:0.72rem; color:#444; text-align:center; margin-top:2rem">X轴=前日训练负荷 | Y轴=睡眠综合质量 | 气泡大小=深睡时长(min) | 白框=昨晚</p>
+</div>
+</div>
+
+<!-- ===== 4. Weekly Comparison ===== -->
+<div class="section">
+<div class="section-title">周度横向对比</div>
+<div class="card">
+  <table class="week-table">
+    <thead>
+      <tr><th></th><th>平均时长</th><th>平均深睡</th><th>平均REM</th><th>平均清醒</th><th>平均HRV</th><th>深睡占比</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="week-label">第1周 (4/17-4/23)</td>
+        <td>6h12m</td>
+        <td>70min</td>
+        <td>50min</td>
+        <td class="warn">50min</td>
+        <td>63</td>
+        <td>19%</td>
+      </tr>
+      <tr>
+        <td class="week-label">第2周 (4/24-4/30)</td>
+        <td class="good">7h17m</td>
+        <td class="good">95min</td>
+        <td class="good">92min</td>
+        <td class="good">22min</td>
+        <td class="good">68</td>
+        <td class="good">22%</td>
+      </tr>
+      <tr>
+        <td class="week-label">第3周 (5/1-5/7)</td>
+        <td>6h48m</td>
+        <td class="good">108min</td>
+        <td>69min</td>
+        <td class="good">10min</td>
+        <td>67</td>
+        <td class="good">26%</td>
+      </tr>
+      <tr>
+        <td class="week-label">第4周 (5/8-5/15)</td>
+        <td class="warn">6h03m</td>
+        <td>85min</td>
+        <td>62min</td>
+        <td>32min</td>
+        <td>66</td>
+        <td>23%</td>
+      </tr>
+      <tr style="background:#0f1a2f">
+        <td class="week-label" style="color:#fff">昨晚 5/15</td>
+        <td>6h31m</td>
+        <td class="good"><strong>118min</strong></td>
+        <td>59min</td>
+        <td>25min</td>
+        <td>66</td>
+        <td class="good"><strong>30%</strong></td>
+      </tr>
+    </tbody>
+  </table>
+  <!-- Mini sparklines under table -->
+  <div class="grid-4" style="margin-top:1.5rem">
+    <div style="text-align:center">
+      <div style="font-size:0.75rem; color:#666; margin-bottom:0.3rem">时长趋势</div>
+      <div class="sparkline">
+        <div class="spark-bar" style="height:79%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:65%; background:#f97316"></div>
+        <div class="spark-bar" style="height:58%; background:#f97316"></div>
+        <div class="spark-bar" style="height:75%; background:#60a5fa"></div>
+        <div class="spark-bar" style="height:86%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:75%; background:#60a5fa"></div>
+        <div class="spark-bar" style="height:100%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:84%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:63%; background:#f97316"></div>
+        <div class="spark-bar" style="height:77%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:91%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:86%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:76%; background:#60a5fa"></div>
+        <div class="spark-bar" style="height:82%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:61%; background:#f97316"></div>
+        <div class="spark-bar" style="height:49%; background:#ef4444"></div>
+        <div class="spark-bar" style="height:62%; background:#f97316"></div>
+        <div class="spark-bar" style="height:71%; background:#60a5fa"></div>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:0.75rem; color:#666; margin-bottom:0.3rem">深睡趋势</div>
+      <div class="sparkline">
+        <div class="spark-bar" style="height:45%; background:#1d4ed8"></div>
+        <div class="spark-bar" style="height:18%; background:#ef4444"></div>
+        <div class="spark-bar" style="height:60%; background:#3b82f6"></div>
+        <div class="spark-bar" style="height:63%; background:#3b82f6"></div>
+        <div class="spark-bar" style="height:55%; background:#3b82f6"></div>
+        <div class="spark-bar" style="height:80%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:72%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:72%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:62%; background:#3b82f6"></div>
+        <div class="spark-bar" style="height:100%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:69%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:48%; background:#60a5fa"></div>
+        <div class="spark-bar" style="height:67%; background:#3b82f6"></div>
+        <div class="spark-bar" style="height:72%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:42%; background:#f97316"></div>
+        <div class="spark-bar" style="height:60%; background:#3b82f6"></div>
+        <div class="spark-bar" style="height:39%; background:#f97316"></div>
+        <div class="spark-bar" style="height:41%; background:#f97316"></div>
+        <div class="spark-bar" style="height:79%; background:#4ade80"></div>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:0.75rem; color:#666; margin-bottom:0.3rem">REM趋势</div>
+      <div class="sparkline">
+        <div class="spark-bar" style="height:16%; background:#7c3aed"></div>
+        <div class="spark-bar" style="height:38%; background:#a78bfa"></div>
+        <div class="spark-bar" style="height:23%; background:#7c3aed"></div>
+        <div class="spark-bar" style="height:36%; background:#a78bfa"></div>
+        <div class="spark-bar" style="height:90%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:58%; background:#a78bfa"></div>
+        <div class="spark-bar" style="height:100%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:19%; background:#7c3aed"></div>
+        <div class="spark-bar" style="height:50%; background:#a78bfa"></div>
+        <div class="spark-bar" style="height:21%; background:#7c3aed"></div>
+        <div class="spark-bar" style="height:40%; background:#a78bfa"></div>
+        <div class="spark-bar" style="height:75%; background:#a78bfa"></div>
+        <div class="spark-bar" style="height:64%; background:#a78bfa"></div>
+        <div class="spark-bar" style="height:61%; background:#a78bfa"></div>
+        <div class="spark-bar" style="height:33%; background:#a78bfa"></div>
+        <div class="spark-bar" style="height:11%; background:#ef4444"></div>
+        <div class="spark-bar" style="height:39%; background:#a78bfa"></div>
+        <div class="spark-bar" style="height:28%; background:#7c3aed"></div>
+        <div class="spark-bar" style="height:55%; background:#a78bfa"></div>
+        <div class="spark-bar" style="height:39%; background:#a78bfa"></div>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:0.75rem; color:#666; margin-bottom:0.3rem">HRV趋势</div>
+      <div class="sparkline">
+        <div class="spark-bar" style="height:69%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:67%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:66%; background:#60a5fa"></div>
+        <div class="spark-bar" style="height:59%; background:#f97316"></div>
+        <div class="spark-bar" style="height:60%; background:#f97316"></div>
+        <div class="spark-bar" style="height:52%; background:#ef4444"></div>
+        <div class="spark-bar" style="height:70%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:66%; background:#60a5fa"></div>
+        <div class="spark-bar" style="height:68%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:73%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:66%; background:#60a5fa"></div>
+        <div class="spark-bar" style="height:59%; background:#f97316"></div>
+        <div class="spark-bar" style="height:75%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:73%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:66%; background:#60a5fa"></div>
+        <div class="spark-bar" style="height:63%; background:#60a5fa"></div>
+        <div class="spark-bar" style="height:58%; background:#f97316"></div>
+        <div class="spark-bar" style="height:65%; background:#60a5fa"></div>
+        <div class="spark-bar" style="height:66%; background:#60a5fa"></div>
+        <div class="spark-bar" style="height:73%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:74%; background:#4ade80"></div>
+        <div class="spark-bar" style="height:66%; background:#60a5fa"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== 5. Deep Insights ===== -->
+<div class="section">
+<div class="section-title">深度洞察</div>
+
+<div class="insight-box">
+  <div class="insight-title">1. 睡眠负债持续累积</div>
+  <div class="insight-text">
+    4周内仅有 <strong>9/24晚 (37.5%)</strong> 达到7小时推荐时长。最近一周(5/8-5/15)平均仅6h03m，是4周中最差。
+    特别是5/11→5/13→5/14连续三天严重不足，累计睡眠负债约 <strong>4-5小时</strong>。昨晚虽有回升，但仍未完全偿还。
+  </div>
+</div>
+
+<div class="insight-box">
+  <div class="insight-title">2. 深睡补偿机制 — 身体在自救</div>
+  <div class="insight-text">
+    昨晚深睡118min(30.2%)是4周最高值(仅次于5/3的149min)。这是连续短睡后身体的 <strong>代偿反应</strong>。
+    规律: 连续2-3天不足后，下一次充足睡眠必现深睡暴增(>100min)。散点图清楚显示这一模式。
+  </div>
+</div>
+
+<div class="insight-box">
+  <div class="insight-title">3. 入睡时间是REM的关键控制变量</div>
+  <div class="insight-text">
+    从散点图和热力图可以看出: <strong>23:00前入睡时REM平均97min; 00:00后仅48min</strong>。
+    REM集中在后半夜4-6点，晚入睡直接压缩窗口。5/13(02:06入睡)REM仅43min，5/11的REM更是仅16min。
+  </div>
+</div>
+
+<div class="insight-box">
+  <div class="insight-title">4. 训练是优质睡眠的催化剂</div>
+  <div class="insight-text">
+    气泡图显示: 中等训练负荷(60-160)次日的深睡显著更高，且集中在图表右上方(高质量区)。
+    <strong>但休息日≠好睡眠</strong> — 连续无训练日反而出现更多低质量夜晚(左下角)。适量运动是你的"安眠药"。
+  </div>
+</div>
+
+<div class="insight-box">
+  <div class="insight-title">5. HRV基线稳步上升 (+4.8%)</div>
+  <div class="insight-text">
+    4周HRV基线从63上升至66，面积图中的趋势清晰可见。即使在睡眠时长下降的本周，HRV仍保持基线水平。
+    昨晚训练负荷164(本周最高)后HRV仍回到66，说明 <strong>心血管适应性在持续增强</strong>。
+  </div>
+</div>
+
+<div class="insight-box">
+  <div class="insight-title">6. 昨晚综合评定: "高效恢复型"</div>
+  <div class="insight-text">
+    雷达图显示: 深睡和心率恢复得分极高(95/90)，HRV正常(80)，但时长和REM偏低(67/55)。
+    这是典型的 <strong>睡眠负债后代偿夜</strong> — 时间虽短但恢复效率在前10%。不应依赖此模式。
+  </div>
+</div>
+</div>
+
+<!-- ===== 6. Recommendations ===== -->
+<div class="section">
+<div class="section-title">针对性建议</div>
+<div class="card">
+  <ul class="rec-list">
+    <li><span class="rec-priority p-high"></span><strong>今晚目标: 23:00前入睡, 争取7.5h+</strong> — 还有约3h负债，连续2晚各多睡30-45min即可回到平衡。热力图显示23:00前入睡是你的黄金时间。</li>
+    <li><span class="rec-priority p-high"></span><strong>本周保持23:00前入睡节奏</strong> — 散点图证实: 这个时间入睡深睡和REM都会大幅提升。02:06那个红点不能重现。</li>
+    <li><span class="rec-priority p-med"></span><strong>维持每周3-4次中等训练</strong> — 气泡图清晰显示负荷60-160区间对应最佳睡眠质量。你当前的训练频率恰好在甜蜜点。</li>
+    <li><span class="rec-priority p-med"></span><strong>避免波动式补觉</strong> — 4/27的9h10m虽然数据亮眼，但这种"欠→补"循环会扰乱节律。稳定7-7.5h优于过山车模式。</li>
+    <li><span class="rec-priority p-low"></span><strong>关注REM恢复</strong> — 本周REM均值仅62min(4周最低)，影响记忆和情绪。提早入睡是最有效的REM增长策略。</li>
+  </ul>
+</div>
+</div>
+
+<div class="footer">
+  Generated by Claude Code × COROS MCP | Deep Sleep Analysis with Multi-Chart Visualization | 2026-05-15<br>
+  数据范围: 4周26晚 | HRV基线: 63→66ms (+4.8%) | 静息心率: 42-51bpm | 图表: 雷达/环形/面积/散点/气泡/热力/堆叠/仪表盘/迷你折线
+</div>
+
+</div>
+</body>
+</html>

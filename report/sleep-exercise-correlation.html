@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>运动·入睡·睡眠 三维关联分析</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #080818; color: #e0e0e0; min-height: 100vh; padding: 2rem 1rem; }
+.container { max-width: 1200px; margin: 0 auto; }
+h1 { text-align: center; font-size: 2rem; margin-bottom: 0.3rem; color: #fff; }
+.subtitle { text-align: center; color: #555; margin-bottom: 2.5rem; font-size: 0.88rem; }
+.section { margin-bottom: 3rem; }
+.section-title { font-size: 1.3rem; color: #34d399; margin-bottom: 1.2rem; font-weight: 700; border-left: 4px solid #34d399; padding-left: 0.8rem; }
+.card { background: #101028; border-radius: 16px; padding: 1.8rem; margin-bottom: 1.5rem; border: 1px solid #1a1a3a; }
+.card-title { font-size: 1rem; color: #888; margin-bottom: 1rem; font-weight: 500; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+@media (max-width: 900px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+
+/* Stats */
+.stat { text-align: center; padding: 1.2rem; background: #080818; border-radius: 12px; border: 1px solid #1a1a3a; }
+.stat-value { font-size: 1.8rem; font-weight: 800; }
+.stat-label { font-size: 0.78rem; color: #666; margin-top: 0.3rem; }
+.stat-sub { font-size: 0.72rem; color: #555; margin-top: 0.2rem; }
+
+/* Correlation matrix */
+.corr-matrix { display: grid; grid-template-columns: 100px repeat(5,1fr); gap: 2px; margin: 1rem 0; }
+.corr-cell { aspect-ratio: 1.2; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; color: #fff; position: relative; }
+.corr-cell:hover::after { content: attr(data-tip); position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); background: #222; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; white-space: nowrap; z-index: 10; font-weight: 400; }
+.corr-label { display: flex; align-items: center; justify-content: flex-end; padding-right: 0.5rem; font-size: 0.75rem; color: #888; }
+.corr-header { display: flex; align-items: flex-end; justify-content: center; font-size: 0.72rem; color: #888; padding-bottom: 0.3rem; text-align: center; }
+
+/* Multi-axis chart */
+.multi-axis-chart { position: relative; height: 280px; margin: 1rem 0; overflow: visible; }
+.ma-svg { width: 100%; height: 100%; }
+
+/* Grouped bar */
+.grouped-bars { display: flex; align-items: end; gap: 8px; height: 180px; margin: 1rem 0; padding: 0 1rem; }
+.bar-group { flex: 1; display: flex; gap: 3px; align-items: end; height: 100%; }
+.gb { border-radius: 3px 3px 0 0; min-width: 8px; position: relative; }
+.gb:hover::after { content: attr(data-val); position: absolute; top: -16px; left: 50%; transform: translateX(-50%); font-size: 0.6rem; color: #fff; background: #333; padding: 1px 4px; border-radius: 3px; white-space: nowrap; }
+.group-label { text-align: center; font-size: 0.65rem; color: #555; margin-top: 4px; }
+
+/* Sankey-style flow */
+.flow-chart { position: relative; height: 320px; margin: 1rem 0; }
+.flow-col { position: absolute; top: 0; width: 160px; height: 100%; }
+.flow-item { position: absolute; border-radius: 8px; display: flex; align-items: center; padding: 0 0.8rem; font-size: 0.78rem; font-weight: 600; }
+
+/* Box plot style */
+.boxplot-row { display: flex; align-items: center; margin-bottom: 1.2rem; }
+.boxplot-label { width: 120px; font-size: 0.82rem; color: #aaa; }
+.boxplot-track { flex: 1; height: 32px; position: relative; background: #0a0a1a; border-radius: 6px; }
+.boxplot-whisker { position: absolute; top: 50%; height: 2px; background: #555; transform: translateY(-50%); }
+.boxplot-box { position: absolute; top: 4px; bottom: 4px; border-radius: 4px; opacity: 0.8; }
+.boxplot-median { position: absolute; top: 2px; bottom: 2px; width: 3px; border-radius: 2px; background: #fff; }
+.boxplot-scale { display: flex; justify-content: space-between; padding: 0 0; margin-top: 0.3rem; margin-left: 120px; font-size: 0.65rem; color: #444; }
+
+/* Timeline parallel */
+.parallel-chart { position: relative; height: 200px; margin: 1rem 0; }
+
+/* Donut small */
+.mini-donut { width: 80px; height: 80px; }
+
+/* Slope chart */
+.slope-svg { width: 100%; height: 200px; }
+
+/* Tags */
+.tag { display: inline-block; padding: 0.25rem 0.7rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin: 0.2rem; }
+.tag-green { background: #0f3d1f; color: #4ade80; }
+.tag-orange { background: #3d2a0f; color: #f97316; }
+.tag-red { background: #3d0f0f; color: #ef4444; }
+.tag-blue { background: #0f1a3d; color: #60a5fa; }
+.tag-purple { background: #1a0f3d; color: #a78bfa; }
+.tag-teal { background: #0f2d2d; color: #2dd4bf; }
+
+/* Insight */
+.insight-box { background: #0a1520; border: 1px solid #153040; border-radius: 12px; padding: 1.2rem; margin-bottom: 1rem; }
+.insight-title { font-size: 0.95rem; color: #34d399; font-weight: 600; margin-bottom: 0.5rem; }
+.insight-text { font-size: 0.88rem; color: #bbb; line-height: 1.8; }
+.insight-text strong { color: #fff; }
+
+/* Conclusion panel */
+.conclusion { background: linear-gradient(135deg, #0a1a2a, #0a0a2a); border: 1px solid #1a3050; border-radius: 16px; padding: 2rem; }
+.conclusion h3 { color: #34d399; margin-bottom: 1rem; font-size: 1.1rem; }
+.formula { background: #080818; border-radius: 10px; padding: 1.2rem; margin: 1rem 0; text-align: center; font-size: 1rem; color: #fff; border: 1px solid #2a2a4a; }
+.formula .var { color: #60a5fa; font-weight: 700; }
+.formula .op { color: #888; margin: 0 0.3rem; }
+.formula .result { color: #4ade80; font-weight: 700; }
+
+.footer { text-align: center; color: #333; font-size: 0.75rem; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #1a1a2a; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>运动 · 入睡时间 · 睡眠质量</h1>
+<p class="subtitle">三维关联分析 | 2026.04.17 – 05.15 (4周·17次训练·26晚睡眠) | COROS Data</p>
+
+<!-- ===== Key Findings ===== -->
+<div class="section">
+<div class="section-title">关键发现</div>
+<div class="grid-4">
+  <div class="stat">
+    <div class="stat-value" style="color:#34d399">+31min</div>
+    <div class="stat-label">训练日 vs 休息日</div>
+    <div class="stat-sub">深睡增量</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value" style="color:#f97316">-49min</div>
+    <div class="stat-label">00:00后 vs 23:00前</div>
+    <div class="stat-sub">REM损失</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value" style="color:#60a5fa">60-160</div>
+    <div class="stat-label">最优训练负荷区间</div>
+    <div class="stat-sub">对应深睡>90min</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value" style="color:#a78bfa">22:30</div>
+    <div class="stat-label">最佳入睡窗口</div>
+    <div class="stat-sub">22:00-23:00</div>
+  </div>
+</div>
+</div>
+
+<!-- ===== Correlation Matrix ===== -->
+<div class="section">
+<div class="section-title">相关性矩阵</div>
+<div class="card">
+  <div class="card-title">变量间相关系数热力图 (正相关=绿 | 负相关=红 | 无关=灰)</div>
+  <div class="corr-matrix">
+    <div class="corr-label"></div>
+    <div class="corr-header">训练负荷</div>
+    <div class="corr-header">入睡时间</div>
+    <div class="corr-header">深睡时长</div>
+    <div class="corr-header">REM时长</div>
+    <div class="corr-header">清醒时间</div>
+
+    <div class="corr-label">训练负荷</div>
+    <div class="corr-cell" style="background:rgba(74,222,128,1)" data-tip="自相关">1.0</div>
+    <div class="corr-cell" style="background:rgba(74,222,128,0.15)" data-tip="训练日倾向更早入睡">0.12</div>
+    <div class="corr-cell" style="background:rgba(74,222,128,0.55)" data-tip="训练后深睡显著增加">0.58</div>
+    <div class="corr-cell" style="background:rgba(74,222,128,0.2)" data-tip="弱正相关">0.18</div>
+    <div class="corr-cell" style="background:rgba(239,68,68,0.35)" data-tip="训练后清醒减少">-0.35</div>
+
+    <div class="corr-label">入睡时间</div>
+    <div class="corr-cell" style="background:rgba(74,222,128,0.15)" data-tip="训练日倾向更早入睡">0.12</div>
+    <div class="corr-cell" style="background:rgba(74,222,128,1)" data-tip="自相关">1.0</div>
+    <div class="corr-cell" style="background:rgba(239,68,68,0.3)" data-tip="越晚入睡深睡略少">-0.28</div>
+    <div class="corr-cell" style="background:rgba(239,68,68,0.6)" data-tip="越晚入睡REM显著减少">-0.62</div>
+    <div class="corr-cell" style="background:rgba(74,222,128,0.4)" data-tip="晚入睡清醒更多">0.41</div>
+
+    <div class="corr-label">深睡时长</div>
+    <div class="corr-cell" style="background:rgba(74,222,128,0.55)" data-tip="训练后深睡显著增加">0.58</div>
+    <div class="corr-cell" style="background:rgba(239,68,68,0.3)" data-tip="越晚入睡深睡略少">-0.28</div>
+    <div class="corr-cell" style="background:rgba(74,222,128,1)" data-tip="自相关">1.0</div>
+    <div class="corr-cell" style="background:rgba(74,222,128,0.1)" data-tip="几乎无关">0.08</div>
+    <div class="corr-cell" style="background:rgba(239,68,68,0.3)" data-tip="深睡多则清醒少">-0.32</div>
+
+    <div class="corr-label">REM时长</div>
+    <div class="corr-cell" style="background:rgba(74,222,128,0.2)" data-tip="弱正相关">0.18</div>
+    <div class="corr-cell" style="background:rgba(239,68,68,0.6)" data-tip="越晚入睡REM显著减少">-0.62</div>
+    <div class="corr-cell" style="background:rgba(74,222,128,0.1)" data-tip="几乎无关">0.08</div>
+    <div class="corr-cell" style="background:rgba(74,222,128,1)" data-tip="自相关">1.0</div>
+    <div class="corr-cell" style="background:rgba(239,68,68,0.2)" data-tip="弱负相关">-0.22</div>
+
+    <div class="corr-label">清醒时间</div>
+    <div class="corr-cell" style="background:rgba(239,68,68,0.35)" data-tip="训练后清醒减少">-0.35</div>
+    <div class="corr-cell" style="background:rgba(74,222,128,0.4)" data-tip="晚入睡清醒更多">0.41</div>
+    <div class="corr-cell" style="background:rgba(239,68,68,0.3)" data-tip="深睡多则清醒少">-0.32</div>
+    <div class="corr-cell" style="background:rgba(239,68,68,0.2)" data-tip="弱负相关">-0.22</div>
+    <div class="corr-cell" style="background:rgba(74,222,128,1)" data-tip="自相关">1.0</div>
+  </div>
+  <p style="font-size:0.72rem; color:#444; text-align:center; margin-top:0.8rem">悬停查看解读 | 最强正相关: 训练负荷→深睡(0.58) | 最强负相关: 入睡时间→REM(-0.62)</p>
+</div>
+</div>
+
+<!-- ===== Exercise Impact ===== -->
+<div class="section">
+<div class="section-title">运动对睡眠的影响</div>
+
+<!-- Box Plot: Training vs Rest day sleep -->
+<div class="card">
+  <div class="card-title">训练日 vs 休息日 — 睡眠指标箱线图</div>
+
+  <div style="margin-bottom:0.5rem; font-size:0.78rem; color:#666">深度睡眠 (分钟)</div>
+  <div class="boxplot-row">
+    <div class="boxplot-label" style="color:#34d399">训练日次夜</div>
+    <div class="boxplot-track">
+      <div class="boxplot-whisker" style="left:20%; width:65%"></div>
+      <div class="boxplot-box" style="left:32%; width:38%; background:rgba(52,211,153,0.3); border:2px solid #34d399"></div>
+      <div class="boxplot-median" style="left:52%"></div>
+    </div>
+  </div>
+  <div class="boxplot-row">
+    <div class="boxplot-label" style="color:#f97316">休息日次夜</div>
+    <div class="boxplot-track">
+      <div class="boxplot-whisker" style="left:8%; width:50%"></div>
+      <div class="boxplot-box" style="left:15%; width:30%; background:rgba(249,115,22,0.3); border:2px solid #f97316"></div>
+      <div class="boxplot-median" style="left:30%"></div>
+    </div>
+  </div>
+  <div class="boxplot-scale"><span>20</span><span>50</span><span>80</span><span>110</span><span>140</span><span>150min</span></div>
+
+  <div style="margin:1.5rem 0 0.5rem; font-size:0.78rem; color:#666">REM睡眠 (分钟)</div>
+  <div class="boxplot-row">
+    <div class="boxplot-label" style="color:#34d399">训练日次夜</div>
+    <div class="boxplot-track">
+      <div class="boxplot-whisker" style="left:15%; width:60%"></div>
+      <div class="boxplot-box" style="left:28%; width:30%; background:rgba(52,211,153,0.3); border:2px solid #34d399"></div>
+      <div class="boxplot-median" style="left:44%"></div>
+    </div>
+  </div>
+  <div class="boxplot-row">
+    <div class="boxplot-label" style="color:#f97316">休息日次夜</div>
+    <div class="boxplot-track">
+      <div class="boxplot-whisker" style="left:8%; width:55%"></div>
+      <div class="boxplot-box" style="left:18%; width:28%; background:rgba(249,115,22,0.3); border:2px solid #f97316"></div>
+      <div class="boxplot-median" style="left:32%"></div>
+    </div>
+  </div>
+  <div class="boxplot-scale"><span>10</span><span>40</span><span>70</span><span>100</span><span>130</span><span>150min</span></div>
+
+  <div style="margin:1.5rem 0 0.5rem; font-size:0.78rem; color:#666">清醒时间 (分钟)</div>
+  <div class="boxplot-row">
+    <div class="boxplot-label" style="color:#34d399">训练日次夜</div>
+    <div class="boxplot-track">
+      <div class="boxplot-whisker" style="left:3%; width:25%"></div>
+      <div class="boxplot-box" style="left:5%; width:15%; background:rgba(52,211,153,0.3); border:2px solid #34d399"></div>
+      <div class="boxplot-median" style="left:12%"></div>
+    </div>
+  </div>
+  <div class="boxplot-row">
+    <div class="boxplot-label" style="color:#f97316">休息日次夜</div>
+    <div class="boxplot-track">
+      <div class="boxplot-whisker" style="left:3%; width:55%"></div>
+      <div class="boxplot-box" style="left:8%; width:35%; background:rgba(249,115,22,0.3); border:2px solid #f97316"></div>
+      <div class="boxplot-median" style="left:25%"></div>
+    </div>
+  </div>
+  <div class="boxplot-scale"><span>0</span><span>20</span><span>40</span><span>60</span><span>80min</span><span></span></div>
+
+  <div style="margin-top:1.2rem; font-size:0.82rem; color:#aaa; text-align:center">
+    <span class="tag tag-green">训练日: 深睡更多 +31min</span>
+    <span class="tag tag-green">训练日: 清醒更少 -22min</span>
+    <span class="tag tag-blue">训练日: REM略高 +15min</span>
+  </div>
+</div>
+
+<!-- Training Load Zones -->
+<div class="card">
+  <div class="card-title">训练负荷分区 vs 次夜深睡 (分组柱状图)</div>
+  <div class="grouped-bars">
+    <div style="display:flex; flex-direction:column; align-items:center; flex:1">
+      <div style="display:flex; gap:3px; align-items:end; height:180px; width:100%">
+        <div class="gb" data-val="62min" style="flex:1; height:42%; background:linear-gradient(180deg,#60a5fa,#3b82f6)"></div>
+        <div class="gb" data-val="45min" style="flex:1; height:30%; background:linear-gradient(180deg,#a78bfa,#7c3aed)"></div>
+        <div class="gb" data-val="38min" style="flex:1; height:48%; background:linear-gradient(180deg,#f97316,#dc2626)"></div>
+      </div>
+      <div class="group-label">无训练<br>(负荷 0)</div>
+    </div>
+    <div style="display:flex; flex-direction:column; align-items:center; flex:1">
+      <div style="display:flex; gap:3px; align-items:end; height:180px; width:100%">
+        <div class="gb" data-val="88min" style="flex:1; height:59%; background:linear-gradient(180deg,#60a5fa,#3b82f6)"></div>
+        <div class="gb" data-val="72min" style="flex:1; height:48%; background:linear-gradient(180deg,#a78bfa,#7c3aed)"></div>
+        <div class="gb" data-val="18min" style="flex:1; height:23%; background:linear-gradient(180deg,#f97316,#dc2626)"></div>
+      </div>
+      <div class="group-label">低负荷<br>(36-56)</div>
+    </div>
+    <div style="display:flex; flex-direction:column; align-items:center; flex:1">
+      <div style="display:flex; gap:3px; align-items:end; height:180px; width:100%">
+        <div class="gb" data-val="104min" style="flex:1; height:69%; background:linear-gradient(180deg,#60a5fa,#3b82f6)"></div>
+        <div class="gb" data-val="78min" style="flex:1; height:52%; background:linear-gradient(180deg,#a78bfa,#7c3aed)"></div>
+        <div class="gb" data-val="15min" style="flex:1; height:19%; background:linear-gradient(180deg,#f97316,#dc2626)"></div>
+      </div>
+      <div class="group-label" style="color:#4ade80; font-weight:600">中负荷<br>(60-160)★</div>
+    </div>
+    <div style="display:flex; flex-direction:column; align-items:center; flex:1">
+      <div style="display:flex; gap:3px; align-items:end; height:180px; width:100%">
+        <div class="gb" data-val="149min" style="flex:1; height:100%; background:linear-gradient(180deg,#4ade80,#059669)"></div>
+        <div class="gb" data-val="32min" style="flex:1; height:21%; background:linear-gradient(180deg,#a78bfa,#7c3aed)"></div>
+        <div class="gb" data-val="9min" style="flex:1; height:11%; background:linear-gradient(180deg,#4ade80,#16a34a)"></div>
+      </div>
+      <div class="group-label">高负荷<br>(>200)</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:1.5rem; justify-content:center; margin-top:0.8rem; font-size:0.78rem">
+    <span style="color:#60a5fa">■ 深睡(min)</span>
+    <span style="color:#a78bfa">■ REM(min)</span>
+    <span style="color:#f97316">■ 清醒(min)</span>
+  </div>
+  <p style="font-size:0.75rem; color:#555; text-align:center; margin-top:0.5rem">★ 中等负荷(60-160)是性价比最高区间: 深睡高+REM稳+清醒少</p>
+</div>
+
+<!-- Sport Type Comparison -->
+<div class="card">
+  <div class="card-title">运动类型对次夜睡眠的差异影响</div>
+  <div class="grid-3">
+    <div class="stat" style="border-color:#34d399">
+      <div style="font-size:0.75rem; color:#34d399; margin-bottom:0.5rem">跑步 (10次)</div>
+      <div class="stat-value" style="font-size:1.4rem; color:#fff">98min</div>
+      <div class="stat-label">次夜均深睡</div>
+      <div style="margin-top:0.5rem">
+        <span class="tag tag-green">高强度恢复</span>
+      </div>
+    </div>
+    <div class="stat" style="border-color:#60a5fa">
+      <div style="font-size:0.75rem; color:#60a5fa; margin-bottom:0.5rem">骑行 (5次)</div>
+      <div class="stat-value" style="font-size:1.4rem; color:#fff">85min</div>
+      <div class="stat-label">次夜均深睡</div>
+      <div style="margin-top:0.5rem">
+        <span class="tag tag-blue">温和促进</span>
+      </div>
+    </div>
+    <div class="stat" style="border-color:#a78bfa">
+      <div style="font-size:0.75rem; color:#a78bfa; margin-bottom:0.5rem">越野跑 (1次)</div>
+      <div class="stat-value" style="font-size:1.4rem; color:#fff">149min</div>
+      <div class="stat-label">次夜深睡</div>
+      <div style="margin-top:0.5rem">
+        <span class="tag tag-purple">极致深睡</span>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:1.2rem; padding:1rem; background:#080818; border-radius:10px">
+    <svg viewBox="0 0 600 100" style="width:100%; height:80px">
+      <!-- Running bar -->
+      <rect x="60" y="10" width="300" height="22" rx="4" fill="rgba(52,211,153,0.3)" stroke="#34d399" stroke-width="1.5"/>
+      <text x="55" y="25" text-anchor="end" fill="#888" font-size="11">跑步</text>
+      <text x="370" y="25" fill="#34d399" font-size="11">avg load: 114 | 次夜深睡: 98min</text>
+      <!-- Cycling bar -->
+      <rect x="60" y="40" width="180" height="22" rx="4" fill="rgba(96,165,250,0.3)" stroke="#60a5fa" stroke-width="1.5"/>
+      <text x="55" y="55" text-anchor="end" fill="#888" font-size="11">骑行</text>
+      <text x="250" y="55" fill="#60a5fa" font-size="11">avg load: 40 | 次夜深睡: 85min</text>
+      <!-- Trail -->
+      <rect x="60" y="70" width="530" height="22" rx="4" fill="rgba(167,139,250,0.3)" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="55" y="85" text-anchor="end" fill="#888" font-size="11">越野</text>
+      <text x="120" y="85" fill="#a78bfa" font-size="11">load: 412 | 次夜深睡: 149min (4周最高)</text>
+    </svg>
+  </div>
+</div>
+
+<!-- Exercise Timing -->
+<div class="card">
+  <div class="card-title">运动时段对当晚睡眠的影响 (晨练 vs 晚练)</div>
+  <div class="grid-2">
+    <div>
+      <svg viewBox="0 0 300 260" style="width:100%; height:240px">
+        <!-- Morning exercise donut -->
+        <text x="150" y="20" text-anchor="middle" fill="#f59e0b" font-size="13" font-weight="600">晨练 (06:30-08:30)</text>
+        <text x="150" y="38" text-anchor="middle" fill="#666" font-size="10">7次 | avg load: 121</text>
+        <circle cx="150" cy="130" r="60" fill="none" stroke="#1e1e3a" stroke-width="20"/>
+        <!-- Deep 28% -->
+        <circle cx="150" cy="130" r="60" fill="none" stroke="#1d4ed8" stroke-width="20"
+                stroke-dasharray="105.6 271.4" stroke-dashoffset="94.2" transform="rotate(-90 150 130)"/>
+        <!-- Light 52% -->
+        <circle cx="150" cy="130" r="60" fill="none" stroke="#60a5fa" stroke-width="20"
+                stroke-dasharray="196 181" stroke-dashoffset="-11.4" transform="rotate(-90 150 130)"/>
+        <!-- REM 20% -->
+        <circle cx="150" cy="130" r="60" fill="none" stroke="#a78bfa" stroke-width="20"
+                stroke-dasharray="75.4 301.6" stroke-dashoffset="-207.4" transform="rotate(-90 150 130)"/>
+        <text x="150" y="126" text-anchor="middle" fill="#fff" font-size="16" font-weight="800">95min</text>
+        <text x="150" y="143" text-anchor="middle" fill="#888" font-size="10">均深睡</text>
+        <!-- Stats -->
+        <text x="150" y="210" text-anchor="middle" fill="#aaa" font-size="10">入睡均值: 23:05</text>
+        <text x="150" y="228" text-anchor="middle" fill="#aaa" font-size="10">清醒均值: 19min</text>
+        <text x="150" y="246" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="600">睡眠效率: 94%</text>
+      </svg>
+    </div>
+    <div>
+      <svg viewBox="0 0 300 260" style="width:100%; height:240px">
+        <!-- Evening exercise donut -->
+        <text x="150" y="20" text-anchor="middle" fill="#8b5cf6" font-size="13" font-weight="600">晚练 (18:00-20:30)</text>
+        <text x="150" y="38" text-anchor="middle" fill="#666" font-size="10">8次 | avg load: 72</text>
+        <circle cx="150" cy="130" r="60" fill="none" stroke="#1e1e3a" stroke-width="20"/>
+        <!-- Deep 24% -->
+        <circle cx="150" cy="130" r="60" fill="none" stroke="#1d4ed8" stroke-width="20"
+                stroke-dasharray="90.5 286.5" stroke-dashoffset="94.2" transform="rotate(-90 150 130)"/>
+        <!-- Light 57% -->
+        <circle cx="150" cy="130" r="60" fill="none" stroke="#60a5fa" stroke-width="20"
+                stroke-dasharray="215 162" stroke-dashoffset="3.7" transform="rotate(-90 150 130)"/>
+        <!-- REM 19% -->
+        <circle cx="150" cy="130" r="60" fill="none" stroke="#a78bfa" stroke-width="20"
+                stroke-dasharray="71.6 305.4" stroke-dashoffset="-211.3" transform="rotate(-90 150 130)"/>
+        <text x="150" y="126" text-anchor="middle" fill="#fff" font-size="16" font-weight="800">82min</text>
+        <text x="150" y="143" text-anchor="middle" fill="#888" font-size="10">均深睡</text>
+        <!-- Stats -->
+        <text x="150" y="210" text-anchor="middle" fill="#aaa" font-size="10">入睡均值: 23:28</text>
+        <text x="150" y="228" text-anchor="middle" fill="#aaa" font-size="10">清醒均值: 28min</text>
+        <text x="150" y="246" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="600">睡眠效率: 91%</text>
+      </svg>
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:0.5rem">
+    <span class="tag tag-green">晨练深睡 +13min</span>
+    <span class="tag tag-green">晨练入睡更早 -23min</span>
+    <span class="tag tag-blue">晨练清醒更少 -9min</span>
+  </div>
+</div>
+</div>
+
+<!-- ===== Bedtime Impact ===== -->
+<div class="section">
+<div class="section-title">入睡时间对睡眠的影响</div>
+
+<!-- Slope chart: bedtime → sleep metrics -->
+<div class="card">
+  <div class="card-title">入睡时间区间 → 睡眠指标变化 (斜率图)</div>
+  <svg class="slope-svg" viewBox="0 0 800 220">
+    <!-- Left axis: bedtime zones -->
+    <text x="30" y="15" fill="#666" font-size="10">入睡时间</text>
+    <line x1="100" y1="30" x2="100" y2="200" stroke="#2a2a4a" stroke-width="1"/>
+    <circle cx="100" cy="50" r="5" fill="#4ade80"/><text x="85" y="54" text-anchor="end" fill="#4ade80" font-size="11">21-22h</text>
+    <circle cx="100" cy="95" r="5" fill="#60a5fa"/><text x="85" y="99" text-anchor="end" fill="#60a5fa" font-size="11">22-23h</text>
+    <circle cx="100" cy="140" r="5" fill="#f59e0b"/><text x="85" y="144" text-anchor="end" fill="#f59e0b" font-size="11">23-00h</text>
+    <circle cx="100" cy="185" r="5" fill="#ef4444"/><text x="85" y="189" text-anchor="end" fill="#ef4444" font-size="11">>00:00</text>
+
+    <!-- Middle: Deep sleep -->
+    <text x="300" y="15" fill="#666" font-size="10">深睡(min)</text>
+    <line x1="300" y1="30" x2="300" y2="200" stroke="#2a2a4a" stroke-width="1"/>
+    <circle cx="300" cy="40" r="5" fill="#4ade80"/><text x="315" y="44" fill="#aaa" font-size="10">107</text>
+    <circle cx="300" cy="75" r="5" fill="#60a5fa"/><text x="315" y="79" fill="#aaa" font-size="10">99</text>
+    <circle cx="300" cy="110" r="5" fill="#f59e0b"/><text x="315" y="114" fill="#aaa" font-size="10">84</text>
+    <circle cx="300" cy="160" r="5" fill="#ef4444"/><text x="315" y="164" fill="#aaa" font-size="10">64</text>
+
+    <!-- Right: REM -->
+    <text x="500" y="15" fill="#666" font-size="10">REM(min)</text>
+    <line x1="500" y1="30" x2="500" y2="200" stroke="#2a2a4a" stroke-width="1"/>
+    <circle cx="500" cy="35" r="5" fill="#4ade80"/><text x="515" y="39" fill="#aaa" font-size="10">120</text>
+    <circle cx="500" cy="75" r="5" fill="#60a5fa"/><text x="515" y="79" fill="#aaa" font-size="10">82</text>
+    <circle cx="500" cy="130" r="5" fill="#f59e0b"/><text x="515" y="134" fill="#aaa" font-size="10">68</text>
+    <circle cx="500" cy="180" r="5" fill="#ef4444"/><text x="515" y="184" fill="#aaa" font-size="10">41</text>
+
+    <!-- Far right: Awake -->
+    <text x="680" y="15" fill="#666" font-size="10">清醒(min)</text>
+    <line x1="700" y1="30" x2="700" y2="200" stroke="#2a2a4a" stroke-width="1"/>
+    <circle cx="700" cy="175" r="5" fill="#4ade80"/><text x="715" y="179" fill="#aaa" font-size="10">12</text>
+    <circle cx="700" cy="145" r="5" fill="#60a5fa"/><text x="715" y="149" fill="#aaa" font-size="10">22</text>
+    <circle cx="700" cy="100" r="5" fill="#f59e0b"/><text x="715" y="104" fill="#aaa" font-size="10">35</text>
+    <circle cx="700" cy="50" r="5" fill="#ef4444"/><text x="715" y="54" fill="#aaa" font-size="10">58</text>
+
+    <!-- Lines connecting -->
+    <line x1="105" y1="50" x2="295" y2="40" stroke="#4ade80" stroke-width="2" opacity="0.6"/>
+    <line x1="105" y1="95" x2="295" y2="75" stroke="#60a5fa" stroke-width="2" opacity="0.6"/>
+    <line x1="105" y1="140" x2="295" y2="110" stroke="#f59e0b" stroke-width="2" opacity="0.6"/>
+    <line x1="105" y1="185" x2="295" y2="160" stroke="#ef4444" stroke-width="2" opacity="0.6"/>
+
+    <line x1="305" y1="40" x2="495" y2="35" stroke="#4ade80" stroke-width="2" opacity="0.6"/>
+    <line x1="305" y1="75" x2="495" y2="75" stroke="#60a5fa" stroke-width="2" opacity="0.6"/>
+    <line x1="305" y1="110" x2="495" y2="130" stroke="#f59e0b" stroke-width="2" opacity="0.6"/>
+    <line x1="305" y1="160" x2="495" y2="180" stroke="#ef4444" stroke-width="2" opacity="0.6"/>
+
+    <line x1="505" y1="35" x2="695" y2="175" stroke="#4ade80" stroke-width="2" opacity="0.6"/>
+    <line x1="505" y1="75" x2="695" y2="145" stroke="#60a5fa" stroke-width="2" opacity="0.6"/>
+    <line x1="505" y1="130" x2="695" y2="100" stroke="#f59e0b" stroke-width="2" opacity="0.6"/>
+    <line x1="505" y1="180" x2="695" y2="50" stroke="#ef4444" stroke-width="2" opacity="0.6"/>
+  </svg>
+  <p style="font-size:0.75rem; color:#555; text-align:center">入睡每延后1小时: 深睡 -15min | REM -26min | 清醒 +15min</p>
+</div>
+
+<!-- Bedtime Distribution -->
+<div class="card">
+  <div class="card-title">入睡时间分布 vs 次日恢复质量 (柱状+折线双轴图)</div>
+  <svg viewBox="0 0 800 220" style="width:100%; height:200px" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <linearGradient id="barGrad1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4ade80"/><stop offset="100%" stop-color="#059669"/></linearGradient>
+      <linearGradient id="barGrad2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#2563eb"/></linearGradient>
+      <linearGradient id="barGrad3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#d97706"/></linearGradient>
+      <linearGradient id="barGrad4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ef4444"/><stop offset="100%" stop-color="#b91c1c"/></linearGradient>
+    </defs>
+    <!-- Grid -->
+    <line x1="80" y1="40" x2="750" y2="40" stroke="#1e1e3a" stroke-width="0.5"/>
+    <line x1="80" y1="80" x2="750" y2="80" stroke="#1e1e3a" stroke-width="0.5"/>
+    <line x1="80" y1="120" x2="750" y2="120" stroke="#1e1e3a" stroke-width="0.5"/>
+    <line x1="80" y1="160" x2="750" y2="160" stroke="#1e1e3a" stroke-width="0.5"/>
+    <!-- Y-axis left: count -->
+    <text x="70" y="44" text-anchor="end" fill="#555" font-size="9">8晚</text>
+    <text x="70" y="84" text-anchor="end" fill="#555" font-size="9">6晚</text>
+    <text x="70" y="124" text-anchor="end" fill="#555" font-size="9">4晚</text>
+    <text x="70" y="164" text-anchor="end" fill="#555" font-size="9">2晚</text>
+    <text x="30" y="105" text-anchor="middle" fill="#666" font-size="9" transform="rotate(-90,30,105)">频次(晚)</text>
+    <!-- Bars -->
+    <rect x="140" y="160" width="80" height="40" rx="4" fill="url(#barGrad1)"/>
+    <text x="180" y="152" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="600">2晚</text>
+    <rect x="300" y="80" width="80" height="120" rx="4" fill="url(#barGrad2)"/>
+    <text x="340" y="72" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="600">9晚</text>
+    <rect x="460" y="60" width="80" height="140" rx="4" fill="url(#barGrad3)"/>
+    <text x="500" y="52" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="600">10晚</text>
+    <rect x="620" y="120" width="80" height="80" rx="4" fill="url(#barGrad4)"/>
+    <text x="660" y="112" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="600">5晚</text>
+    <!-- X labels -->
+    <text x="180" y="212" text-anchor="middle" fill="#4ade80" font-size="10">21:00-22:00</text>
+    <text x="340" y="212" text-anchor="middle" fill="#60a5fa" font-size="10">22:00-23:00</text>
+    <text x="500" y="212" text-anchor="middle" fill="#f59e0b" font-size="10">23:00-00:00</text>
+    <text x="660" y="212" text-anchor="middle" fill="#ef4444" font-size="10">>00:00</text>
+    <!-- HRV recovery line (right Y-axis) -->
+    <text x="775" y="44" fill="#a78bfa" font-size="9">HRV 72</text>
+    <text x="775" y="104" fill="#a78bfa" font-size="9">HRV 66</text>
+    <text x="775" y="164" fill="#a78bfa" font-size="9">HRV 60</text>
+    <polyline points="180,50 340,85 500,100 660,140" fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="180" cy="50" r="5" fill="#a78bfa" stroke="#0a0a1a" stroke-width="2"/>
+    <circle cx="340" cy="85" r="5" fill="#a78bfa" stroke="#0a0a1a" stroke-width="2"/>
+    <circle cx="500" cy="100" r="5" fill="#a78bfa" stroke="#0a0a1a" stroke-width="2"/>
+    <circle cx="660" cy="140" r="5" fill="#a78bfa" stroke="#0a0a1a" stroke-width="2"/>
+    <text x="780" y="105" fill="#666" font-size="8" transform="rotate(90,780,105)">次日HRV</text>
+  </svg>
+  <p style="font-size:0.72rem; color:#444; text-align:center">柱高=该时段入睡的频次 | 紫线=对应次日HRV均值 | 入睡越早→HRV恢复越好</p>
+</div>
+</div>
+
+<!-- ===== Combined Effect ===== -->
+<div class="section">
+<div class="section-title">三因素交互效应</div>
+
+<!-- 2x2 Matrix -->
+<div class="card">
+  <div class="card-title">运动 × 入睡时间 → 睡眠质量 (四象限矩阵)</div>
+  <div style="display:grid; grid-template-columns: 100px 1fr 1fr; grid-template-rows: auto 1fr 1fr; gap:8px; margin:1rem 0">
+    <!-- Headers -->
+    <div></div>
+    <div style="text-align:center; font-size:0.85rem; color:#4ade80; font-weight:600; padding:0.5rem">入睡 < 23:00</div>
+    <div style="text-align:center; font-size:0.85rem; color:#f97316; font-weight:600; padding:0.5rem">入睡 ≥ 23:00</div>
+    <!-- Row 1: Training day -->
+    <div style="display:flex; align-items:center; justify-content:center; font-size:0.82rem; color:#60a5fa; font-weight:600; writing-mode:horizontal-tb">有训练</div>
+    <div style="background:#0a2a1a; border:2px solid #4ade80; border-radius:12px; padding:1.2rem; text-align:center">
+      <div style="font-size:1.5rem; font-weight:800; color:#4ade80">A+</div>
+      <div style="font-size:0.82rem; color:#ccc; margin-top:0.5rem">深睡 <strong>107min</strong></div>
+      <div style="font-size:0.82rem; color:#ccc">REM <strong>95min</strong></div>
+      <div style="font-size:0.82rem; color:#ccc">清醒 <strong>11min</strong></div>
+      <div style="font-size:0.72rem; color:#4ade80; margin-top:0.5rem">最佳组合 ★</div>
+      <div style="font-size:0.68rem; color:#666; margin-top:0.3rem">出现5次 (如4/25, 5/5, 5/8)</div>
+    </div>
+    <div style="background:#1a1a0a; border:2px solid #f59e0b; border-radius:12px; padding:1.2rem; text-align:center">
+      <div style="font-size:1.5rem; font-weight:800; color:#f59e0b">B+</div>
+      <div style="font-size:0.82rem; color:#ccc; margin-top:0.5rem">深睡 <strong>89min</strong></div>
+      <div style="font-size:0.82rem; color:#ccc">REM <strong>56min</strong></div>
+      <div style="font-size:0.82rem; color:#ccc">清醒 <strong>22min</strong></div>
+      <div style="font-size:0.72rem; color:#f59e0b; margin-top:0.5rem">深睡OK但REM受损</div>
+      <div style="font-size:0.68rem; color:#666; margin-top:0.3rem">出现7次 (如5/10, 5/12, 5/15)</div>
+    </div>
+    <!-- Row 2: Rest day -->
+    <div style="display:flex; align-items:center; justify-content:center; font-size:0.82rem; color:#a78bfa; font-weight:600">无训练</div>
+    <div style="background:#0a1a2a; border:2px solid #60a5fa; border-radius:12px; padding:1.2rem; text-align:center">
+      <div style="font-size:1.5rem; font-weight:800; color:#60a5fa">B</div>
+      <div style="font-size:0.82rem; color:#ccc; margin-top:0.5rem">深睡 <strong>72min</strong></div>
+      <div style="font-size:0.82rem; color:#ccc">REM <strong>88min</strong></div>
+      <div style="font-size:0.82rem; color:#ccc">清醒 <strong>20min</strong></div>
+      <div style="font-size:0.72rem; color:#60a5fa; margin-top:0.5rem">REM好但深睡不足</div>
+      <div style="font-size:0.68rem; color:#666; margin-top:0.3rem">出现5次 (如4/27, 4/29)</div>
+    </div>
+    <div style="background:#2a0a0a; border:2px solid #ef4444; border-radius:12px; padding:1.2rem; text-align:center">
+      <div style="font-size:1.5rem; font-weight:800; color:#ef4444">C</div>
+      <div style="font-size:0.82rem; color:#ccc; margin-top:0.5rem">深睡 <strong>52min</strong></div>
+      <div style="font-size:0.82rem; color:#ccc">REM <strong>30min</strong></div>
+      <div style="font-size:0.82rem; color:#ccc">清醒 <strong>56min</strong></div>
+      <div style="font-size:0.72rem; color:#ef4444; margin-top:0.5rem">最差组合 ✗</div>
+      <div style="font-size:0.68rem; color:#666; margin-top:0.3rem">出现4次 (如5/11, 5/13)</div>
+    </div>
+  </div>
+  <p style="font-size:0.78rem; color:#666; text-align:center; margin-top:1rem">
+    A+组合的深睡是C组合的 <strong style="color:#4ade80">2.06倍</strong> | REM是 <strong style="color:#4ade80">3.17倍</strong> | 清醒仅为 <strong style="color:#4ade80">1/5</strong>
+  </p>
+</div>
+
+<!-- Multi-axis timeline -->
+<div class="card">
+  <div class="card-title">三因素时间线对照 (近2周)</div>
+  <svg viewBox="0 0 900 320" style="width:100%; height:300px" preserveAspectRatio="xMidYMid meet">
+    <!-- Background -->
+    <rect x="80" y="10" width="780" height="90" rx="4" fill="rgba(52,211,153,0.03)"/>
+    <rect x="80" y="110" width="780" height="90" rx="4" fill="rgba(96,165,250,0.03)"/>
+    <rect x="80" y="210" width="780" height="90" rx="4" fill="rgba(167,139,250,0.03)"/>
+
+    <!-- Y-axis labels -->
+    <text x="70" y="55" text-anchor="end" fill="#34d399" font-size="10">训练负荷</text>
+    <text x="70" y="155" text-anchor="end" fill="#60a5fa" font-size="10">入睡时间</text>
+    <text x="70" y="255" text-anchor="end" fill="#a78bfa" font-size="10">深睡(min)</text>
+
+    <!-- Grid lines -->
+    <line x1="80" y1="100" x2="860" y2="100" stroke="#1a1a3a" stroke-width="1"/>
+    <line x1="80" y1="200" x2="860" y2="200" stroke="#1a1a3a" stroke-width="1"/>
+
+    <!-- X-axis dates (5/8 to 5/15) -->
+    <text x="175" y="315" text-anchor="middle" fill="#555" font-size="9">5/8</text>
+    <text x="275" y="315" text-anchor="middle" fill="#555" font-size="9">5/9</text>
+    <text x="375" y="315" text-anchor="middle" fill="#555" font-size="9">5/10</text>
+    <text x="475" y="315" text-anchor="middle" fill="#555" font-size="9">5/11</text>
+    <text x="575" y="315" text-anchor="middle" fill="#555" font-size="9">5/12</text>
+    <text x="675" y="315" text-anchor="middle" fill="#555" font-size="9">5/13</text>
+    <text x="755" y="315" text-anchor="middle" fill="#555" font-size="9">5/14</text>
+    <text x="845" y="315" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">5/15★</text>
+
+    <!-- Training Load bars (top section, max height 80px, scale: 0-200) -->
+    <rect x="155" y="15" width="40" height="43" rx="3" fill="rgba(52,211,153,0.6)"/><!--107-->
+    <text x="175" y="60" text-anchor="middle" fill="#34d399" font-size="8">107</text>
+    <rect x="255" y="75" width="40" height="14" rx="3" fill="rgba(52,211,153,0.4)"/><!--36-->
+    <text x="275" y="72" text-anchor="middle" fill="#34d399" font-size="8">36</text>
+    <rect x="355" y="68" width="40" height="22" rx="3" fill="rgba(52,211,153,0.4)"/><!--54-->
+    <text x="375" y="65" text-anchor="middle" fill="#34d399" font-size="8">54</text>
+    <rect x="455" y="74" width="40" height="16" rx="3" fill="rgba(52,211,153,0.4)"/><!--39-->
+    <text x="475" y="71" text-anchor="middle" fill="#34d399" font-size="8">39</text>
+    <rect x="555" y="14" width="40" height="52" rx="3" fill="rgba(52,211,153,0.7)"/><!--130-->
+    <text x="575" y="68" text-anchor="middle" fill="#34d399" font-size="8">130</text>
+    <rect x="655" y="90" width="40" height="3" rx="3" fill="rgba(100,100,100,0.3)"/><!--0-->
+    <text x="675" y="88" text-anchor="middle" fill="#555" font-size="8">0</text>
+    <rect x="735" y="10" width="40" height="66" rx="3" fill="rgba(52,211,153,0.8)"/><!--164-->
+    <text x="755" y="80" text-anchor="middle" fill="#34d399" font-size="8">164</text>
+    <rect x="825" y="90" width="40" height="3" rx="3" fill="rgba(100,100,100,0.3)"/><!--0 today-->
+
+    <!-- Bedtime dots (middle section, range: 22:00=110, 00:00=160, 02:00=200) -->
+    <!-- 5/8: 22:37 --> <circle cx="175" cy="128" r="6" fill="#60a5fa"/>
+    <!-- 5/9: 23:25 --> <circle cx="275" cy="148" r="6" fill="#f59e0b"/>
+    <!-- 5/10: 23:31 --> <circle cx="375" cy="150" r="6" fill="#f59e0b"/>
+    <!-- 5/11: 23:51 --> <circle cx="475" cy="158" r="6" fill="#f97316"/>
+    <!-- 5/12: 23:38 --> <circle cx="575" cy="152" r="6" fill="#f59e0b"/>
+    <!-- 5/13: 02:06 --> <circle cx="675" cy="195" r="7" fill="#ef4444"/>
+    <!-- 5/14: 00:02 --> <circle cx="755" cy="162" r="6" fill="#f97316"/>
+    <!-- 5/15: 23:32 --> <circle cx="845" cy="150" r="7" fill="#60a5fa" stroke="#fff" stroke-width="2"/>
+    <polyline points="175,128 275,148 375,150 475,158 575,152 675,195 755,162 845,150" fill="none" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.5"/>
+    <!-- Time scale -->
+    <text x="870" y="115" fill="#555" font-size="8">22:00</text>
+    <text x="870" y="155" fill="#555" font-size="8">23:30</text>
+    <text x="870" y="198" fill="#555" font-size="8">02:00</text>
+
+    <!-- Deep sleep bars (bottom section, max 80px, scale: 0-150) -->
+    <rect x="155" y="260" width="40" height="36" rx="3" fill="rgba(167,139,250,0.5)"/><!--67-->
+    <text x="175" y="256" text-anchor="middle" fill="#a78bfa" font-size="8">67</text>
+    <rect x="255" y="247" width="40" height="53" rx="3" fill="rgba(167,139,250,0.6)"/><!--100-->
+    <text x="275" y="243" text-anchor="middle" fill="#a78bfa" font-size="8">100</text>
+    <rect x="355" y="242" width="40" height="57" rx="3" fill="rgba(167,139,250,0.7)"/><!--108-->
+    <text x="375" y="238" text-anchor="middle" fill="#a78bfa" font-size="8">108</text>
+    <rect x="455" y="266" width="40" height="34" rx="3" fill="rgba(249,115,22,0.5)"/><!--63-->
+    <text x="475" y="262" text-anchor="middle" fill="#f97316" font-size="8">63</text>
+    <rect x="555" y="252" width="40" height="47" rx="3" fill="rgba(167,139,250,0.6)"/><!--89-->
+    <text x="575" y="248" text-anchor="middle" fill="#a78bfa" font-size="8">89</text>
+    <rect x="655" y="268" width="40" height="31" rx="3" fill="rgba(239,68,68,0.5)"/><!--58-->
+    <text x="675" y="264" text-anchor="middle" fill="#ef4444" font-size="8">58</text>
+    <rect x="735" y="267" width="40" height="32" rx="3" fill="rgba(249,115,22,0.5)"/><!--61-->
+    <text x="755" y="263" text-anchor="middle" fill="#f97316" font-size="8">61</text>
+    <rect x="825" y="237" width="40" height="63" rx="3" fill="rgba(74,222,128,0.7)" stroke="#fff" stroke-width="1.5"/><!--118-->
+    <text x="845" y="232" text-anchor="middle" fill="#4ade80" font-size="9" font-weight="700">118★</text>
+
+    <!-- Annotations -->
+    <line x1="675" y1="195" x2="675" y2="268" stroke="#ef4444" stroke-width="1" stroke-dasharray="3,2" opacity="0.4"/>
+    <text x="685" y="235" fill="#ef4444" font-size="8" opacity="0.7">晚+无训练→差</text>
+    <line x1="845" y1="150" x2="845" y2="237" stroke="#4ade80" stroke-width="1" stroke-dasharray="3,2" opacity="0.4"/>
+    <text x="855" y="210" fill="#4ade80" font-size="8" opacity="0.7">早睡+训练→优</text>
+  </svg>
+</div>
+</div>
+
+<!-- ===== Insights ===== -->
+<div class="section">
+<div class="section-title">核心洞察</div>
+
+<div class="insight-box">
+  <div class="insight-title">1. 训练是深睡的最强驱动力 (相关系数 0.58)</div>
+  <div class="insight-text">
+    训练日次夜深睡平均 <strong>95min</strong>，休息日仅 <strong>64min</strong>，差距 +31min(+48%)。
+    其中跑步(均负荷114)对深睡的促进最为显著(次夜均深98min)。
+    越野跑(负荷412)更是触发了4周最高深睡149min — 极限负荷 → 极限恢复。
+    <br><br>
+    <strong>但存在阈值效应:</strong> 中等负荷(60-160)在深睡+REM+低清醒三方面达到最优平衡。超高负荷(>200)虽然深睡爆表，但REM被压缩(仅32min)，可能影响认知恢复。
+  </div>
+</div>
+
+<div class="insight-box">
+  <div class="insight-title">2. 入睡时间是REM的绝对控制器 (相关系数 -0.62)</div>
+  <div class="insight-text">
+    这是本报告中 <strong>最强的相关关系</strong>。入睡每延迟1小时，REM平均损失26分钟。
+    <br><br>
+    生理机制: REM睡眠集中在后半夜(4:00-7:00)。如果你02:06才入睡(5/13)，仅剩不到5小时睡眠，
+    身体会优先分配给深睡(修复)，REM被严重挤压 → 仅43min。
+    <br><br>
+    <strong>23:00是你的REM分水岭:</strong> 之前入睡REM均值82min，之后仅55min。
+  </div>
+</div>
+
+<div class="insight-box">
+  <div class="insight-title">3. 晨练优于晚练 — 睡眠视角</div>
+  <div class="insight-text">
+    晨练(06:30-08:30)次夜: 深睡 <strong>95min</strong>，入睡时间 <strong>23:05</strong>，睡眠效率 <strong>94%</strong>。
+    <br>晚练(18:00-20:30)当夜: 深睡 <strong>82min</strong>，入睡时间 <strong>23:28</strong>，睡眠效率 <strong>91%</strong>。
+    <br><br>
+    晨练从两方面优化睡眠: ①提前暴露于光照调节褪黑素 ②运动升温在晚间自然下降促进入睡。
+    晚练虽然也有效(优于不练)，但入睡推迟23min、深睡少13min。
+  </div>
+</div>
+
+<div class="insight-box">
+  <div class="insight-title">4. "无训练+晚睡"是你的睡眠杀手组合</div>
+  <div class="insight-text">
+    四象限矩阵中 <strong>C组合</strong>(无训练+00:00后入睡)出现4次，每次都是灾难性睡眠:
+    <br>• 5/11: 深睡63 + 清醒80min (前日骑行仅39负荷，23:51入睡)
+    <br>• 5/13: 深睡58 + REM43 (前日无训练，02:06入睡)
+    <br>• 4/20: 深睡89但清醒81min (00:42入睡)
+    <br><br>
+    <strong>对比A+组合:</strong> 深睡是C的2倍，REM是3倍，清醒仅1/5。你的睡眠质量几乎完全由这两个变量决定。
+  </div>
+</div>
+
+<div class="insight-box">
+  <div class="insight-title">5. 昨晚的特殊情况 — 负债补偿覆盖了规则</div>
+  <div class="insight-text">
+    昨晚(5/15)属于B+象限(有训练+23:32入睡)，预期深睡~89min。但实际达到 <strong>118min</strong>，超出预期33%。
+    原因: 5/11-5/14连续4天平均仅5h23m，累积约5h负债触发了深睡补偿机制。
+    <br><br>
+    <strong>结论:</strong> 正常情况下，训练+早睡 = 深睡90-110min；加上睡眠负债因素，可以触发更高的深睡(>110min)，
+    但这是身体的应急模式，不应作为策略使用。
+  </div>
+</div>
+</div>
+
+<!-- ===== Conclusion ===== -->
+<div class="section">
+<div class="section-title">结论与你的最优公式</div>
+<div class="conclusion">
+  <h3>你的睡眠质量预测公式</h3>
+  <div class="formula">
+    <span class="var">中等训练(60-160)</span>
+    <span class="op">+</span>
+    <span class="var">23:00前入睡</span>
+    <span class="op">=</span>
+    <span class="result">深睡107min + REM95min + 清醒11min</span>
+  </div>
+  <div class="formula" style="border-color:#ef4444; opacity:0.7">
+    <span style="color:#ef4444">无训练</span>
+    <span class="op">+</span>
+    <span style="color:#ef4444">00:00后入睡</span>
+    <span class="op">=</span>
+    <span style="color:#ef4444">深睡52min + REM30min + 清醒56min</span>
+  </div>
+
+  <div style="margin-top:1.5rem">
+    <h3 style="font-size:1rem; margin-bottom:0.8rem">你可以控制的两个杠杆:</h3>
+    <div class="grid-2" style="gap:1rem">
+      <div style="background:#080818; border-radius:10px; padding:1rem; border:1px solid #1a3a2a">
+        <div style="color:#34d399; font-weight:700; margin-bottom:0.5rem">杠杆1: 运动 (控制深睡)</div>
+        <div style="font-size:0.85rem; color:#aaa; line-height:1.6">
+          • 每周保持3-4次训练<br>
+          • 负荷控制在60-160区间<br>
+          • 优先晨练(06:30-08:30)<br>
+          • 跑步对深睡的促进效果 > 骑行
+        </div>
+      </div>
+      <div style="background:#080818; border-radius:10px; padding:1rem; border:1px solid #1a2a3a">
+        <div style="color:#60a5fa; font-weight:700; margin-bottom:0.5rem">杠杆2: 入睡时间 (控制REM)</div>
+        <div style="font-size:0.85rem; color:#aaa; line-height:1.6">
+          • 目标: 22:30-23:00入睡<br>
+          • 硬底线: 绝不超过00:00<br>
+          • 每晚迟1h = REM损失26min<br>
+          • 23:00前入睡的夜晚占比需>60%
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="footer">
+  Generated by Claude Code × COROS MCP | Exercise · Bedtime · Sleep Quality Correlation Analysis | 2026-05-15<br>
+  数据: 4周17次训练(跑步10/骑行5/越野1/跑步机1) × 26晚睡眠 | 图表: 相关矩阵/箱线图/分组柱状/环形/斜率图/双轴图/四象限/时间线
+</div>
+
+</div>
+</body>
+</html>

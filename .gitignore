@@ -19,3 +19,7 @@ build/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Temp analysis artifacts
+.tmp_*
+*.tcx
