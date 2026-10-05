@@ -47,6 +47,7 @@ priority is intended.
 | 天津半马 | 2026-10-25 Sun | Half | Not selected |
 | 杭州半马 | 2026-11-01 Sun | Half | Not selected |
 | 昌平马拉松 | TBD | — | Not selected |
+| 朝阳区滨河半马 | TBD (date unconfirmed) | Half | 🆕 Newly registered — date pending confirmation |
 | 南京全马 | 2026-11-22 Sun | Full | Not selected, on waitlist (候补中) |
 
 Scheduling flag: 北京马拉松 (full) on 10-18 is only 13 days before the 10-31
