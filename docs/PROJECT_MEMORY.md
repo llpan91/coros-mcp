@@ -40,8 +40,8 @@ priority is intended.
 |------|------|----------|--------|
 | 奥森 K马半程 | 2026-09-13 Sun | Half | ✅ Completed, official 1:38:23 (4:39/km) |
 | 怀柔长城半马 | 2026-09-27 Sun | Half | ✅ Completed, 1:36:51 (4:33.8/km) — HM PR |
-| 天津宝坻半马 | 2026-10-01 Thu | Half | Secured (no lottery) |
-| 天津武清半马 | 2026-10-06 Tue | Half | Won lottery |
+| 天津宝坻半马 | 2026-10-01 Thu | Half | ❌ DNS (弃赛) — did not start |
+| 天津武清半马 | 2026-10-06 Tue | Half | ❌ DNS (弃赛) — will not start |
 | 北京海淀全马 | 2026-10-11 Sun | Full | Not selected |
 | 北京马拉松 (full) | 2026-10-18 Sun | Full | Newly registered, result pending |
 | 天津半马 | 2026-10-25 Sun | Half | Not selected |
