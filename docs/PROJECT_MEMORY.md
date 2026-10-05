@@ -47,7 +47,7 @@ priority is intended.
 | 天津半马 | 2026-10-25 Sun | Half | Not selected |
 | 杭州半马 | 2026-11-01 Sun | Half | Not selected |
 | 昌平马拉松 | TBD | — | Not selected |
-| 朝阳区滨河半马 | 2026-11-01 Sun | Half | 🆕 Newly registered + will race (start 11-01) |
+| 朝阳区滨河半马 | 2026-11-01 Sun | Half | 🆕 Registered + will race. Start 07:30/07:38 (wave). 起点 北中轴景观大道（鸟巢与水立方之间）→ 终点 北京温榆河公园东岸草坪 |
 | 南京全马 | 2026-11-22 Sun | Full | Not selected, on waitlist (候补中) |
 
 Scheduling flag: 北京马拉松 (full) on 10-18 is only 13 days before the 10-31
@@ -55,9 +55,11 @@ half-marathon window and adjacent to other October races — a full marathon her
 conflicts with an HM peak. The two cannot both be "all-out" races.
 
 11-01 note: two half marathons fall on 2026-11-01 (Sun). 杭州半马 was not
-selected; the race actually being run that day is 朝阳区滨河半马 (newly
-registered). This is 14 days after the 10-18 北马 full — plan recovery/taper
-accordingly if targeting a strong result (potential sub-1:35 attempt venue).
+selected; the race actually being run that day is 朝阳区滨河半马 (registered via
+数字心动). Start 07:30/07:38 (wave starts); start line 北中轴景观大道 (between
+鸟巢 and 水立方), finish at 北京温榆河公园东岸草坪. This is 14 days after the
+10-18 北马 full — plan recovery/taper accordingly if targeting a strong result
+(potential sub-1:35 attempt venue; course is riverside/park, likely flat).
 
 ## Compliance Rules (from GOALS.md + AGENTS.md)
 
