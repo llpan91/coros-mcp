@@ -4,14 +4,14 @@ Persistent memory for the gaochi (COROS) training project. Machine- and
 agent-readable summary. Canonical goal source is `GOALS.md`; this file mirrors
 it plus current race-registration status for quick recall.
 
-Last updated: 2026-09-17 (Asia/Shanghai)
+Last updated: 2026-10-05 (Asia/Shanghai)
 
 ## Progressive Goal Ladder (increasing difficulty)
 
 | # | Goal | Target | Required pace | Status |
 |---|------|--------|---------------|--------|
 | 0 | Half Marathon sub-1:43 | 1:43:00 | 4:52.9/km | ✅ Achieved 2026-09-13 (official 1:38:23) |
-| 1 | Half Marathon sub-1:35 | 1:35:00 | 4:30.2/km | Active — nearest next target (~9 s/km gap) |
+| 1 | Half Marathon sub-1:35 | 1:35:00 | 4:30.2/km | Active — very close (~3.6 s/km gap; best 4:33.8/km @ 怀柔 09-27) |
 | 2 | Half Marathon sub-1:30 | 1:30:00 | 4:16.0/km | Active — stretch |
 | 3 | Marathon sub-3:30 | 3:30:00 | 4:58.6/km | Active — first full milestone, none completed yet |
 | 4 | Marathon sub-3:10 | 3:10:00 | 4:30.2/km | Active — intermediate |
@@ -23,17 +23,23 @@ Ordering note: user's original list numbered sub-1:30 as #1 and sub-1:35 as #2;
 ladder reorders by difficulty (1:43 → 1:35 → 1:30). Confirm if a different
 priority is intended.
 
-## Current Baseline (2026-09-13 official HM)
+## Current Baseline (2026-09-27 怀柔 HM — current best)
 
-- 21.16 km in 1:38:23 moving time, ~4:39/km, avg HR 169.
-- Recent quality-session threshold paces ~4:26–4:35.
+- 21.22 km in 1:36:51 moving time, ~4:33.8/km, avg HR 170, max HR 181, TL 442.
+  New HM PR, ~92 s faster than the 2026-09-13 Aoson official 1:38:23 (4:39/km),
+  on a harder (more climbing) course. (Device moving time; not an official
+  net/gun time.)
+- Capability trend (2026-07 → 2026-10, verified): threshold pace (LTSP)
+  4:35 → 4:18/km with LTHR stable 168-169; same-HR (146 bpm) aerobic pace
+  5:52 → ~5:20/km (~30 s/km gain); VO2max 56 → 57; longest run 30.4 km.
+- Recent quality-session threshold paces ~4:18-4:30.
 
-## Race Registration Status (as of 2026-09-17)
+## Race Registration Status (as of 2026-10-05)
 
 | Race | Date | Distance | Status |
 |------|------|----------|--------|
-| 奥森 K马半程 | 2026-09-13 Sun | Half | ✅ Registered + completed, 1:38:23 |
-| 怀柔长城半马 | 2026-09-27 Sun | Half | Won (sponsor slot) / secured |
+| 奥森 K马半程 | 2026-09-13 Sun | Half | ✅ Completed, official 1:38:23 (4:39/km) |
+| 怀柔长城半马 | 2026-09-27 Sun | Half | ✅ Completed, 1:36:51 (4:33.8/km) — HM PR |
 | 天津宝坻半马 | 2026-10-01 Thu | Half | Secured (no lottery) |
 | 天津武清半马 | 2026-10-06 Tue | Half | Won lottery |
 | 北京海淀全马 | 2026-10-11 Sun | Full | Not selected |
@@ -61,6 +67,9 @@ conflicts with an HM peak. The two cannot both be "all-out" races.
 
 ## Report Artifacts
 
+- `report/2026-10-05-capability-improvement-deep-analysis.html` — capability
+  improvement assessment (threshold pace, same-HR aerobic efficiency, HM PR,
+  volume/load, physiology). Confirms clear fitness gains Jul→Oct.
 - `report/2026-09-17-multidimensional-training-analysis.html` — deep analysis;
   section 8 holds the goal ladder, section 10 the current-week training advice.
 - `report/2026-09-17-race-registration-tracker.html` — race-status snapshot.
