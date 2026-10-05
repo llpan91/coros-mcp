@@ -47,12 +47,17 @@ priority is intended.
 | 天津半马 | 2026-10-25 Sun | Half | Not selected |
 | 杭州半马 | 2026-11-01 Sun | Half | Not selected |
 | 昌平马拉松 | TBD | — | Not selected |
-| 朝阳区滨河半马 | TBD (date unconfirmed) | Half | 🆕 Newly registered — date pending confirmation |
+| 朝阳区滨河半马 | 2026-11-01 Sun | Half | 🆕 Newly registered + will race (start 11-01) |
 | 南京全马 | 2026-11-22 Sun | Full | Not selected, on waitlist (候补中) |
 
 Scheduling flag: 北京马拉松 (full) on 10-18 is only 13 days before the 10-31
 half-marathon window and adjacent to other October races — a full marathon here
 conflicts with an HM peak. The two cannot both be "all-out" races.
+
+11-01 note: two half marathons fall on 2026-11-01 (Sun). 杭州半马 was not
+selected; the race actually being run that day is 朝阳区滨河半马 (newly
+registered). This is 14 days after the 10-18 北马 full — plan recovery/taper
+accordingly if targeting a strong result (potential sub-1:35 attempt venue).
 
 ## Compliance Rules (from GOALS.md + AGENTS.md)
 
